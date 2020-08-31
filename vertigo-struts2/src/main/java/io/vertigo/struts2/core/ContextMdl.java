@@ -19,7 +19,7 @@
 package io.vertigo.struts2.core;
 
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.datamodel.structure.metamodel.DtDefinition;
+import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.model.DtListURIForMasterData;
 import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;

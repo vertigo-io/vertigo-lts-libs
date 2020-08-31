@@ -43,7 +43,7 @@ import io.vertigo.core.lang.WrappedException;
 import io.vertigo.datafactory.collections.ListFilter;
 import io.vertigo.datafactory.collections.model.FacetedQueryResult;
 import io.vertigo.datafactory.impl.search.SearchResource;
-import io.vertigo.datafactory.search.metamodel.SearchIndexDefinition;
+import io.vertigo.datafactory.search.definitions.SearchIndexDefinition;
 import io.vertigo.datafactory.search.model.SearchIndex;
 import io.vertigo.datafactory.search.model.SearchQuery;
 import io.vertigo.datamodel.structure.model.DtListState;

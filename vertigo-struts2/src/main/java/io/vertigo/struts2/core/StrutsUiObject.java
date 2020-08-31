@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.datamodel.structure.metamodel.DtField;
+import io.vertigo.datamodel.structure.definitions.DtField;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.vega.engines.webservice.json.VegaUiObject;

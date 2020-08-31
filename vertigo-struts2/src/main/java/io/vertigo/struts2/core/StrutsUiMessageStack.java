@@ -21,8 +21,8 @@ package io.vertigo.struts2.core;
 import java.io.Serializable;
 
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.datamodel.structure.metamodel.DtDefinition;
-import io.vertigo.datamodel.structure.metamodel.DtField;
+import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.definitions.DtField;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.vega.webservice.model.UiList;

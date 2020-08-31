@@ -44,7 +44,7 @@ import io.vertigo.datafactory.search.data.ItemSearchClient;
 import io.vertigo.datafactory.search.data.TestSearchSmartTypes;
 import io.vertigo.datafactory.search.data.domain.Item;
 import io.vertigo.datafactory.search.data.domain.ItemDataBase;
-import io.vertigo.datafactory.search.metamodel.SearchIndexDefinition;
+import io.vertigo.datafactory.search.definitions.SearchIndexDefinition;
 import io.vertigo.datafactory.search.model.SearchIndex;
 import io.vertigo.datafactory.search.model.SearchQuery;
 import io.vertigo.datamodel.DataModelFeatures;

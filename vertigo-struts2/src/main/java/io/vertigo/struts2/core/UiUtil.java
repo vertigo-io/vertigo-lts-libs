@@ -28,9 +28,9 @@ import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.node.Node;
 import io.vertigo.datamodel.impl.smarttype.formatter.FormatterDefault;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
-import io.vertigo.datamodel.structure.metamodel.DtDefinition;
-import io.vertigo.datamodel.structure.metamodel.DtField;
-import io.vertigo.datamodel.structure.metamodel.Formatter;
+import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.definitions.DtField;
+import io.vertigo.datamodel.structure.definitions.Formatter;
 import io.vertigo.vega.webservice.model.UiList;
 import io.vertigo.vega.webservice.model.UiObject;
 
