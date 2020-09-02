@@ -18,10 +18,10 @@
  */
 package io.vertigo.struts2.impl.formatter;
 
+import io.vertigo.basics.formatter.Resources;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.datamodel.impl.smarttype.formatter.Resources;
 import io.vertigo.datamodel.structure.definitions.Formatter;
 import io.vertigo.datamodel.structure.definitions.FormatterException;
 
