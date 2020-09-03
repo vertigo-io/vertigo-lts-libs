@@ -2,6 +2,7 @@ bin/
 trash/
 target/
 .classpath
+.gitignore
 .project
 */.settings/
 *.prefs
