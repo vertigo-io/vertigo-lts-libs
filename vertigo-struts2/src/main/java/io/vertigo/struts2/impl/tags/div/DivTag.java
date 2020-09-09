@@ -32,8 +32,6 @@ import com.opensymphony.xwork2.util.ValueStack;
  */
 public final class DivTag extends AbstractClosingTag {
 
-	private static final long serialVersionUID = 5309231035916461758L;
-
 	/** {@inheritDoc} */
 	@Override
 	public Component getBean(final ValueStack stack, final HttpServletRequest req, final HttpServletResponse res) {

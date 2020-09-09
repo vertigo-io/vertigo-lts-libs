@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.eclipse.jetty.annotations.ServletContainerInitializersStarter;
 import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
 import org.eclipse.jetty.jsp.JettyJspServlet;
@@ -335,7 +337,7 @@ public class TestUi {
 		final String downloadedFileAbsoluteLocation = fileDownloader4Tests.downloadFile(downloadLink);
 
 		assertTrue(new File(downloadedFileAbsoluteLocation).exists());
-		assertEquals(fileDownloader4Tests.getHTTPStatusOfLastDownloadAttempt(), 200);
+		assertEquals(HttpServletResponse.SC_OK, fileDownloader4Tests.getHTTPStatusOfLastDownloadAttempt());
 	}
 
 	@Test
