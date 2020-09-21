@@ -110,7 +110,7 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 	public final void initUiObjectByKeyIndex(final String keyFieldName) {
 		final Map<String, UiObject<O>> uiObjectById = obtainUiObjectByIdMap(keyFieldName);
 		for (final UiObject<O> uiObject : this) {
-			uiObjectById.put(uiObject.getInputValue(keyFieldName), uiObject);
+			uiObjectById.put(uiObject.getSingleInputValue(keyFieldName), uiObject);
 		}
 	}
 

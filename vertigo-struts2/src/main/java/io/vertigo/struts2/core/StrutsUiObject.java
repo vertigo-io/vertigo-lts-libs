@@ -63,7 +63,7 @@ public final class StrutsUiObject<D extends DtObject> extends VegaUiObject<D> im
 		//-----
 		final DtField dtField = getDtField(keyFieldName);
 		if (isMultiple(dtField)) {
-			final String strValue = getInputValue(keyFieldName);
+			final String strValue = getSingleInputValue(keyFieldName);
 			return parseMultipleValue(strValue);
 		} else if (isBoolean(dtField)) {
 			final Boolean value = getTypedValue(keyFieldName, Boolean.class);
