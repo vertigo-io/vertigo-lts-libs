@@ -62,6 +62,9 @@ public final class StrutsUiObject<D extends DtObject> extends VegaUiObject<D> im
 				.isTrue(StringUtil.isLowerCamelCase(keyFieldName), "Le nom du champs doit-être en camelCase ({0}).", keyFieldName);
 		//-----
 		final DtField dtField = getDtField(keyFieldName);
+		if (dtField.getCardinality().hasMany()) {
+			return getInputValue(keyFieldName);
+		}
 		if (isMultiple(dtField)) {
 			final String strValue = getSingleInputValue(keyFieldName);
 			return parseMultipleValue(strValue);
@@ -69,7 +72,7 @@ public final class StrutsUiObject<D extends DtObject> extends VegaUiObject<D> im
 			final Boolean value = getTypedValue(keyFieldName, Boolean.class);
 			return value != null ? String.valueOf(value) : null;
 		} else {
-			return getInputValue(keyFieldName);
+			return getSingleInputValue(keyFieldName);
 		}
 	}
 
@@ -82,13 +85,17 @@ public final class StrutsUiObject<D extends DtObject> extends VegaUiObject<D> im
 				.isTrue(value instanceof String || value instanceof String[], "Les données saisies doivent être de type String ou String[] ({0} : {1})", fieldName, value.getClass());
 		//-----
 		final DtField dtField = getDtField(fieldName);
-		final String strValue;
-		if (isMultiple(dtField)) {
-			strValue = formatMultipleValue((String[]) value);
+		if (dtField.getCardinality().hasMany()) {
+			setInputValue(fieldName, value instanceof String[] ? (String[]) value : new String[] { (String) value });
 		} else {
-			strValue = requestParameterToString(value);
+			final String strValue;
+			if (isMultiple(dtField)) {
+				strValue = formatMultipleValue((String[]) value);
+			} else {
+				strValue = requestParameterToString(value);
+			}
+			setInputValue(fieldName, new String[] { strValue });
 		}
-		setInputValue(fieldName, strValue);
 		return null;// TODO voir comment faire autrement
 	}
 

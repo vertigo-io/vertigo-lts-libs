@@ -136,10 +136,10 @@ public class TestUi {
 		}
 	}
 
-	//	@Test
-	//	public void testServer() throws Exception {
-	//		server.join();
-	//	}
+	public static void main(final String[] args) throws Exception {
+		setUp();
+		server.join();
+	}
 
 	@Test
 	public void testLoadLoginPage() {
