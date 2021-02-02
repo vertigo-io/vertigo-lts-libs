@@ -294,8 +294,8 @@ public class TestUi {
 
 		findElement(By.xpath("//form[@id='autocompleteContextList']/table/tbody/tr/td/input[2]")).clear();
 		findElement(By.xpath("//form[@id='autocompleteContextList']/table/tbody/tr/td/input[2]")).sendKeys("the");
-
-		assertEquals("The Godfather", waitElement(By.cssSelector("ul.ui-autocomplete span.col"), 5000).getText());
+		Thread.sleep(6000);
+		assertEquals("The Godfather", waitElement(By.cssSelector("ul.ui-autocomplete span.col"), 10000).getText());
 
 		findElement(By.cssSelector("ul.ui-autocomplete span.col")).click();
 		assertEquals("The Godfather", findElement(By.xpath("//form[@id='autocompleteContextList']/table/tbody/tr/td/input[2]")).getAttribute("value"));
