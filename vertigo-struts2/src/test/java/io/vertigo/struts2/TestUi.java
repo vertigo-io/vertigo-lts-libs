@@ -36,6 +36,7 @@ import org.eclipse.jetty.jsp.JettyJspServlet;
 import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.jupiter.api.AfterAll;
@@ -98,7 +99,8 @@ public class TestUi {
 
 	private static void startServer() throws IOException, Exception {
 		server = new Server(port);
-		final WebAppContext context = new WebAppContext(TestUi.class.getClassLoader().getResource("testWebApp/").getFile(), "/test");
+		final Resource webAppResource = Resource.newResource(TestUi.class.getClassLoader().getResource("testWebApp/"));
+		final WebAppContext context = new WebAppContext(webAppResource, "/test");
 		System.setProperty("org.apache.jasper.compiler.disablejsr199", "false");
 		context.setAttribute("jacoco.exclClassLoaders", "*");
 
