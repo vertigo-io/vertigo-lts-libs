@@ -294,7 +294,6 @@ public class TestUi {
 
 		findElement(By.xpath("//form[@id='autocompleteContextList']/table/tbody/tr/td/input[2]")).clear();
 		findElement(By.xpath("//form[@id='autocompleteContextList']/table/tbody/tr/td/input[2]")).sendKeys("the");
-		Thread.sleep(6000);
 		assertEquals("The Godfather", waitElement(By.cssSelector("ul.ui-autocomplete span.col"), 10000).getText());
 
 		findElement(By.cssSelector("ul.ui-autocomplete span.col")).click();
