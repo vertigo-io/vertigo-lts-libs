@@ -123,11 +123,13 @@ public final class CropHtmlFilter extends AbstractFilter {
 	private static int findEndTag(final String temp, final int from, final String tag, final int deep) {
 		int end = temp.indexOf("</" + tag + ">", from);
 		Assertion.check().isTrue(end > 0, "Cant find en tag {0} after position {1}", "</" + tag + ">", from);
-		final int innerStart = temp.indexOf("<" + tag, from + 1 + tag.length());
-		if (innerStart != -1 && innerStart < end) {
-			final int innerEnd = findEndTag(temp, innerStart, tag, deep + 1);
-			end = findEndTag(temp, innerEnd + 3 + tag.length(), tag, deep);
-			Assertion.check().isTrue(end > 0, "Cant find en tag {0} after position {1} (deep", "</" + tag + ">", from);
+		int innerStart = temp.indexOf("<" + tag, from + 1 + tag.length());
+		int innerEnd = -1;
+		while (innerStart != -1 && innerStart < end) {
+			innerEnd = findEndTag(temp, innerStart, tag, deep + 1);
+			end = temp.indexOf("</" + tag + ">", innerEnd + 3 + tag.length());
+			Assertion.check().isTrue(end > 0, "Cant find en tag {0} after position {1} ({2})", "</" + tag + ">", from, deep);
+			innerStart = temp.indexOf("<" + tag, innerEnd);
 		}
 		return end;
 	}

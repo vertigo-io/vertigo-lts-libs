@@ -36,6 +36,7 @@ import org.eclipse.jetty.jsp.JettyJspServlet;
 import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.jupiter.api.AfterAll;
@@ -98,7 +99,8 @@ public class TestUi {
 
 	private static void startServer() throws IOException, Exception {
 		server = new Server(port);
-		final WebAppContext context = new WebAppContext(TestUi.class.getClassLoader().getResource("testWebApp/").getFile(), "/test");
+		final Resource webAppResource = Resource.newResource(TestUi.class.getClassLoader().getResource("testWebApp/"));
+		final WebAppContext context = new WebAppContext(webAppResource, "/test");
 		System.setProperty("org.apache.jasper.compiler.disablejsr199", "false");
 		context.setAttribute("jacoco.exclClassLoaders", "*");
 
@@ -292,8 +294,7 @@ public class TestUi {
 
 		findElement(By.xpath("//form[@id='autocompleteContextList']/table/tbody/tr/td/input[2]")).clear();
 		findElement(By.xpath("//form[@id='autocompleteContextList']/table/tbody/tr/td/input[2]")).sendKeys("the");
-
-		assertEquals("The Godfather", waitElement(By.cssSelector("ul.ui-autocomplete span.col"), 5000).getText());
+		assertEquals("The Godfather", waitElement(By.cssSelector("ul.ui-autocomplete span.col"), 10000).getText());
 
 		findElement(By.cssSelector("ul.ui-autocomplete span.col")).click();
 		assertEquals("The Godfather", findElement(By.xpath("//form[@id='autocompleteContextList']/table/tbody/tr/td/input[2]")).getAttribute("value"));
@@ -315,9 +316,7 @@ public class TestUi {
 
 		findElement(By.xpath("//form[@id='autocompleteContextMdl']/table/tbody/tr/td/input[2]")).clear();
 		findElement(By.xpath("//form[@id='autocompleteContextMdl']/table/tbody/tr/td/input[2]")).sendKeys("blai");
-		Thread.sleep(5000);
 		assertEquals("BLAISE", waitElement(By.cssSelector("ul.ui-autocomplete span.col"), 10000).getText());
-
 		findElement(By.cssSelector("ul.ui-autocomplete span.col")).click();
 		assertEquals("BLAISE", findElement(By.xpath("//form[@id='autocompleteContextMdl']/table/tbody/tr/td/input[2]")).getAttribute("value"));
 
@@ -413,6 +412,8 @@ public class TestUi {
 		do {
 			try {
 				if (isElementPresent(byElement)) {
+					//System.out.println(byElement.toString() + " found in " + (System.currentTimeMillis() - start));
+					Thread.sleep(250);
 					return driver.findElement(byElement);
 				}
 			} catch (final Exception e) {
