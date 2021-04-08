@@ -39,4 +39,9 @@ public class StrutsUiListModifiable<D extends DtObject> extends AbstractUiListMo
 		return new StrutsUiObject<>(dto);
 	}
 
+	@Override
+	protected String toContextKey(final String inputKey, final int index) {
+		return inputKey + ".get(" + index + ")";
+	}
+
 }
