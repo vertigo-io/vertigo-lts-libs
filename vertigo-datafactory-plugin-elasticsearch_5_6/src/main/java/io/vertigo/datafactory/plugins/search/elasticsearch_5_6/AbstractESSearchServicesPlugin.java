@@ -69,7 +69,7 @@ import io.vertigo.datamodel.structure.model.KeyConcept;
 import io.vertigo.datamodel.structure.model.UID;
 
 /**
- * Gestion de la connexion au serveur Solr de manière transactionnel.
+ * Gestion de la connexion au serveur ElasticSearch de manière transactionnel.
  * @author dchallas, npiedeloup
  */
 public abstract class AbstractESSearchServicesPlugin implements SearchServicesPlugin, Activeable {
@@ -275,12 +275,13 @@ public abstract class AbstractESSearchServicesPlugin implements SearchServicesPl
 
 	/** {@inheritDoc} */
 	@Override
-	public final <R extends DtObject> FacetedQueryResult<R, SearchQuery> loadList(final SearchIndexDefinition indexDefinition, final SearchQuery searchQuery, final DtListState listState) {
+	public final <R extends DtObject> FacetedQueryResult<R, SearchQuery> loadList(final List<SearchIndexDefinition> indexDefinitions, final SearchQuery searchQuery, final DtListState listState) {
 		Assertion.check().isNotNull(searchQuery);
+		Assertion.check().isTrue(indexDefinitions.size() == 1, "ElasticSearch plugn for old version (5.6) don't support multiple SearchIndexDefinition");
 		//-----
-		final ESStatement<KeyConcept, R> statement = createElasticStatement(indexDefinition);
+		final ESStatement<KeyConcept, R> statement = createElasticStatement(indexDefinitions.get(0));
 		final DtListState usedListState = listState != null ? listState : defaultListState;
-		return statement.loadList(indexDefinition, searchQuery, usedListState, defaultMaxRows);
+		return statement.loadList(indexDefinitions.get(0), searchQuery, usedListState, defaultMaxRows);
 	}
 
 	/** {@inheritDoc} */
