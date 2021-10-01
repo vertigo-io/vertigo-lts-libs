@@ -21,17 +21,17 @@
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-commons</artifactId>
-			<version>${project.version}</version>
+			<version>${vertigo.version}</version>
 		</dependency>
 		<dependency>
             <groupId>io.vertigo</groupId>
             <artifactId>vertigo-account</artifactId>
-            <version>${project.version}</version>
+            <version>${vertigo.version}</version>
         </dependency>
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-datastore</artifactId>
-			<version>${project.version}</version>
+			<version>${vertigo.version}</version>
 		</dependency>
 		
         <!--  tests -->
