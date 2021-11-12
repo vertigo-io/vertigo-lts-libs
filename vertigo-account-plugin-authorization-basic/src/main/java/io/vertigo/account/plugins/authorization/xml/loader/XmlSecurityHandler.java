@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -69,7 +70,7 @@ final class XmlSecurityHandler extends DefaultHandler {
 					final String prmId = convertDefinitionId(attrs.getValue(AttrsName.id.name()).trim());
 					// it's a real permission so we handle it
 					permissions.put(prmId, supplyPermissions(prmId,
-							convertDefinitionId(attrs.getValue(AttrsName.operation.name()).trim()),
+							convertOperations(attrs.getValue(AttrsName.operation.name()).trim()),
 							attrs.getValue(AttrsName.filter.name()).trim()));
 				} else {
 					// we are in a role so we append to the list of references
@@ -83,6 +84,10 @@ final class XmlSecurityHandler extends DefaultHandler {
 				break;
 			default:
 		}
+	}
+
+	private String convertOperations(final String operations) {
+		return Stream.of(operations.split("\\|")).map(StringUtil::constToUpperCamelCase).collect(Collectors.joining("|"));
 	}
 
 	private String convertDefinitionId(final String defId) {
