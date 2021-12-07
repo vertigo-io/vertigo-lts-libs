@@ -100,4 +100,12 @@ public final class ContextRef<O extends Serializable> {
 	public boolean exists() {
 		return action.getModel().containsKey(contextKey);
 	}
+
+	/**
+	 * Vide la valeur de ce champ du contexte
+	 */
+	public void clear() {
+		action.getModel().remove(contextKey);
+	}
+
 }
