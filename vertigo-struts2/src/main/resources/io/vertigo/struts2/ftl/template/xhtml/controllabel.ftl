@@ -27,5 +27,8 @@
 		<em class="required">*</em><#t/>
 	</#if>
 </#if>
+<#assign tooltipPosition = parameters.dynamicAttributes['tooltipPosition']!'label' />
+<#if tooltipPosition = 'label'>
 <#include "/${parameters.templateDir}/${parameters.theme}/tooltip.ftl" /> 
+</#if>
 </label><#t/>

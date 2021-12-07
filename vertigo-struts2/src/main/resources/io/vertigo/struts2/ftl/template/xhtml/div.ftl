@@ -25,10 +25,10 @@
 <#if parameters.dynamicAttributes['layout']??>
 	<#if parameters.dynamicAttributes['layout'] = 'table' > 
 <#assign tablecolspan = parameters.dynamicAttributes['cols']?default(2)?number />
-<table class="grid"<#rt/>
+<table class="grid table-${parameters.dynamicAttributes['cols']?default(2)}-col<#rt/>
+<#if parameters.cssClass??> ${parameters.cssClass?default('wwFormTable')?html}</#if>"<#rt/>
 <#if parameters.id??> id="${parameters.id?html}"</#if><#rt/>
 <#if parameters.name??> name="${parameters.name?html}"</#if><#rt/>
-<#if parameters.cssClass??> class="${parameters.cssClass?default('wwFormTable')?html}"</#if><#rt/>
 <#if parameters.cssStyle??> style="${parameters.cssStyle?html}"</#if><#rt/>
 <#if parameters.title??> title="${parameters.title?html}"</#if><#rt/>
 <#include "/${parameters.templateDir}/simple/scripting-events.ftl" />

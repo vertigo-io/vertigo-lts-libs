@@ -32,7 +32,10 @@
 <#if parameters.id??>
  id="${parameters.id?html}"<#rt/>
 </#if>
+<#assign previousCssClass = appendedCssClass!''/>
+<#assign appendedCssClass = previousCssClass +' autocompleter-input'/>
 <#include "/${parameters.templateDir}/simple/css.ftl" />
+<#assign appendedCssClass = previousCssClass/>
 <#if parameters.title??>
  title="${parameters.title?html}"<#rt/>
 </#if>
