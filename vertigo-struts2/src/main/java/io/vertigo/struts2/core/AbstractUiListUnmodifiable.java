@@ -109,7 +109,7 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 	 * Attention : nécessite la DtList (appel obtainDtList).
 	 * @param keyFieldName Nom du champs à indexer
 	 */
-	public final void initUiObjectByKeyIndex(final String keyFieldName) {
+	protected final void initUiObjectByKeyIndex(final String keyFieldName) {
 		final Map<String, UiObject<O>> uiObjectById = uiObjectByFieldValue.computeIfAbsent(keyFieldName, fieldName -> new HashMap<>());
 		for (final UiObject<O> uiObject : this) {
 			uiObjectById.put(uiObject.getSingleInputValue(keyFieldName), uiObject);
