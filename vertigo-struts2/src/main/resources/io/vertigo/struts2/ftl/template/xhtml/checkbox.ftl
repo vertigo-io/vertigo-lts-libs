@@ -5,17 +5,17 @@
  */
 -->
 <#assign currentLayout = controlLayout_type?default('none') />
-<#if !parameters.labelposition?? && (parameters.form.labelposition)??>
-<#assign labelpos = parameters.form.labelposition/>
+<#if !parameters.labelPosition?? && (parameters.form.labelPosition)??>
+<#assign labelPos = parameters.form.labelPosition/>
 <#else>
-<#assign labelpos = parameters.labelposition?default("right")/>
+<#assign labelPos = parameters.labelPosition?default("right")/>
 </#if>
 
-<#if labelpos == 'left'>
+<#if labelPos == 'left'>
 	<#include "/${parameters.templateDir}/${parameters.theme}/controlheader.ftl" />
 	<#include "/${parameters.templateDir}/simple/checkbox.ftl" />
 	<#include "/${parameters.templateDir}/${parameters.theme}/controlfooter.ftl" />  
-<#elseif (labelpos!"") == 'top' && parameters.label??>
+<#elseif (labelPos!"") == 'top' && parameters.label??>
 	<#if currentLayout == 'table'>
 	<tr>
 		<#assign tablecolspan = controlLayout_tablecolspan />
@@ -39,7 +39,7 @@
 		<#include "/${parameters.templateDir}/simple/checkbox.ftl" />
 	</#if>
 	<#include "/${parameters.templateDir}/${parameters.theme}/controlfooter.ftl" />
-<#elseif (labelpos!"") == 'right'>
+<#elseif (labelPos!"") == 'right'>
 	<#if currentLayout == 'table'>
 		<#include "/${parameters.templateDir}/${parameters.theme}/controlheader-trlogic.ftl" />	
 		<td class="checkBoxLeft"<#t/>

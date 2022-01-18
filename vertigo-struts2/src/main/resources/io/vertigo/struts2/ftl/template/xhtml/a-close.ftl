@@ -26,7 +26,7 @@
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/common-attributes.ftl" />
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/dynamic-attributes.ftl" />
 >${parameters.body}</a>
-<#if parameters.dynamicAttributes['tooltipPosition']?? && parameters.dynamicAttributes['tooltipPosition'] = 'field'>
+<#if parameters.dynamicAttributes.get('tooltipPosition')?? && parameters.dynamicAttributes.get('tooltipPosition') = 'field'>
         <#include "/${parameters.templateDir}/xhtml/tooltip.ftl" /> 
 </#if>
 

@@ -5,7 +5,7 @@
  */
 -->
 <#assign fieldName = parameters.widgetname!parameters.name!""/><#-- for jquery component -->
-<#assign hasFieldErrors = parameters.name?? && fieldErrors?? && fieldErrors[fieldName]??/>
+<#assign hasFieldErrors = parameters.name?? && fieldErrors?? && fieldErrors.get(fieldName)??/>
 <label<#t/>
 <#if parameters.id??>
  for="${parameters.id?html}"<#rt/>
@@ -27,7 +27,7 @@
 		<em class="required">*</em><#t/>
 	</#if>
 </#if>
-<#assign tooltipPosition = parameters.dynamicAttributes['tooltipPosition']!'label' />
+<#assign tooltipPosition = parameters.dynamicAttributes.get('tooltipPosition')!'label' />
 <#if tooltipPosition = 'label'>
 <#include "/${parameters.templateDir}/${parameters.theme}/tooltip.ftl" /> 
 </#if>

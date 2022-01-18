@@ -16,7 +16,7 @@
 <#else>
 	${parameters.label?html}<#t/>
 </#if>
-<#if parameters.dynamicAttributes['forceTooltip']?? && parameters.dynamicAttributes['forceTooltip'] = 'true' > 
+<#if parameters.dynamicAttributes.get('forceTooltip')?? && parameters.dynamicAttributes.get('forceTooltip') = 'true' > 
 <#include "/${parameters.templateDir}/xhtml/tooltip.ftl" />
 </#if>
 </label><#t/>

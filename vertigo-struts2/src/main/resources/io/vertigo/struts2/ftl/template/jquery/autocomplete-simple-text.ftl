@@ -18,7 +18,7 @@
 </#if>
 <#if uiObject??>
 <#-- replace \ en - : doit correspondre au formatage du javascript jQuery.ui.autocomplete.prototype._renderItem -->
- value="${uiObject[parameters.remoteListValue]?html?replace('\n', ' - ')}"<#rt/>
+ value="${uiObject.get(parameters.remoteListValue)?html?replace('\n', ' - ')}"<#rt/>
 </#if>
 <#if parameters.disabled?default(false)>
  disabled="disabled"<#rt/>
