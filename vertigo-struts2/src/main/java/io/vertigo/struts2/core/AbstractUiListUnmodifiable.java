@@ -110,7 +110,7 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 	 * @param keyFieldName Nom du champs à indexer
 	 */
 	protected final void initUiObjectByKeyIndex(final String keyFieldName) {
-		final Map<String, UiObject<O>> uiObjectById = uiObjectByFieldValue.computeIfAbsent(keyFieldName, fieldName -> new HashMap<>());
+		final Map<String, UiObject<O>> uiObjectById = obtainUiObjectByIdMap(keyFieldName);
 		for (final UiObject<O> uiObject : this) {
 			uiObjectById.put(uiObject.getSingleInputValue(keyFieldName), uiObject);
 		}
@@ -186,6 +186,8 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 	 * @throws FormatterException Format error
 	 */
 	public UiObject<O> getById(final String keyFieldName, final String keyValueAsString) throws FormatterException {
+		Assertion.check().isNotNull(keyValueAsString);
+		//-----
 		final Map<String, UiObject<O>> uiObjectById = obtainUiObjectByIdMap(keyFieldName);
 		UiObject<O> uiObject = uiObjectById.get(keyValueAsString);
 		if (uiObject == null) {
@@ -225,10 +227,7 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 	 * @return Index des UiObjects par Id
 	 */
 	protected final Map<String, UiObject<O>> obtainUiObjectByIdMap(final String keyFieldName) {
-		if (!uiObjectByFieldValue.containsKey(keyFieldName)) {
-			initUiObjectByKeyIndex(keyFieldName);
-		}
-		return uiObjectByFieldValue.get(keyFieldName);
+		return uiObjectByFieldValue.computeIfAbsent(keyFieldName, fieldName -> new HashMap<>());		
 	}
 
 	/**
