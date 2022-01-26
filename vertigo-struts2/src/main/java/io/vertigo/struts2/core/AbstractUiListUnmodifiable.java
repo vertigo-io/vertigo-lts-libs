@@ -78,10 +78,13 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 		//-----
 		dtDefinitionRef = new DefinitionReference<>(dtDefinition);
 		final Optional<DtField> idFieldOpt = getDtDefinition().getIdField();
+		final Optional<DtField> keyFieldOpt = getDtDefinition().getKeyField();
 		if (idFieldOpt.isPresent()) {
 			camelIdFieldName = idFieldOpt.get().getName();
+		} else if (keyFieldOpt.isPresent()) {
+			camelIdFieldName = keyFieldOpt.get().getName();
 		} else if (keyFieldNameOpt.isPresent()) {
-			Assertion.check().isTrue(keyFieldNameOpt.isPresent(), "DtDefinition : {0} is not an entity, you must provide a keyFieldName", dtDefinition.getName());
+			Assertion.check().isTrue(keyFieldNameOpt.isPresent(), "DtDefinition : {0} is not an entity and does not have a keyField, you must provide a keyFieldName", dtDefinition.getName());
 			camelIdFieldName = keyFieldNameOpt.get().name();
 		} else {
 			camelIdFieldName = null;
