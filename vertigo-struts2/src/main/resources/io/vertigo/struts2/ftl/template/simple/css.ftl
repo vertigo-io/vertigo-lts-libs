@@ -1,10 +1,10 @@
 <#--
 /*
- * $Id: css.ftl,v 1.2 2014/01/17 09:33:28 npiedeloup Exp $
- *
+ * See Struts 2.5.28.3
+ * Merge 18/01/2022 Npi2loup
  */
 -->
-<#assign hasFieldErrors = parameters.name?? && fieldErrors?? && fieldErrors[parameters.widgetname!parameters.name]??/>
+<#assign hasFieldErrors = parameters.name?? && fieldErrors?? && fieldErrors.get(parameters.widgetname!parameters.name)??/>
 <#if parameters.cssClass?has_content || hasFieldErrors || (appendedCssClass?has_content) >
  class="<#rt/>
 </#if>

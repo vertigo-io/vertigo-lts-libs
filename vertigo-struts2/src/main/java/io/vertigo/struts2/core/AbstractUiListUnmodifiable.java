@@ -1,7 +1,7 @@
 /**
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2021, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2022, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,11 +78,16 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 		//-----
 		dtDefinitionRef = new DefinitionReference<>(dtDefinition);
 		final Optional<DtField> idFieldOpt = getDtDefinition().getIdField();
+		final Optional<DtField> keyFieldOpt = getDtDefinition().getKeyField();
 		if (idFieldOpt.isPresent()) {
 			camelIdFieldName = idFieldOpt.get().getName();
-		} else {
-			Assertion.check().isTrue(keyFieldNameOpt.isPresent(), "DtDefinition : {0} is not an entity, you must provide a keyFieldName", dtDefinition.getName());
+		} else if (keyFieldOpt.isPresent()) {
+			camelIdFieldName = keyFieldOpt.get().getName();
+		} else if (keyFieldNameOpt.isPresent()) {
+			Assertion.check().isTrue(keyFieldNameOpt.isPresent(), "DtDefinition : {0} is not an entity and does not have a keyField, you must provide a keyFieldName", dtDefinition.getName());
 			camelIdFieldName = keyFieldNameOpt.get().name();
+		} else {
+			camelIdFieldName = null;
 		}
 	}
 
@@ -107,7 +112,7 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 	 * Attention : nécessite la DtList (appel obtainDtList).
 	 * @param keyFieldName Nom du champs à indexer
 	 */
-	public final void initUiObjectByKeyIndex(final String keyFieldName) {
+	protected final void initUiObjectByKeyIndex(final String keyFieldName) {
 		final Map<String, UiObject<O>> uiObjectById = obtainUiObjectByIdMap(keyFieldName);
 		for (final UiObject<O> uiObject : this) {
 			uiObjectById.put(uiObject.getSingleInputValue(keyFieldName), uiObject);
@@ -184,6 +189,8 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 	 * @throws FormatterException Format error
 	 */
 	public UiObject<O> getById(final String keyFieldName, final String keyValueAsString) throws FormatterException {
+		Assertion.check().isNotNull(keyValueAsString);
+		//-----
 		final Map<String, UiObject<O>> uiObjectById = obtainUiObjectByIdMap(keyFieldName);
 		UiObject<O> uiObject = uiObjectById.get(keyValueAsString);
 		if (uiObject == null) {
@@ -195,7 +202,7 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 	private UiObject<O> loadMissingEntity(final String keyFieldName, final String keyValueAsString, final Map<String, UiObject<O>> uiObjectById) throws FormatterException {
 		final DtDefinition dtDefinition = getDtDefinition();
 		// ---
-		Assertion.check().isTrue(dtDefinition.getIdField().isPresent(), "The definition : {0} must have an id to retrieve elements by Id", dtDefinition);
+		Assertion.check().isTrue(dtDefinition.getIdField().isPresent(), "The definition : {0} must have an id to retrieve missing elements by Id", dtDefinition);
 		// ---
 		UiObject<O> uiObject;
 		final DtField dtField = dtDefinition.getField(keyFieldName);
@@ -218,11 +225,12 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 
 	/**
 	 * Récupère l'index des UiObjects par Id.
+	 * Calcul l'index si besoin.
 	 * @param keyFieldName Nom du champ identifiant
 	 * @return Index des UiObjects par Id
 	 */
 	protected final Map<String, UiObject<O>> obtainUiObjectByIdMap(final String keyFieldName) {
-		return uiObjectByFieldValue.computeIfAbsent(keyFieldName, fieldName -> new HashMap<>());
+		return uiObjectByFieldValue.computeIfAbsent(keyFieldName, fieldName -> new HashMap<>());		
 	}
 
 	/**

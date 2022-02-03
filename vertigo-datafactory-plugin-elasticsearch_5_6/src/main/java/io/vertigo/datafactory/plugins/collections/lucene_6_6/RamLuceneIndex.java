@@ -1,7 +1,7 @@
 /**
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2021, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2022, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +76,10 @@ final class RamLuceneIndex<D extends DtObject> {
 
 	//DtDefinition est non serializable
 	private final DtDefinition dtDefinition;
+
+	private final Optional<DtField> idFieldOpt;
+	private final String idFieldName;
+
 	private final SmartTypeManager smartTypeManager;
 	private final Map<String, D> indexedObjectPerPk = new HashMap<>();
 	private final Directory directory;
@@ -97,6 +101,8 @@ final class RamLuceneIndex<D extends DtObject> {
 		this.dtDefinition = dtDefinition;
 		this.smartTypeManager = smartTypeManager;
 		directory = new RAMDirectory();
+		idFieldOpt = dtDefinition.getIdField();
+		idFieldName = idFieldOpt.isPresent() ? idFieldOpt.get().getName() : "_id";
 
 		//l'index est crée automatiquement la premiere fois.
 		buildIndex();
@@ -156,7 +162,6 @@ final class RamLuceneIndex<D extends DtObject> {
 			final TopDocs topDocs,
 			final int skip,
 			final int top) throws IOException {
-		final DtField idField = dtDefinition.getIdField().get();
 
 		final DtList<D> dtcResult = new DtList<>(dtDefinition);
 		final int resultLength = topDocs.scoreDocs.length;
@@ -164,7 +169,7 @@ final class RamLuceneIndex<D extends DtObject> {
 			for (int i = skip; i < Math.min(skip + top, resultLength); i++) {
 				final ScoreDoc scoreDoc = topDocs.scoreDocs[i];
 				final Document document = searcher.doc(scoreDoc.doc);
-				dtcResult.add(getDtObjectIndexed(document.get(idField.getName())));
+				dtcResult.add(getDtObjectIndexed(document.get(idFieldName)));
 			}
 		}
 		return dtcResult;
@@ -180,18 +185,15 @@ final class RamLuceneIndex<D extends DtObject> {
 		Assertion.check().isNotNull(fullDtc);
 		//-----
 		try (final IndexWriter indexWriter = createIndexWriter()) {
-			final DtField idField = fullDtc.getDefinition().getIdField().get();
 			final Collection<DtField> dtFields = fullDtc.getDefinition().getFields();
 
 			for (final D dto : fullDtc) {
 				final Document document = new Document();
-				final Object pkValue = idField.getDataAccessor().getValue(dto);
-				Assertion.check().isNotNull(pkValue, "Indexed DtObject must have a not null primary key. {0}.{1} was null.", fullDtc.getDefinition().getName(), idField.getName());
-				final String indexedPkValue = String.valueOf(pkValue);
-				addKeyword(document, idField.getName(), indexedPkValue, true);
+				final String indexedPkValue = obtainIndexedIdValue(dto);
+				addKeyword(document, idFieldName, indexedPkValue, true);
 				for (final DtField dtField : dtFields) {
 					final Object value = dtField.getDataAccessor().getValue(dto);
-					if (value != null && !dtField.equals(idField)) {
+					if (value != null && (idFieldOpt.isEmpty() || !dtField.equals(idFieldOpt.get()))) {
 						if (value instanceof String) {
 							final String valueAsString = getStringValue(dto, dtField);
 							addIndexed(document, dtField.getName(), valueAsString, storeValue);
@@ -206,6 +208,16 @@ final class RamLuceneIndex<D extends DtObject> {
 				indexWriter.addDocument(document);
 				mapDocument(indexedPkValue, dto);
 			}
+		}
+	}
+
+	private String obtainIndexedIdValue(final D dto) {
+		if (idFieldOpt.isPresent()) {
+			final Object pkValue = idFieldOpt.get().getDataAccessor().getValue(dto);
+			Assertion.check().isNotNull(pkValue, "Indexed DtObject must have a not null primary key. {0}.{1} was null.", dtDefinition.getName(), idFieldOpt.get().getName());
+			return String.valueOf(pkValue);
+		} else {
+			return String.valueOf(dto.hashCode());
 		}
 	}
 

@@ -1,7 +1,7 @@
 /**
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2021, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2022, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,7 +155,7 @@ final class ESStatement<K extends KeyConcept, I extends DtObject> {
 			final long deleted = response.getDeleted();
 			LOGGER.debug("Removed {} elements", deleted);
 		} catch (final SearchPhaseExecutionException e) {
-			final VUserException vue = new VUserException(SearchResource.DYNAMO_SEARCH_QUERY_SYNTAX_ERROR);
+			final VUserException vue = new VUserException(SearchResource.DATAFACTORY_SEARCH_QUERY_SYNTAX_ERROR);
 			vue.initCause(e);
 			throw vue;
 		}
@@ -197,7 +197,7 @@ final class ESStatement<K extends KeyConcept, I extends DtObject> {
 			return new ESFacetedQueryResultBuilder(esDocumentCodec, indexDefinition, queryResponse, searchQuery)
 					.build();
 		} catch (final SearchPhaseExecutionException e) {
-			final VUserException vue = new VUserException(SearchResource.DYNAMO_SEARCH_QUERY_SYNTAX_ERROR);
+			final VUserException vue = new VUserException(SearchResource.DATAFACTORY_SEARCH_QUERY_SYNTAX_ERROR);
 			vue.initCause(e);
 			throw vue;
 		}

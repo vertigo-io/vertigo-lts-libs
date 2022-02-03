@@ -41,7 +41,7 @@
 					${parameters.headerValue?html}<#t/>
 				<#else>
 					<#if uiObject??>
-					 	${uiObject[paramListValue]?html?replace("\n", "<br/>")}<#t/>
+					 	${uiObject.get(paramListValue)?html?replace("\n", "<br/>")}<#t/>
 					<#else> <#-- si pas de getById : liste ou map brute -->
 						<#list parameters.list as entry>
 							<#if entry.key = selectedValue>

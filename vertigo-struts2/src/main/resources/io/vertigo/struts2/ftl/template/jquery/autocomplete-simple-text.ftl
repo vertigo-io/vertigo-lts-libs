@@ -18,7 +18,7 @@
 </#if>
 <#if uiObject??>
 <#-- replace \ en - : doit correspondre au formatage du javascript jQuery.ui.autocomplete.prototype._renderItem -->
- value="${uiObject[parameters.remoteListValue]?html?replace('\n', ' - ')}"<#rt/>
+ value="${uiObject.get(parameters.remoteListValue)?html?replace('\n', ' - ')}"<#rt/>
 </#if>
 <#if parameters.disabled?default(false)>
  disabled="disabled"<#rt/>
@@ -32,7 +32,10 @@
 <#if parameters.id??>
  id="${parameters.id?html}"<#rt/>
 </#if>
+<#assign previousCssClass = appendedCssClass!''/>
+<#assign appendedCssClass = previousCssClass +' autocompleter-input'/>
 <#include "/${parameters.templateDir}/simple/css.ftl" />
+<#assign appendedCssClass = previousCssClass/>
 <#if parameters.title??>
  title="${parameters.title?html}"<#rt/>
 </#if>
