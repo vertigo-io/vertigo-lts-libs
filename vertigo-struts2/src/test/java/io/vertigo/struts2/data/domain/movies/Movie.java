@@ -41,6 +41,7 @@ public final class Movie implements KeyConcept {
 	private String description;
 	private String poster;
 	private String rated;
+	private Boolean vff;
 	private java.time.Instant lastModified;
 
 	/** {@inheritDoc} */
@@ -201,6 +202,25 @@ public final class Movie implements KeyConcept {
 	 */
 	public void setRated(final String rated) {
 		this.rated = rated;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'vff'.
+	 * @return Boolean vff
+	 */
+	@Field(smartType = "STyOuiNon", label = "vff")
+	public Boolean getVff() {
+		return vff;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'vff'.
+	 * @param vff Boolean
+	 */
+	public void setVff(final Boolean vff) {
+		this.vff = vff;
 	}
 
 	/**

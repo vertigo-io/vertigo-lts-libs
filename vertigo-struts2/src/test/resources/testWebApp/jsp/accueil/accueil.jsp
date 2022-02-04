@@ -48,6 +48,13 @@
 		<s:submit action="saveCastingAccueil" />
 	</v:div>
 </s:form>
+<s:form id="radioBoolInlineList">
+<h1>Test boolean radio sur List Inline (dans jsp)</h1>
+    <v:div layout="table">
+        <s:radio name="movie.vff" label="default" list="#{'true':'Oui','false':'Non'}"/>
+        <s:submit action="saveAccueil" />
+    </v:div>
+</s:form>
 <s:form id="selectContextMdl">
 <h1>Test select sur ContextMdl</h1>
 	<v:div layout="table">
