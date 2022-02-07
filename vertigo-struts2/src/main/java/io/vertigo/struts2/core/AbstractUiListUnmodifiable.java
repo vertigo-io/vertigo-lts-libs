@@ -28,7 +28,7 @@ import io.vertigo.commons.transaction.VTransactionManager;
 import io.vertigo.commons.transaction.VTransactionWritable;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.Node;
-import io.vertigo.core.node.definition.DefinitionReference;
+import io.vertigo.core.node.definition.DefinitionId;
 import io.vertigo.core.util.ClassUtil;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
@@ -66,7 +66,7 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 	private final Map<String, Map<String, UiObject<O>>> uiObjectByFieldValue = new HashMap<>();
 
 	//==========================================================================
-	private final DefinitionReference<DtDefinition> dtDefinitionRef;
+	private final DefinitionId<DtDefinition> dtDefinitionRef;
 	private final String camelIdFieldName; //nullable (Option n'est pas serializable)
 
 	/**
@@ -76,13 +76,13 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 	AbstractUiListUnmodifiable(final DtDefinition dtDefinition, final Optional<DtFieldName<O>> keyFieldNameOpt) {
 		Assertion.check().isNotNull(dtDefinition);
 		//-----
-		dtDefinitionRef = new DefinitionReference<>(dtDefinition);
+		dtDefinitionRef = dtDefinition.id();
 		final Optional<DtField> idFieldOpt = getDtDefinition().getIdField();
 		final Optional<DtField> keyFieldOpt = getDtDefinition().getKeyField();
 		if (idFieldOpt.isPresent()) {
-			camelIdFieldName = idFieldOpt.get().getName();
+			camelIdFieldName = idFieldOpt.get().name();
 		} else if (keyFieldOpt.isPresent()) {
-			camelIdFieldName = keyFieldOpt.get().getName();
+			camelIdFieldName = keyFieldOpt.get().name();
 		} else if (keyFieldNameOpt.isPresent()) {
 			Assertion.check().isTrue(keyFieldNameOpt.isPresent(), "DtDefinition : {0} is not an entity and does not have a keyField, you must provide a keyFieldName", dtDefinition.getName());
 			camelIdFieldName = keyFieldNameOpt.get().name();
@@ -208,7 +208,7 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 		final DtField dtField = dtDefinition.getField(keyFieldName);
 		Assertion.check().isTrue(dtField.getType().isId(), "La clé {0} de la liste doit être la PK", keyFieldName);
 		final SmartTypeManager smartTypeManager = Node.getNode().getComponentSpace().resolve(SmartTypeManager.class);
-		final Object key = smartTypeManager.stringToValue(dtField.getSmartTypeDefinition(), keyValueAsString);
+		final Object key = smartTypeManager.stringToValue(dtField.smartTypeDefinition(), keyValueAsString);
 		final O entity = (O) loadDto(key);
 		uiObject = new StrutsUiObject<>(entity);
 		uiObjectById.put(keyValueAsString, uiObject);
@@ -230,7 +230,7 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 	 * @return Index des UiObjects par Id
 	 */
 	protected final Map<String, UiObject<O>> obtainUiObjectByIdMap(final String keyFieldName) {
-		return uiObjectByFieldValue.computeIfAbsent(keyFieldName, fieldName -> new HashMap<>());		
+		return uiObjectByFieldValue.computeIfAbsent(keyFieldName, fieldName -> new HashMap<>());
 	}
 
 	/**

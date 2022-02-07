@@ -493,7 +493,7 @@ public abstract class AbstractSearchManagerTest {
 		firstItem = doQueryAndGetFirst("*:*", "itemYear", true);
 		Assertions.assertEquals(2010, firstItem.getItemYear().intValue());
 
-		final DtListState listState = DtListState.of(null, 0, itemIndexDefinition.getIndexDtDefinition().getField("model").getName(), true);
+		final DtListState listState = DtListState.of(null, 0, itemIndexDefinition.getIndexDtDefinition().getField("model").name(), true);
 		final DtList<Item> dtList = doQueryAll(listState).getDtList();
 
 		Assertions.assertEquals("Tucson 2.0 CRDi Pack Luxe BA", dtList.get(0).getModel());
@@ -598,7 +598,7 @@ public abstract class AbstractSearchManagerTest {
 
 		boolean found = false;
 		for (final Entry<FacetValue, Long> entry : yearFacet.getFacetValues().entrySet()) {
-			if (entry.getKey().getLabel().getDisplay().toLowerCase(Locale.FRENCH).contains("avant")) {
+			if (entry.getKey().label().getDisplay().toLowerCase(Locale.FRENCH).contains("avant")) {
 				found = true;
 				Assertions.assertEquals(itemDataBase.before(2000), entry.getValue().longValue());
 			}
@@ -639,14 +639,14 @@ public abstract class AbstractSearchManagerTest {
 		//On recherche la facette constructeur
 		final Facet optionalStringFacet = getFacetByName(result, "FctOptionalStringItem");
 		//On vérifie que l'on est sur le champ Manufacturer
-		Assertions.assertEquals("optionalString", optionalStringFacet.getDefinition().getDtField().getName());
+		Assertions.assertEquals("optionalString", optionalStringFacet.getDefinition().getDtField().name());
 		Assertions.assertFalse(optionalStringFacet.getDefinition().isRangeFacet());
 
 		//On vérifie qu'il existe une valeur pour empty et que le nombre d'occurrences est correct
 		boolean found = false;
 		final String value = "_empty_";
 		for (final Entry<FacetValue, Long> entry : optionalStringFacet.getFacetValues().entrySet()) {
-			if (entry.getKey().getLabel().getDisplay().toLowerCase(Locale.FRENCH).equals(value)) {
+			if (entry.getKey().label().getDisplay().toLowerCase(Locale.FRENCH).equals(value)) {
 				found = true;
 				Assertions.assertEquals(1, entry.getValue().intValue()); //only one empty string (other are null)
 			}
@@ -665,14 +665,14 @@ public abstract class AbstractSearchManagerTest {
 		//On recherche la facette constructeur
 		final Facet manufacturerFacet = getFacetByName(result, "FctManufacturerItem");
 		//On vérifie que l'on est sur le champ Manufacturer
-		Assertions.assertEquals("manufacturer", manufacturerFacet.getDefinition().getDtField().getName());
+		Assertions.assertEquals("manufacturer", manufacturerFacet.getDefinition().getDtField().name());
 		Assertions.assertFalse(manufacturerFacet.getDefinition().isRangeFacet());
 
 		//On vérifie qu'il existe une valeur pour peugeot et que le nombre d'occurrences est correct
 		boolean found = false;
 		final String manufacturer = "peugeot";
 		for (final Entry<FacetValue, Long> entry : manufacturerFacet.getFacetValues().entrySet()) {
-			if (entry.getKey().getLabel().getDisplay().toLowerCase(Locale.FRENCH).equals(manufacturer)) {
+			if (entry.getKey().label().getDisplay().toLowerCase(Locale.FRENCH).equals(manufacturer)) {
 				found = true;
 				Assertions.assertEquals(itemDataBase.getItemsByManufacturer(manufacturer).size(), entry.getValue().intValue());
 			}
@@ -697,7 +697,7 @@ public abstract class AbstractSearchManagerTest {
 		//on vérifie l'ordre
 		String lastLabel = "";
 		for (final Entry<FacetValue, Long> entry : facet.getFacetValues().entrySet()) {
-			final String label = entry.getKey().getLabel().getDisplay();
+			final String label = entry.getKey().label().getDisplay();
 			Assertions.assertTrue(label.compareTo(lastLabel) >= 0, "Ordre des facettes par 'alpha' non respecté");
 			lastLabel = label;
 		}
@@ -819,7 +819,7 @@ public abstract class AbstractSearchManagerTest {
 		FacetValue facetValue = null; //pb d'initialisation, et Assertions.notNull ne suffit pas
 		final Facet facet = getFacetByName(result, facetName);
 		for (final Entry<FacetValue, Long> entry : facet.getFacetValues().entrySet()) {
-			if (entry.getKey().getLabel().getDisplay().toLowerCase(Locale.FRENCH).contains(facetValueLabel)) {
+			if (entry.getKey().label().getDisplay().toLowerCase(Locale.FRENCH).contains(facetValueLabel)) {
 				facetValue = entry.getKey();
 				break;
 			}
@@ -838,7 +838,7 @@ public abstract class AbstractSearchManagerTest {
 	private static long getFacetValueCount(final String facetName, final String facetValueLabel, final FacetedQueryResult<Item, ?> result) {
 		final Facet facet = getFacetByName(result, facetName);
 		for (final Entry<FacetValue, Long> entry : facet.getFacetValues().entrySet()) {
-			if (entry.getKey().getLabel().getDisplay().toLowerCase(Locale.FRENCH).contains(facetValueLabel)) {
+			if (entry.getKey().label().getDisplay().toLowerCase(Locale.FRENCH).contains(facetValueLabel)) {
 				return entry.getValue();
 			}
 		}
@@ -1113,7 +1113,7 @@ public abstract class AbstractSearchManagerTest {
 		int previousCount = Integer.MAX_VALUE;
 		Assertions.assertEquals(databaseCluster.size(), result.getClusters().size());
 		for (final Entry<FacetValue, DtList<Item>> entry : result.getClusters().entrySet()) {
-			final String searchFacetLabel = entry.getKey().getLabel().getDisplay().toLowerCase(Locale.FRENCH);
+			final String searchFacetLabel = entry.getKey().label().getDisplay().toLowerCase(Locale.FRENCH);
 			final int searchFacetCount = entry.getValue().size();
 			final List<Item> itemsByManufacturer = databaseCluster.get(searchFacetLabel);
 			Assertions.assertEquals(itemsByManufacturer.size(), searchFacetCount);
@@ -1167,7 +1167,7 @@ public abstract class AbstractSearchManagerTest {
 		}
 		Assertions.assertEquals(databaseCluster.size(), result.getClusters().size());
 		for (final Entry<FacetValue, DtList<Item>> entry : result.getClusters().entrySet()) {
-			final String searchFacetLabel = entry.getKey().getLabel().getDisplay().toLowerCase(Locale.FRENCH);
+			final String searchFacetLabel = entry.getKey().label().getDisplay().toLowerCase(Locale.FRENCH);
 			final int searchFacetCount = entry.getValue().size();
 			final List<Item> itemsByYear = databaseCluster.get(searchFacetLabel);
 			Assertions.assertEquals(itemsByYear.size(), searchFacetCount);
@@ -1194,7 +1194,7 @@ public abstract class AbstractSearchManagerTest {
 				.withFacetClustering(manufacturerFacetDefinition)
 				.build();
 
-		final DtListState listState = DtListState.of(null, 0, itemIndexDefinition.getIndexDtDefinition().getField("itemYear").getName(), true);
+		final DtListState listState = DtListState.of(null, 0, itemIndexDefinition.getIndexDtDefinition().getField("itemYear").name(), true);
 		final FacetedQueryResult<Item, SearchQuery> result = searchManager.loadList(itemIndexDefinition, searchQuery, listState);
 
 		//On vérifie qu'il existe une valeur pour chaque marques et que la première est bien la plus ancienne
@@ -1206,7 +1206,7 @@ public abstract class AbstractSearchManagerTest {
 		}
 		Assertions.assertEquals(databaseCluster.size(), result.getClusters().size());
 		for (final Entry<FacetValue, DtList<Item>> entry : result.getClusters().entrySet()) {
-			final String searchFacetLabel = entry.getKey().getLabel().getDisplay().toLowerCase(Locale.FRENCH);
+			final String searchFacetLabel = entry.getKey().label().getDisplay().toLowerCase(Locale.FRENCH);
 			final Item firstClusterItem = entry.getValue().get(0);
 			final Set<Item> itemsByManufacturer = databaseCluster.get(searchFacetLabel);
 			Assertions.assertEquals(itemsByManufacturer.iterator().next().getId(), firstClusterItem.getId());
@@ -1244,7 +1244,7 @@ public abstract class AbstractSearchManagerTest {
 		}
 		Assertions.assertEquals(databaseCluster.size(), result.getClusters().size());
 		for (final Entry<FacetValue, DtList<Item>> entry : result.getClusters().entrySet()) {
-			final String searchFacetLabel = entry.getKey().getLabel().getDisplay().toLowerCase(Locale.FRENCH);
+			final String searchFacetLabel = entry.getKey().label().getDisplay().toLowerCase(Locale.FRENCH);
 			final int searchFacetCount = entry.getValue().size();
 			Assertions.assertEquals(1, searchFacetCount); //result == listState.top (=1)
 			for (final Item item : entry.getValue()) {
@@ -1264,7 +1264,7 @@ public abstract class AbstractSearchManagerTest {
 		for (final Facet facet : result.getFacets()) {
 			log.info("\tFacet " + facet.getDefinition().getLabel().getDisplay());
 			for (final Entry<FacetValue, Long> facetValue : facet.getFacetValues().entrySet()) {
-				log.info("\t\t+ " + facetValue.getKey().getLabel().getDisplay() + " : " + facetValue.getValue());
+				log.info("\t\t+ " + facetValue.getKey().label().getDisplay() + " : " + facetValue.getValue());
 			}
 		}
 	}
@@ -1352,7 +1352,7 @@ public abstract class AbstractSearchManagerTest {
 				.builder("QryItemFacet")
 				.withCriteria("")
 				.build();
-		final DtListState listState = DtListState.of(null, 0, itemIndexDefinition.getIndexDtDefinition().getField(sortField).getName(), sortDesc);
+		final DtListState listState = DtListState.of(null, 0, itemIndexDefinition.getIndexDtDefinition().getField(sortField).name(), sortDesc);
 		final DtList<Item> dtList = doQuery(searchQuery, listState).getDtList();
 		Assertions.assertFalse(dtList.isEmpty(), "Result list was empty");
 		return dtList.get(0);

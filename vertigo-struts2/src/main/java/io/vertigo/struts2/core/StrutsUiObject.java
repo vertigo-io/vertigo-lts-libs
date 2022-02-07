@@ -62,7 +62,7 @@ public final class StrutsUiObject<D extends DtObject> extends VegaUiObject<D> im
 				.isTrue(StringUtil.isLowerCamelCase(keyFieldName), "Le nom du champs doit-être en camelCase ({0}).", keyFieldName);
 		//-----
 		final DtField dtField = getDtField(keyFieldName);
-		if (dtField.getCardinality().hasMany()) {
+		if (dtField.cardinality().hasMany()) {
 			return getInputValue(keyFieldName);
 		}
 		if (isMultiple(dtField)) {
@@ -85,7 +85,7 @@ public final class StrutsUiObject<D extends DtObject> extends VegaUiObject<D> im
 				.isTrue(value instanceof String || value instanceof String[], "Les données saisies doivent être de type String ou String[] ({0} : {1})", fieldName, value.getClass());
 		//-----
 		final DtField dtField = getDtField(fieldName);
-		if (dtField.getCardinality().hasMany()) {
+		if (dtField.cardinality().hasMany()) {
 			setInputValue(fieldName, value instanceof String[] ? (String[]) value : new String[] { (String) value });
 		} else {
 			final String strValue;
@@ -114,11 +114,11 @@ public final class StrutsUiObject<D extends DtObject> extends VegaUiObject<D> im
 	}
 
 	private static boolean isMultiple(final DtField dtField) {
-		return DOMAIN_MULTIPLE_IDS.equals(dtField.getSmartTypeDefinition().getName());
+		return DOMAIN_MULTIPLE_IDS.equals(dtField.smartTypeDefinition().getName());
 	}
 
 	private static boolean isBoolean(final DtField dtField) {
-		return dtField.getSmartTypeDefinition().getScope().isPrimitive() && dtField.getSmartTypeDefinition().getBasicType() == BasicType.Boolean;
+		return dtField.smartTypeDefinition().getScope().isBasicType() && dtField.smartTypeDefinition().getBasicType() == BasicType.Boolean;
 	}
 
 	/** {@inheritDoc} */

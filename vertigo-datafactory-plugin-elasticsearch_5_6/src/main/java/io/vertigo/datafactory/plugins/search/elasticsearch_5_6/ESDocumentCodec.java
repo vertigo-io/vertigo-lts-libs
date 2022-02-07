@@ -152,9 +152,9 @@ final class ESDocumentCodec {
 				if (!copyToFields.contains(dtField)) {//On index pas les copyFields
 					final Object value = dtField.getDataAccessor().getValue(dtIndex);
 					if (value != null) { //les valeurs null ne sont pas indexées => conséquence : on ne peut pas les rechercher
-						final String indexFieldName = dtField.getName();
-						switch (dtField.getSmartTypeDefinition().getScope()) {
-							case PRIMITIVE:
+						final String indexFieldName = dtField.name();
+						switch (dtField.smartTypeDefinition().getScope()) {
+							case BASIC_TYPE:
 								if (value instanceof String) {
 									final String encodedValue = escapeInvalidUTF8Char((String) value);
 									xContentBuilder.field(indexFieldName, encodedValue);
@@ -162,12 +162,12 @@ final class ESDocumentCodec {
 									xContentBuilder.field(indexFieldName, value);
 								}
 								break;
-							case VALUE_OBJECT:
-								final BasicTypeAdapter basicTypeAdapter = typeAdapters.get(dtField.getSmartTypeDefinition().getJavaClass());
+							case VALUE_TYPE:
+								final BasicTypeAdapter basicTypeAdapter = typeAdapters.get(dtField.smartTypeDefinition().getJavaClass());
 								xContentBuilder.field(indexFieldName, basicTypeAdapter.toBasic(value));
 								break;
 							default:
-								throw new IllegalArgumentException("Type de donnée non pris en charge pour l'indexation [" + dtField.getSmartTypeDefinition() + "].");
+								throw new IllegalArgumentException("Type de donnée non pris en charge pour l'indexation [" + dtField.smartTypeDefinition() + "].");
 						}
 					}
 				}
@@ -178,7 +178,7 @@ final class ESDocumentCodec {
 
 	private static List<DtField> getNotStoredFields(final DtDefinition dtDefinition) {
 		return dtDefinition.getFields().stream()
-				.filter(dtField -> !isIndexStoredDomain(dtField.getSmartTypeDefinition()))
+				.filter(dtField -> !isIndexStoredDomain(dtField.smartTypeDefinition()))
 				.collect(Collectors.toList());
 	}
 

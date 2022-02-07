@@ -39,7 +39,7 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Builder;
 import io.vertigo.core.lang.VSystemException;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datafactory.collections.ListFilter;
 import io.vertigo.datafactory.collections.definitions.FacetDefinition;
@@ -141,7 +141,7 @@ final class ESFacetedQueryResultBuilder<I extends DtObject> implements Builder<F
 			//Cas des facettes par 'range'
 			final MultiBucketsAggregation multiBuckets = (MultiBucketsAggregation) facetAggregation;
 			for (final FacetValue facetRange : facetDefinition.getFacetRanges()) {
-				final Bucket value = getBucketByKey(multiBuckets, facetRange.getCode());
+				final Bucket value = getBucketByKey(multiBuckets, facetRange.code());
 				populateCluster(value, facetRange, resultCluster, dtcIndex, resultHighlights);
 			}
 		} else {
@@ -257,12 +257,12 @@ final class ESFacetedQueryResultBuilder<I extends DtObject> implements Builder<F
 			term = EMPTY_TERM;
 		}
 		if (valueAsString != null) {
-			query = facetDefinition.getDtField().getName() + ":\"" + valueAsString + "\"";
+			query = facetDefinition.getDtField().name() + ":\"" + valueAsString + "\"";
 		} else {
-			query = "!_exists_:" + facetDefinition.getDtField().getName(); //only for null value, empty ones use FIELD:""
+			query = "!_exists_:" + facetDefinition.getDtField().name(); //only for null value, empty ones use FIELD:""
 		}
 
-		return new FacetValue(term, ListFilter.of(query), MessageText.of(term));
+		return new FacetValue(term, ListFilter.of(query), LocaleMessageText.of(term));
 
 	}
 
@@ -270,7 +270,7 @@ final class ESFacetedQueryResultBuilder<I extends DtObject> implements Builder<F
 		//Cas des facettes par range
 		final Map<FacetValue, Long> rangeValues = new LinkedHashMap<>();
 		for (final FacetValue facetRange : facetDefinition.getFacetRanges()) {
-			final Bucket value = getBucketByKey(rangeBuckets, facetRange.getCode());
+			final Bucket value = getBucketByKey(rangeBuckets, facetRange.code());
 			rangeValues.put(facetRange, value.getDocCount());
 		}
 		return new Facet(facetDefinition, rangeValues);

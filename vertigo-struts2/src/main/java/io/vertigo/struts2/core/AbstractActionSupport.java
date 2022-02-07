@@ -51,6 +51,7 @@ import io.vertigo.core.lang.WrappedException;
 import io.vertigo.core.param.Param;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.core.util.InjectorUtil;
+import io.vertigo.datastore.kvstore.KVCollection;
 import io.vertigo.datastore.kvstore.KVStoreManager;
 import io.vertigo.struts2.exception.ExpiredContextException;
 
@@ -63,7 +64,7 @@ public abstract class AbstractActionSupport extends ActionSupport implements Mod
 	private static final long serialVersionUID = -1850868830308743394L;
 
 	/** Clé de la collection des contexts dans le KVStoreManager. */
-	public static final String CONTEXT_COLLECTION_NAME = "VActionContext";
+	public static final KVCollection CONTEXT_KV_COLLECTION = new KVCollection("VActionContext");
 
 	/** Clé de context du UiUtil. */
 	public static final String UTIL_CONTEXT_KEY = "util";
@@ -123,7 +124,7 @@ public abstract class AbstractActionSupport extends ActionSupport implements Mod
 				contextMiss(null);
 			} else {
 				try (VTransactionWritable transactionWritable = transactionManager.createCurrentTransaction()) {
-					context = kvStoreManager.find(CONTEXT_COLLECTION_NAME, obtainStoredCtxId(ctxId, request), KActionContext.class).orElse(null);
+					context = kvStoreManager.find(CONTEXT_KV_COLLECTION, obtainStoredCtxId(ctxId, request), KActionContext.class).orElse(null);
 				}
 				if (context == null) {
 					contextMiss(ctxId);
@@ -229,7 +230,7 @@ public abstract class AbstractActionSupport extends ActionSupport implements Mod
 					//sinon un warn, et on le retire du context ?
 				}
 			}
-			kvStoreManager.put(CONTEXT_COLLECTION_NAME, obtainStoredCtxId(context.getId(), ServletActionContext.getRequest()), context);
+			kvStoreManager.put(CONTEXT_KV_COLLECTION, obtainStoredCtxId(context.getId(), ServletActionContext.getRequest()), context);
 			transactionWritable.commit();
 		}
 	}

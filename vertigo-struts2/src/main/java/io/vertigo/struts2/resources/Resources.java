@@ -16,18 +16,18 @@
  * limitations under the License.
  */
 /**
- * 
+ *
  */
 package io.vertigo.struts2.resources;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
 /**
  * Ressources générales.
- * 
+ *
  * @author mlaroche
  */
-public enum Resources implements MessageKey {
+public enum Resources implements LocaleMessageKey {
 	/** {0} : le champ est obligatoire. */
 	CHAMP_OBLIGATOIRE,
 }

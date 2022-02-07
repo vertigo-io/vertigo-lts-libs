@@ -87,7 +87,7 @@ public final class UiUtil implements Serializable {
 			return DEFAULT_FORMATTER.valueToString(value, BasicType.Boolean);
 		}
 		final SmartTypeManager smartTypeManager = Node.getNode().getComponentSpace().resolve(SmartTypeManager.class);
-		return smartTypeManager.valueToString(getDtField(fieldPath).getSmartTypeDefinition(), value);
+		return smartTypeManager.valueToString(getDtField(fieldPath).smartTypeDefinition(), value);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public final class UiUtil implements Serializable {
 		Assertion.check().isTrue(fieldPath.indexOf('.') != 0, "FieldPath shouldn't starts with . ({0})", fieldPath);
 		//-----
 		if (fieldPath.indexOf('.') > 0) { //Le champs est porté par un Object
-			return getDtField(fieldPath).getCardinality().hasOne();
+			return getDtField(fieldPath).cardinality().hasOne();
 		}
 		return false; //on ne sait pas dire, mais on ne force pas à obligatoire
 	}
@@ -109,7 +109,7 @@ public final class UiUtil implements Serializable {
 	 */
 	public static String getDisplayField(final UiList<?> uiList) {
 		final DtDefinition dtDefinition = uiList.getDtDefinition();
-		return dtDefinition.getDisplayField().get().getName();
+		return dtDefinition.getDisplayField().get().name();
 	}
 
 	/**
@@ -118,7 +118,7 @@ public final class UiUtil implements Serializable {
 	 */
 	public static String getIdField(final UiList<?> uiList) {
 		final DtDefinition dtDefinition = uiList.getDtDefinition();
-		return dtDefinition.getIdField().get().getName();
+		return dtDefinition.getIdField().get().name();
 	}
 
 	private static DtField getDtField(final String fieldPath) {

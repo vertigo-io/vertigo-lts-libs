@@ -167,8 +167,8 @@ final class ESSearchRequestBuilder implements Builder<SearchRequestBuilder> {
 
 	private static FieldSortBuilder getFieldSortBuilder(final SearchIndexDefinition myIndexDefinition, final DtListState myListState) {
 		final DtField sortField = myIndexDefinition.getIndexDtDefinition().getField(myListState.getSortFieldName().get());
-		String sortIndexFieldName = sortField.getName();
-		final IndexType indexType = IndexType.readIndexType(sortField.getSmartTypeDefinition());
+		String sortIndexFieldName = sortField.name();
+		final IndexType indexType = IndexType.readIndexType(sortField.smartTypeDefinition());
 
 		if (indexType.isIndexSubKeyword()) { //s'il y a un subKeyword on tri dessus
 			sortIndexFieldName = sortIndexFieldName + ".keyword";
@@ -234,11 +234,11 @@ final class ESSearchRequestBuilder implements Builder<SearchRequestBuilder> {
 
 	private static void appendSelectedFacetValuesFilter(final BoolQueryBuilder filterBoolQueryBuilder, final List<FacetValue> facetValues) {
 		if (facetValues.size() == 1) {
-			filterBoolQueryBuilder.filter(translateToQueryBuilder(facetValues.get(0).getListFilter()));
+			filterBoolQueryBuilder.filter(translateToQueryBuilder(facetValues.get(0).listFilter()));
 		} else if (facetValues.size() > 1) {
 			final BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 			for (final FacetValue facetValue : facetValues) {
-				boolQueryBuilder.should(translateToQueryBuilder(facetValue.getListFilter()));//on ajoute les valeurs en OU
+				boolQueryBuilder.should(translateToQueryBuilder(facetValue.listFilter()));//on ajoute les valeurs en OU
 			}
 			filterBoolQueryBuilder.filter(boolQueryBuilder);
 		}
@@ -332,8 +332,8 @@ final class ESSearchRequestBuilder implements Builder<SearchRequestBuilder> {
 		}
 
 		//Warning term aggregations are inaccurate : see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html
-		final IndexType indexType = IndexType.readIndexType(dtField.getSmartTypeDefinition());
-		String fieldName = dtField.getName();
+		final IndexType indexType = IndexType.readIndexType(dtField.smartTypeDefinition());
+		String fieldName = dtField.name();
 		if (!indexType.isIndexFieldData() && indexType.isIndexSubKeyword()) { //si le champs n'est pas facetable mais qu'il y a un sub keyword on le prend
 			fieldName = fieldName + ".keyword";
 		}
@@ -345,8 +345,8 @@ final class ESSearchRequestBuilder implements Builder<SearchRequestBuilder> {
 
 	private static AggregationBuilder rangeFacetToAggregationBuilder(final FacetDefinition facetDefinition, final DtField dtField) {
 		//facette par range
-		Assertion.check().isTrue(dtField.getSmartTypeDefinition().getScope().isPrimitive(), "Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + dtField.getSmartTypeDefinition() + "].");
-		final BasicType dataType = dtField.getSmartTypeDefinition().getBasicType();
+		Assertion.check().isTrue(dtField.smartTypeDefinition().getScope().isBasicType(), "Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + dtField.smartTypeDefinition() + "].");
+		final BasicType dataType = dtField.smartTypeDefinition().getBasicType();
 		if (dataType == BasicType.LocalDate) {
 			return dateRangeFacetToAggregationBuilder(facetDefinition, dtField);
 		} else if (dataType.isNumber()) {
@@ -355,28 +355,28 @@ final class ESSearchRequestBuilder implements Builder<SearchRequestBuilder> {
 
 		final List<KeyedFilter> filters = new ArrayList<>();
 		for (final FacetValue facetRange : facetDefinition.getFacetRanges()) {
-			final String filterValue = facetRange.getListFilter().getFilterValue();
-			Assertion.check().isTrue(filterValue.contains(dtField.getName()), "RangeFilter query ({1}) should use defined fieldName {0}", dtField.getName(), filterValue);
-			filters.add(new KeyedFilter(facetRange.getCode(), QueryBuilders.queryStringQuery(filterValue)));
+			final String filterValue = facetRange.listFilter().getFilterValue();
+			Assertion.check().isTrue(filterValue.contains(dtField.name()), "RangeFilter query ({1}) should use defined fieldName {0}", dtField.name(), filterValue);
+			filters.add(new KeyedFilter(facetRange.code(), QueryBuilders.queryStringQuery(filterValue)));
 		}
 		return AggregationBuilders.filters(facetDefinition.getName(), filters.toArray(new KeyedFilter[filters.size()]));
 	}
 
 	private static AggregationBuilder numberRangeFacetToAggregationBuilder(final FacetDefinition facetDefinition, final DtField dtField) {
 		final RangeAggregationBuilder rangeBuilder = AggregationBuilders.range(facetDefinition.getName())//
-				.field(dtField.getName());
+				.field(dtField.name());
 		for (final FacetValue facetRange : facetDefinition.getFacetRanges()) {
-			final String filterValue = facetRange.getListFilter().getFilterValue();
-			Assertion.check().isTrue(filterValue.contains(dtField.getName()), "RangeFilter query ({1}) should use defined fieldName {0}", dtField.getName(), filterValue);
+			final String filterValue = facetRange.listFilter().getFilterValue();
+			Assertion.check().isTrue(filterValue.contains(dtField.name()), "RangeFilter query ({1}) should use defined fieldName {0}", dtField.name(), filterValue);
 			final String[] parsedFilter = DtListPatternFilterUtil.parseFilter(filterValue, RANGE_PATTERN).get();
 			final Optional<Double> minValue = convertToDouble(parsedFilter[3]);
 			final Optional<Double> maxValue = convertToDouble(parsedFilter[4]);
 			if (!minValue.isPresent()) {
-				rangeBuilder.addUnboundedTo(facetRange.getCode(), maxValue.get());
+				rangeBuilder.addUnboundedTo(facetRange.code(), maxValue.get());
 			} else if (!maxValue.isPresent()) {
-				rangeBuilder.addUnboundedFrom(facetRange.getCode(), minValue.get());
+				rangeBuilder.addUnboundedFrom(facetRange.code(), minValue.get());
 			} else {
-				rangeBuilder.addRange(facetRange.getCode(), minValue.get(), maxValue.get()); //always min include and max exclude in ElasticSearch
+				rangeBuilder.addRange(facetRange.code(), minValue.get(), maxValue.get()); //always min include and max exclude in ElasticSearch
 			}
 		}
 		return rangeBuilder;
@@ -384,20 +384,20 @@ final class ESSearchRequestBuilder implements Builder<SearchRequestBuilder> {
 
 	private static AggregationBuilder dateRangeFacetToAggregationBuilder(final FacetDefinition facetDefinition, final DtField dtField) {
 		final DateRangeAggregationBuilder dateRangeBuilder = AggregationBuilders.dateRange(facetDefinition.getName())
-				.field(dtField.getName())
+				.field(dtField.name())
 				.format(DATE_PATTERN);
 		for (final FacetValue facetRange : facetDefinition.getFacetRanges()) {
-			final String filterValue = facetRange.getListFilter().getFilterValue();
-			Assertion.check().isTrue(filterValue.contains(dtField.getName()), "RangeFilter query ({1}) should use defined fieldName {0}", dtField.getName(), filterValue);
+			final String filterValue = facetRange.listFilter().getFilterValue();
+			Assertion.check().isTrue(filterValue.contains(dtField.name()), "RangeFilter query ({1}) should use defined fieldName {0}", dtField.name(), filterValue);
 			final String[] parsedFilter = DtListPatternFilterUtil.parseFilter(filterValue, RANGE_PATTERN).get();
 			final String minValue = parsedFilter[3];
 			final String maxValue = parsedFilter[4];
 			if ("*".equals(minValue)) {
-				dateRangeBuilder.addUnboundedTo(facetRange.getCode(), maxValue);
+				dateRangeBuilder.addUnboundedTo(facetRange.code(), maxValue);
 			} else if ("*".equals(maxValue)) {
-				dateRangeBuilder.addUnboundedFrom(facetRange.getCode(), minValue);
+				dateRangeBuilder.addUnboundedFrom(facetRange.code(), minValue);
 			} else {
-				dateRangeBuilder.addRange(facetRange.getCode(), minValue, maxValue); //always min include and max exclude in ElasticSearch
+				dateRangeBuilder.addRange(facetRange.code(), minValue, maxValue); //always min include and max exclude in ElasticSearch
 			}
 		}
 		return dateRangeBuilder;
