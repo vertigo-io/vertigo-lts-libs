@@ -24,6 +24,6 @@
 ${parameters.headerValue?html}<#t/>
 </#if>
 <#if uiObject??>
- ${uiObject[parameters.remoteListValue]?html?replace("\n", "<br/>")}<#rt/>
+ ${uiObject.get(parameters.remoteListValue)?html?replace("\n", "<br/>")}<#rt/>
 </#if>
 </span><#t/>

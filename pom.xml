@@ -25,12 +25,13 @@
 	<modules>
 		<module>vertigo-datafactory-plugin-elasticsearch_5_6</module>
 		<module>vertigo-struts2</module>
+		<module>vertigo-account-plugin-authorization-basic</module>
 	</modules>
 
 	<scm>
 		<connection>scm:git:https://github.com/vertigo-io/vertigo-lts-extensions.git</connection>
 		<developerConnection>scm:git:https://github.com/vertigo-io/vertigo-lts-extensions.git</developerConnection>
 		<url>scm:git:https://github.com/vertigo-io/vertigo-lts-extensions.git</url>
-		<tag>vertigo-3.1.0</tag>
+		<tag>vertigo-3.2.0</tag>
 	</scm>
 </project>

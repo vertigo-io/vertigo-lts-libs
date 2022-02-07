@@ -5,11 +5,11 @@
  */
 -->
 <#assign currentLayout = controlLayout_type?default('none') />	
-<#assign submitcolspan = parameters.dynamicAttributes['submitcolspan']?default(1)?number />	
+<#assign submitcolspan = parameters.dynamicAttributes.get('submitcolspan')?default(1)?number />	
 <#if currentLayout = 'table'>
 	<#include "/${parameters.templateDir}/${parameters.expandTheme}/controlheader-trlogic.ftl" />
 			<td <#rt/>
-	<#if parameters.dynamicAttributes['submitcolspan']??><#t/>
+	<#if parameters.dynamicAttributes.get('submitcolspan')??><#t/>
 	    colspan="${submitcolspan}" <#t/>	    
 	<#t/></#if>
 	<#if parameters.align??><#t/>

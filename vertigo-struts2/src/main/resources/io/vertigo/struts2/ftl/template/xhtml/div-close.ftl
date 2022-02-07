@@ -4,8 +4,8 @@
  *
  */
 -->
-<#if parameters.dynamicAttributes['layout']??>
-    <#if parameters.dynamicAttributes['layout'] = "table" > 
+<#if parameters.dynamicAttributes.get('layout')??>
+    <#if parameters.dynamicAttributes.get('layout') = "table" > 
     <#assign columnCount = controlLayout_currentColumnCount />	
 	<#assign tablecolspan = controlLayout_tablecolspan />	
 	<#if (columnCount > 0 && columnCount < tablecolspan) >

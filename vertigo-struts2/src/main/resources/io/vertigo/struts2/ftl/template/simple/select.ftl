@@ -44,8 +44,8 @@
 <#assign paramListValue = parameters.listValue!util.getDisplayField(parameters.list) />
 <@s.iterator value="parameters.list">
         <#if paramListKey??>
-            <#assign itemKey = stack.findValue(paramListKey)/>
-            <#assign itemKeyStr = stack.findString(paramListKey)/>
+            <#assign itemKey = stack.findValue(paramListKey)!''/>
+            <#assign itemKeyStr = stack.findString(paramListKey)!''/>
         <#else>
             <#assign itemKey = stack.findValue('top')/>
             <#assign itemKeyStr = stack.findString('top')>

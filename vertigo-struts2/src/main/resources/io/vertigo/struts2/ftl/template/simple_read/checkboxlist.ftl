@@ -28,7 +28,7 @@
 				<#assign paramListValue = parameters.listValue!util.getDisplayField(parameters.list) />
 				<#assign uiObject = parameters.list.getById(parameters.listKey, selectedValue) />
 				<#if uiObject??>
-				 ${uiObject[parameters.listValue]?html?replace("\n", "<br/>")}<#t/>
+				 ${uiObject.get(parameters.listValue)?html?replace("\n", "<br/>")}<#t/>
 				</#if>
 			<#else> <#-- si pas de getById : liste ou map brute -->
 				<#list parameters.list as entry>

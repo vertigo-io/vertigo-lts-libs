@@ -31,7 +31,7 @@
             <#list eKeys as eKey>
                 <#if (eKey = fieldErrorFieldName)>
                     <#assign haveMatchedErrorField=true>
-                    <#assign eValue = fieldErrors[fieldErrorFieldName]>
+                    <#assign eValue = fieldErrors.get(fieldErrorFieldName)>
                     <#if (haveMatchedErrorField && (!doneStartUlTag))>
 	<ul <#rt/>
                         <#if parameters.id?if_exists != "">
@@ -69,7 +69,7 @@
             </#if>
                 ><#lt/>
             <#list eKeys as eKey>
-                <#assign eValue = fieldErrors[eKey]>
+                <#assign eValue = fieldErrors.get(eKey)>
                 <#list eValue as eEachValue>
 		<li><#t/>
         	<span class="messageLabel" onclick="focusElementByName('${eKey?html}');">${util.label(eKey)?html}: </span><#t/>

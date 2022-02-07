@@ -29,7 +29,7 @@
 		<#assign warnFieldMessage = warnMessage?matches("<label>(.+)</label>(.+)$")>
 		<#if warnFieldMessage>
 			<#list warnFieldMessage as m> 
-		<li><span class="messageLabel">${m?groups[1]?html}: </span><span class="message"><#if parameters.escape>${m?groups[2]?html}<#else>${m?groups[2]!}</#if></span></li>
+		<li><span class="messageLabel">${m?groups.get(1)?html}: </span><span class="message"><#if parameters.escape>${m?groups.get(2)?html}<#else>${m?groups.get(2)!}</#if></span></li>
 	        	</#list> 
 		<#else>
 		<li><span><#if parameters.escape>${warnMessage?html}<#else>${warnMessage!}</#if></span></li>
@@ -65,7 +65,7 @@
 		<#assign infoFieldMessage = infoMessage?matches("<label>(.+)</label>(.+)$")>
 		<#if infoFieldMessage>
 			<#list infoFieldMessage as m> 
-		<li><span class="messageLabel">${m?groups[1]?html}: </span><span class="message"><#if parameters.escape>${m?groups[2]?html}<#else>${m?groups[2]!}</#if></span></li>
+		<li><span class="messageLabel">${m?groups.get(1)?html}: </span><span class="message"><#if parameters.escape>${m?groups.get(2)?html}<#else>${m?groups.get(2)!}</#if></span></li>
 	        	</#list> 
 		<#else>
 		<li><span><#if parameters.escape>${infoMessage?html}<#else>${infoMessage!}</#if></span></li>
