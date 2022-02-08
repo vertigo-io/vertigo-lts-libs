@@ -59,10 +59,10 @@ public final class XmlSecurityDefinitionProvider implements DefinitionProvider {
 	/** {@inheritDoc} */
 	@Override
 	public void addDefinitionResourceConfig(final DefinitionResourceConfig definitionResourceConfig) {
-		Assertion.check().isTrue("securityXml".equals(definitionResourceConfig.getType()), "Type {0} not supported",
-				definitionResourceConfig.getType());
+		Assertion.check().isTrue("securityXml".equals(definitionResourceConfig.type()), "Type {0} not supported",
+				definitionResourceConfig.type());
 		// -----
-		registerDefinitions(new XmlSecurityLoader(resourceManager, definitionResourceConfig.getPath()).load());
+		registerDefinitions(new XmlSecurityLoader(resourceManager, definitionResourceConfig.path()).load());
 	}
 
 	private void registerDefinitions(final XmlSecurityDefinition xmlSecurityDefinition) {

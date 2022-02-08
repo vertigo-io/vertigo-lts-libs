@@ -22,9 +22,9 @@ import java.util.List;
 
 import io.vertigo.account.authorization.basic.SecurityNames.Roles;
 import io.vertigo.account.authorization.definitions.RoleBasic;
+import io.vertigo.core.lang.ListBuilder;
 import io.vertigo.core.node.definition.Definition;
 import io.vertigo.core.node.definition.DefinitionSpace;
-import io.vertigo.core.util.ListBuilder;
 
 public final class TestSecurityDefinitionProvider implements io.vertigo.core.node.definition.SimpleDefinitionProvider {
 

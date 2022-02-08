@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import io.vertigo.account.authorization.definitions.PermissionBasic;
 import io.vertigo.account.authorization.definitions.RoleBasic;
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.node.definition.DefinitionReference;
+import io.vertigo.core.node.definition.DefinitionId;
 
 /**
  * This class list User's Authorizations.
@@ -43,13 +43,13 @@ public final class UserAuthorizationsBasic implements Serializable {
 	/**
 	 * All authorizations list of this user (global and keyConcept)
 	 */
-	private final Map<String, DefinitionReference<PermissionBasic>> permissionRefs = new HashMap<>();
+	private final Map<String, DefinitionId<PermissionBasic>> permissionRefs = new HashMap<>();
 
 	/**
 	 * Accepted roles for this user.
 	 * Use for asc-compatibility.
 	 */
-	private final Set<DefinitionReference<RoleBasic>> roleRefs = new HashSet<>();
+	private final Set<DefinitionId<RoleBasic>> roleRefs = new HashSet<>();
 
 	private final Map<String, List<Serializable>> mySecurityKeys = new HashMap<>();
 
@@ -66,7 +66,7 @@ public final class UserAuthorizationsBasic implements Serializable {
 	public UserAuthorizationsBasic addRole(final RoleBasic role) {
 		Assertion.check().isNotNull(role);
 		//-----
-		roleRefs.add(new DefinitionReference<>(role));
+		roleRefs.add(role.id());
 		role.getPermissions()
 				.forEach(this::addPermission);
 		return this;
@@ -78,7 +78,7 @@ public final class UserAuthorizationsBasic implements Serializable {
 	 */
 	public Set<RoleBasic> getRoles() {
 		return roleRefs.stream()
-				.map(DefinitionReference::get)
+				.map(DefinitionId::get)
 				.collect(Collectors.toSet());
 	}
 
@@ -89,7 +89,7 @@ public final class UserAuthorizationsBasic implements Serializable {
 	public boolean hasRole(final RoleBasic role) {
 		Assertion.check().isNotNull(role);
 		//-----
-		return roleRefs.contains(new DefinitionReference<>(role));
+		return roleRefs.contains(role.id());
 	}
 
 	/**
@@ -113,8 +113,8 @@ public final class UserAuthorizationsBasic implements Serializable {
 	public UserAuthorizationsBasic addPermission(final PermissionBasic permission) {
 		Assertion.check().isNotNull(permission);
 		//-----
-		final DefinitionReference<PermissionBasic> definitionReference = new DefinitionReference<>(permission);
-		permissionRefs.put(permission.getName(), definitionReference);
+		final DefinitionId<PermissionBasic> DefinitionId = permission.id();
+		permissionRefs.put(permission.getName(), DefinitionId);
 		return this;
 	}
 
@@ -124,7 +124,7 @@ public final class UserAuthorizationsBasic implements Serializable {
 	 */
 	public Set<PermissionBasic> getPermissions() {
 		return permissionRefs.values().stream()
-				.map(DefinitionReference::get)
+				.map(DefinitionId::get)
 				.collect(Collectors.toSet());
 	}
 
