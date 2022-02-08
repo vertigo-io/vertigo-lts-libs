@@ -65,7 +65,7 @@ public class AccueilAction extends AbstractTestActionSupport {
 	private final ContextMdl<Movie> moviesListMdl = new ContextMdl<>("moviesMdl", this);
 	private final ContextRef<String> communeId = new ContextRef<>("communeId", String.class, this);
 	private final ContextMdl<Commune> communeListMdl = new ContextMdl<>("communesMdl", this);
-	private final ContextMdl<OuiNonChoice> ouiNonListMdl = new ContextMdl<>("ouiNonMdl", this);
+	private final ContextList<OuiNonChoice> ouiNonList = new ContextList<>("ouiNon", this);
 
 	private final ContextList<MovieDisplay> movieDisplayList = new ContextList<>("moviesDisplay", MovieDisplayFields.movId, this);
 
@@ -96,7 +96,7 @@ public class AccueilAction extends AbstractTestActionSupport {
 		movieListModifiables.publish(movieServices.getMovies(DtListState.defaultOf(Movie.class)));
 		moviesListMdl.publish(Movie.class, null);
 		communeListMdl.publish(Commune.class, null);
-		ouiNonListMdl.publish(OuiNonChoice.class, null); //la pk en boolean n'est pas complétement supporté (v3.3.0)
+		ouiNonList.publish(movieServices.getOuiNonChoice());
 		movieDisplayList.publish(movieServices.getMoviesDisplay(DtListState.defaultOf(Movie.class)));
 
 		toModeCreate();

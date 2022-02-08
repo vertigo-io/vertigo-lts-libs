@@ -55,6 +55,13 @@
         <s:submit action="saveAccueil" />
     </v:div>
 </s:form>
+<s:form id="radioBoolContextList">
+<h1>Test boolean radio sur ContextList</h1>
+    <v:div layout="table">
+        <s:radio name="movie.vff" label="default" list="ouiNon" listKey="key" listValue="libelle"/>
+        <s:submit action="saveAccueil" />
+    </v:div>
+</s:form>
 <s:form id="selectContextMdl">
 <h1>Test select sur ContextMdl</h1>
 	<v:div layout="table">

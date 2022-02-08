@@ -20,6 +20,7 @@ package io.vertigo.struts2.services.movies;
 import javax.inject.Inject;
 
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.node.component.Activeable;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
@@ -27,9 +28,12 @@ import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.struts2.data.dao.movies.MovieDAO;
 import io.vertigo.struts2.data.domain.movies.Movie;
 import io.vertigo.struts2.data.domain.movies.MovieDisplay;
+import io.vertigo.struts2.data.domain.reference.OuiNonChoice;
 
 @Transactional
-public class MovieServicesImpl implements MovieServices {
+public class MovieServicesImpl implements MovieServices, Activeable {
+
+	private DtList<OuiNonChoice> OUI_NON_LIST;
 
 	@Inject
 	private MovieDAO movieDAO;
@@ -42,6 +46,11 @@ public class MovieServicesImpl implements MovieServices {
 	@Override
 	public void save(final Movie movie) {
 		movieDAO.save(movie);
+	}
+
+	@Override
+	public DtList<OuiNonChoice> getOuiNonChoice() {
+		return OUI_NON_LIST;
 	}
 
 	@Override
@@ -62,6 +71,25 @@ public class MovieServicesImpl implements MovieServices {
 					return movieDisplay;
 				})
 				.collect(VCollectors.toDtList(MovieDisplay.class));
+	}
+
+	@Override
+	public void start() {
+		OUI_NON_LIST = new DtList<>(OuiNonChoice.class);
+		final OuiNonChoice oui = new OuiNonChoice();
+		oui.setKey(true);
+		oui.setLibelle("oui");
+		OUI_NON_LIST.add(oui);
+
+		final OuiNonChoice non = new OuiNonChoice();
+		non.setKey(true);
+		non.setLibelle("non");
+		OUI_NON_LIST.add(non);
+	}
+
+	@Override
+	public void stop() {
+		//rien
 	}
 
 }
