@@ -34,4 +34,37 @@
 		<url>scm:git:https://github.com/vertigo-io/vertigo-lts-extensions.git</url>
 		<tag>vertigo-3.2.0</tag>
 	</scm>
+	
+	<profiles>
+		<profile>
+			<id>Github</id>
+			<repositories>
+				<repository>
+					<id>github</id>
+					<name>GitHub Vertigo-io Apache Maven Packages</name>
+					<url>https://maven.pkg.github.com/vertigo-io/vertigo</url>
+					<snapshots><enabled>true</enabled></snapshots>
+				</repository>
+				<repository>
+					<id>github-connectors</id>
+					<name>GitHub Vertigo-io Apache Maven Packages</name>
+					<url>https://maven.pkg.github.com/vertigo-io/vertigo-connectors</url>
+					<snapshots><enabled>true</enabled></snapshots>
+				</repository>
+				<repository>
+					<id>github-extensions</id>
+					<name>GitHub Vertigo-io Apache Maven Packages</name>
+					<url>https://maven.pkg.github.com/vertigo-io/vertigo-extensions</url>
+					<snapshots><enabled>true</enabled></snapshots>
+				</repository>
+			</repositories>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>github</id>
+					<name>GitHub Vertigo-io Apache Maven Packages</name>
+					<url>https://maven.pkg.github.com/vertigo-io/vertigo-lts-extensions</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 </project>
