@@ -78,12 +78,12 @@
 </s:form>
 <s:form id="displayTableContextListModifiable">
 <h1>Test display:table sur ContextListModifiable</h1>
-<display:table name="moviesModifiable" class="tableau" uid="itemModifiable" export="false" requestURI="#" pagesize="20" defaultsort="0">
+<display:table name="moviesModifiable" class="tableau" uid="item" export="false" requestURI="#" pagesize="20" defaultsort="0">
 	<display:column title="Titre" >
-		<s:textfield name="%{util.contextKey(#attr.itemModifiable)}.title" theme="simple" />
+		<s:textfield name="%{util.contextKey(#attr.item)}.title" theme="simple" />
 	</display:column>
 	<display:column title="Année" >
-		<s:textfield name="%{util.contextKey(#attr.itemModifiable)}.year" theme="simple" />
+		<s:textfield name="%{util.contextKey(#attr.item)}.year" theme="simple" />
 	</display:column>
 </display:table>
 <s:submit action="saveListAccueil" />
