@@ -153,7 +153,7 @@ public final class StaticStorePlugin extends AbstractStaticEntityStorePlugin imp
 				.isTrue(dtDefinition.equals(staticDtDefinition), "This store should be use for {0} only, not {1}", staticDtDefinition.getClassSimpleName(), dtDefinition.getClassSimpleName())
 				.isNull(criteria, "This store could only load all data, not {0}", criteria);
 		//----
-		return (DtList<E>) dtc;
+		return (DtList) dtc;
 	}
 
 	/** {@inheritDoc} */
