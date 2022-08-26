@@ -120,7 +120,19 @@ public class AbstractStaticMDDataStorePlugin implements EntityStorePlugin {
 
 	/** {@inheritDoc} */
 	@Override
+	public <E extends Entity> DtList<E> createList(final DtList<E> entities) {
+		throw new UnsupportedOperationException();
+	}
+
+	/** {@inheritDoc} */
+	@Override
 	public void update(final DtDefinition dtDefinition, final Entity dto) {
+		throw new UnsupportedOperationException();
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public <E extends Entity> void updateList(final DtList<E> entities) {
 		throw new UnsupportedOperationException();
 	}
 
