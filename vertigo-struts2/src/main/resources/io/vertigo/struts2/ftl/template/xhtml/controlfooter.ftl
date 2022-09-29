@@ -1,6 +1,6 @@
 ${parameters.after!}<#t/>
 <#if (parameters.unit)??><#t/>
-	<span>${parameters.unit?html}</span>
+	<span>${parameters.unit}</span>
 </#if>
 <#if parameters.dynamicAttributes.get('tooltipPosition')?? && parameters.dynamicAttributes.get('tooltipPosition') = 'field'>
 	<#include "/${parameters.templateDir}/xhtml/tooltip.ftl" /> 

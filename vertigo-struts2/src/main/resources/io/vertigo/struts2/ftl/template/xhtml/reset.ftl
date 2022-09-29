@@ -9,10 +9,10 @@
 	<#include "/${parameters.templateDir}/${parameters.expandTheme}/controlheader-trlogic.ftl" />
 			<td <#t/>
 	<#if parameters.submitcolspan??><#t/>
-	    colspan="${parameters.submitcolspan?html}"<#t/>	    
+	    colspan="${parameters.submitcolspan}"<#t/>	    
 	<#t/></#if>
 	<#if parameters.align??><#t/>
-	    align="${parameters.align?html}"<#t/>
+	    align="${parameters.align}"<#t/>
 	<#t/></#if>
 	><#t/>
 	<#if controlLayout_tablecolspan?exists >

@@ -14,22 +14,22 @@
 	<#list value as selectedValue>
 		<#if selectedValue?? && selectedValue!='' >
 			<#if parameters.list.getById??>
-				<#assign paramListKey = parameters.listKey!util.getIdField(parameters.list) />
-				<#assign paramListValue = parameters.listValue!util.getDisplayField(parameters.list) />
+				<#assign paramListKey = (parameters.listKey != 'top' && parameters.listKey != 'key' )?then(parameters.listKey, util.getIdField(parameters.list)) />
+				<#assign paramListValue = (parameters.listValue != 'top')?then(parameters.listValue, util.getDisplayField(parameters.list)) />
 				<#assign uiObject = parameters.list.getById(paramListKey, selectedValue) />
 				<#assign itemCount = itemCount + 1/>
 <span <#rt/>
 				<#if parameters.id??>
- id="${parameters.id?html}-${itemCount?html}"<#rt/>
+ id="${parameters.id}-${itemCount}"<#rt/>
 				</#if>
 				<#if uiObject?? && parameters.multiple?default(false) && parameters.listTitle??>
- title="${uiObject.get(parameters.listTitle)?html}"<#rt/>
+ title="${uiObject.get(parameters.listTitle)}"<#rt/>
 				<#elseif parameters.title??>
- title="${parameters.title?html}"<#rt/>
+ title="${parameters.title}"<#rt/>
 				</#if>
 				<#assign previousCssClass = appendedCssClass?default('') />
 				<#if uiObject?? && parameters.multiple?default(false) && parameters.listCssClass??>
-					<#assign appendedCssClass = previousCssClass + " " + uiObject.get(parameters.listCssClass)?html />
+					<#assign appendedCssClass = previousCssClass + " " + uiObject.get(parameters.listCssClass) />
 				</#if>
 				<#include "/${parameters.templateDir}/simple/css.ftl" /><#t/>
 				<#include "/${parameters.templateDir}/simple/scripting-events.ftl" /><#t/>
@@ -38,14 +38,14 @@
 				<#assign appendedCssClass = previousCssClass/>
 				><#t/>
 				<#if parameters.headerKey?? && parameters.headerValue?? && tag.contains(parameters.nameValue, parameters.headerKey) == true>
-					${parameters.headerValue?html}<#t/>
+					${parameters.headerValue}<#t/>
 				<#else>
 					<#if uiObject??>
-					 	${uiObject.get(paramListValue)?html?replace("\n", "<br/>")}<#t/>
+					 	${uiObject.get(paramListValue)?replace("\n", "<br/>")}<#t/>
 					<#else> <#-- si pas de getById : liste ou map brute -->
 						<#list parameters.list as entry>
 							<#if entry.key = selectedValue>
-							 	${entry.value?html?replace("\n", "<br/>")}<#t/>
+							 	${entry.value?replace("\n", "<br/>")}<#t/>
 							</#if>
 						</#list>
 					</#if>

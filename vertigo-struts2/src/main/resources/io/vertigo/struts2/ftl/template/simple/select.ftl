@@ -6,22 +6,22 @@
 -->
 <#setting number_format="#.#####">
 <select<#rt/>
- name="${(parameters.name!"")?html}"<#rt/>
+ name="${(parameters.name!"")}"<#rt/>
 <#if parameters.get("size")?has_content>
- size="${parameters.get("size")?html}"<#rt/>
+ size="${parameters.get("size")}"<#rt/>
 </#if>
 <#if parameters.disabled!false>
  disabled="disabled"<#rt/>
 </#if>
 <#if parameters.tabindex?has_content>
- tabindex="${parameters.tabindex?html}"<#rt/>
+ tabindex="${parameters.tabindex}"<#rt/>
 </#if>
 <#if parameters.id?has_content>
- id="${parameters.id?html}"<#rt/>
+ id="${parameters.id}"<#rt/>
 </#if>
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/css.ftl" />
 <#if parameters.title?has_content>
- title="${parameters.title?html}"<#rt/>
+ title="${parameters.title}"<#rt/>
 </#if>
 <#if parameters.multiple!false>
  multiple="multiple"<#rt/>
@@ -31,17 +31,22 @@
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/dynamic-attributes.ftl" />
 >
 <#if parameters.headerKey?? && parameters.headerValue??>
-    <option value="${parameters.headerKey?html}"<#rt/>
+    <option value="${parameters.headerKey}"<#rt/>
     <#if tag.contains(parameters.nameValue, parameters.headerKey) == true>
  selected="selected"<#rt/>
     </#if>
-    >${parameters.headerValue?html}</option><#lt/>
+    >${parameters.headerValue}</option><#lt/>
 </#if>
 <#if parameters.emptyOption!false>
     <option value=""></option>
 </#if>
-<#assign paramListKey = parameters.listKey!util.getIdField(parameters.list) />
-<#assign paramListValue = parameters.listValue!util.getDisplayField(parameters.list) />
+<#if parameters.list.getById??>
+	<#assign paramListKey = (parameters.listKey != 'top' && parameters.listKey != 'key')?then(parameters.listKey, util.getIdField(parameters.list)) />
+	<#assign paramListValue = (parameters.listValue != 'top' && parameters.listValue != 'value')?then(parameters.listValue, util.getDisplayField(parameters.list)) />
+<#else>
+	<#assign paramListKey = parameters.listKey />
+	<#assign paramListValue = parameters.listValue />
+</#if>
 <@s.iterator value="parameters.list">
         <#if paramListKey??>
             <#assign itemKey = stack.findValue(paramListKey)!''/>
@@ -85,27 +90,27 @@
               <#assign itemTitle = ''/>
             </#if>
         </#if>
-    <option value="${itemKeyStr?html}"<#rt/>
+    <option value="${itemKeyStr}"<#rt/>
         <#if tag.contains(parameters.nameValue, itemKey) == true>
  selected="selected"<#rt/>
         </#if>
         <#if itemCssClass?has_content>
- class="${itemCssClass?html}"<#rt/>
+ class="${itemCssClass}"<#rt/>
         </#if>
         <#if itemCssStyle?has_content>
- style="${itemCssStyle?html}"<#rt/>
+ style="${itemCssStyle}"<#rt/>
         </#if>
         <#if itemTitle?has_content>
- title="${itemTitle?html}"<#rt/>
+ title="${itemTitle}"<#rt/>
         </#if>
-    >${itemValue?html}</option><#lt/>
+    >${itemValue}</option><#lt/>
 </@s.iterator>
 
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/optgroup.ftl" />
 
 </select><#t/>
 <#if parameters.multiple!false>
-<input type="hidden" id="__multiselect_${parameters.id?html}" name="__multiselect_${parameters.name?html}" value=""<#rt/>
+<input type="hidden" id="__multiselect_${parameters.id}" name="__multiselect_${parameters.name}" value=""<#rt/>
 <#if parameters.disabled!false>
  disabled="disabled"<#rt/>
 </#if>

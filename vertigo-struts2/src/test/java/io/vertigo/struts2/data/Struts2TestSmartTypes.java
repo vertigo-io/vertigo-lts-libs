@@ -151,5 +151,10 @@ public enum Struts2TestSmartTypes {
 	@SmartTypeDefinition(Boolean.class)
 	@Formatter(clazz = FormatterBoolean.class, arg = "Oui;Non")
 	@SmartTypeProperty(property = "storeType", value = "BOOLEAN")
-	OuiNon;
+	OuiNon,
+
+	@SmartTypeDefinition(Boolean.class)
+	@Formatter(clazz = FormatterBoolean.class, arg = "true;false")
+	@SmartTypeProperty(property = "storeType", value = "BOOLEAN")
+	TrueFalse;
 }

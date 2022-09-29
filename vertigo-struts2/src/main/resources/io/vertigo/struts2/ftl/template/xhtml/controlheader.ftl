@@ -10,10 +10,10 @@
 	<#assign labelColspan = parameters.labelcolspan?default(1) />
 			<td<#rt/>
 	<#if parameters.inputcolspan??>
- colspan="${parameters.inputcolspan?html}"<#rt/>	    
+ colspan="${parameters.inputcolspan}"<#rt/>	    
 	</#if>
 	<#if parameters.align??>
- class="align-${parameters.align?html}"<#rt/>
+ class="align-${parameters.align}"<#rt/>
 	</#if>
 	><#t/>
 	<#if controlLayout_tablecolspan?exists >

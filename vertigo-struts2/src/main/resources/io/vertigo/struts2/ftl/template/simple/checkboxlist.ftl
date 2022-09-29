@@ -5,8 +5,8 @@
 -->
 <#assign itemCount = 0/>
 <#if parameters.list??>
-<#assign paramListKey = parameters.listKey!util.getIdField(parameters.list) />
-<#assign paramListValue = parameters.listValue!util.getDisplayField(parameters.list) />
+<#assign paramListKey = (parameters.listKey != 'top' &&  parameters.listKey != 'key')?then(parameters.listKey, util.getIdField(parameters.list)) />
+<#assign paramListValue = (parameters.listValue != 'top')?then(parameters.listValue, util.getDisplayField(parameters.list)) />
 <@s.iterator value="parameters.list">
     <#assign itemCount = itemCount + 1/>
     <#if paramListKey??>
@@ -38,18 +38,18 @@
 <#assign appendedCssClass = previousCssClass +' checkboxLabel'/>
 <label<#rt/> 
     <#if parameters.id?has_content>
-        for="${parameters.id?html}-${itemCount}"<#rt/>
+        for="${parameters.id}-${itemCount}"<#rt/>
     <#else>
-        for="${parameters.name?html}-${itemCount}"<#rt/>
+        for="${parameters.name}-${itemCount}"<#rt/>
     </#if>
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/css.ftl"/>>
 
 <#assign appendedCssClass = previousCssClass/>
-<input type="checkbox" name="${parameters.name?html}" value="${itemKeyStr?html}"<#rt/>
+<input type="checkbox" name="${parameters.name}" value="${itemKeyStr}"<#rt/>
     <#if parameters.id?has_content>
- id="${parameters.id?html}-${itemCount}"<#rt/>
+ id="${parameters.id}-${itemCount}"<#rt/>
     <#else>
- id="${parameters.name?html}-${itemCount}"<#rt/>
+ id="${parameters.name}-${itemCount}"<#rt/>
     </#if>
     <#if tag.contains(parameters.nameValue, itemKey)>
  checked="checked"<#rt/>
@@ -58,27 +58,27 @@
  disabled="disabled"<#rt/>
     </#if>
     <#if itemCssClass?has_content>
- class="${itemCssClass?html}"<#rt/>   <#-- parameter.cssClass, and other are included by css.ftl -->
+ class="${itemCssClass}"<#rt/>   <#-- parameter.cssClass, and other are included by css.ftl -->
     </#if>
     <#if itemCssStyle?has_content>
- style="${itemCssStyle?html}"<#rt/>
+ style="${itemCssStyle}"<#rt/>
     </#if>
     <#if itemTitle?has_content>
- title="${itemTitle?html}"<#rt/>
+ title="${itemTitle}"<#rt/>
     <#elseif parameters.title?has_content>
- title="${parameters.title?html}"<#rt/>
+ title="${parameters.title}"<#rt/>
     </#if>
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/css.ftl" />
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/scripting-events.ftl" />
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/common-attributes.ftl" />
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/dynamic-attributes.ftl" />
 /><#rt/>
-${itemValue?html}</label><br/>
+${itemValue}</label><br/>
 </@s.iterator>
     <#else>
  &nbsp;<#t/>
 </#if>
-<input type="hidden" id="__multiselect_${parameters.id?html}" name="__multiselect_${parameters.name?html}"<#rt/>
+<input type="hidden" id="__multiselect_${parameters.id}" name="__multiselect_${parameters.name}"<#rt/>
  value=""<#rt/>
 <#if parameters.disabled!false>
  disabled="disabled"<#rt/>

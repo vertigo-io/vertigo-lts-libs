@@ -35,19 +35,19 @@
                     <#if (haveMatchedErrorField && (!doneStartUlTag))>
 	<ul <#rt/>
                         <#if parameters.id?if_exists != "">
-                                id="${parameters.id?html}" <#t/>
+                                id="${parameters.id}" <#t/>
                         </#if>
-                        class="${(parameters.cssClass!'errorMessage')?html}" <#t/>
+                        class="${(parameters.cssClass!'errorMessage')}" <#t/>
                         <#if parameters.cssStyle??>
-                                style="${parameters.cssStyle?html}" <#t/>
+                                style="${parameters.cssStyle}" <#t/>
                         </#if>
 	><#lt/>
                     <#assign doneStartUlTag=true>
                     </#if>
                     <#list eValue as eEachValue>
 		<li><#t/>
-			<span class="messageLabel" onclick="focusElementByName('${eKey?html}');">${util.label(eKey)?html}: </span><#t/>
-	        <span class="message"><#if parameters.escape>${eEachValue!?html}<#else>${eEachValue!}</#if></span><#t/>
+			<span class="messageLabel" onclick="focusElementByName('${eKey}');">${util.label(eKey)}: </span><#t/>
+	        <span class="message"><#if parameters.escape>${eEachValue!}<#else>${eEachValue!}</#if></span><#t/>
 	    </li><#rt/>
                     </#list>
                 </#if>
@@ -60,20 +60,20 @@
     <#elseif (eKeysSize > 0)>
 	<ul <#rt/>
             <#if parameters.cssClass??>
-                    class="${parameters.cssClass?html}" <#t/>
+                    class="${parameters.cssClass}" <#t/>
                 <#else>
                     class="errorMessage" <#t/>
             </#if>
             <#if parameters.cssStyle??>
-                    style="${parameters.cssStyle?html}" <#t/>
+                    style="${parameters.cssStyle}" <#t/>
             </#if>
                 ><#lt/>
             <#list eKeys as eKey>
                 <#assign eValue = fieldErrors.get(eKey)>
                 <#list eValue as eEachValue>
 		<li><#t/>
-        	<span class="messageLabel" onclick="focusElementByName('${eKey?html}');">${util.label(eKey)?html}: </span><#t/>
-        	<span class="message"><#if parameters.escape>${eEachValue!?html}<#else>${eEachValue!}</#if></span><#t/>
+        	<span class="messageLabel" onclick="focusElementByName('${eKey}');">${util.label(eKey)}: </span><#t/>
+        	<span class="message"><#if parameters.escape>${eEachValue!}<#else>${eEachValue!}</#if></span><#t/>
       	</li><#rt/>
             </#list>
 		</#list>

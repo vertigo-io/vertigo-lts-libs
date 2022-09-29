@@ -12,7 +12,7 @@
 	    <!--[if lt IE 9]>
 	      <script src="static/js/html5shiv.js"></script>
 	    <![endif]-->
-		<sj:head compressed="false" jquerytheme="redmond" locale="fr"/>
+		<sj:head compressed="false" jqueryui="true" jquerytheme="redmond" locale="fr" scriptPath="/test/struts/"/>
 		<link href="static/css/kasper_demo.css" rel="stylesheet" type="text/css"media="all" />
 		<link rel="shortcut icon" href="static/img/favicon.png">
 		<title>TeleDo - ${param.subtitle}</title>		

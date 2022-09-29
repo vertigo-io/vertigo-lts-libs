@@ -24,8 +24,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Describes properties supported by the AbstractUITag - base class for all UI tags
@@ -34,7 +34,7 @@ import com.opensymphony.xwork2.util.logging.LoggerFactory;
  */
 public class AbstractUITagBeanInfo extends SimpleBeanInfo {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractUITagBeanInfo.class);
+	private static final Logger LOG = LogManager.getLogger(AbstractUITagBeanInfo.class);
 
 	@Override
 	public PropertyDescriptor[] getPropertyDescriptors() {

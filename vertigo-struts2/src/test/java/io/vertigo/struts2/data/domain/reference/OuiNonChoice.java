@@ -49,7 +49,7 @@ public final class OuiNonChoice implements Entity {
 	 * Récupère la valeur de la propriété 'Valeur'.
 	 * @return Boolean key <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyOuiNon", type = "ID", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Valeur")
+	@Field(smartType = "STyTrueFalse", type = "ID", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Valeur")
 	public Boolean getKey() {
 		return key;
 	}

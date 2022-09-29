@@ -9,19 +9,19 @@
  class="<#rt/>
 </#if>
 <#if parameters.cssClass?has_content>
- ${parameters.cssClass?html}<#rt/>
+ ${parameters.cssClass}<#rt/>
 </#if>
 <#if hasFieldErrors >
- ${parameters.cssErrorClass!' error'?html}<#rt/>
+ ${parameters.cssErrorClass!' error'}<#rt/>
 </#if>
 <#if (appendedCssClass?has_content)>
- ${appendedCssClass?trim?html}<#rt/>
+ ${appendedCssClass?trim}<#rt/>
 </#if>
 <#if parameters.cssClass?has_content || hasFieldErrors || (appendedCssClass?has_content) >
 "<#rt/>
 </#if>
 <#if parameters.cssStyle?has_content && !(hasFieldErrors && (parameters.cssErrorStyle?has_content || parameters.cssErrorClass?has_content))>
- style="${parameters.cssStyle?html}"<#rt/>
+ style="${parameters.cssStyle}"<#rt/>
 <#elseif hasFieldErrors && parameters.cssErrorStyle?has_content>
- style="${parameters.cssErrorStyle?html}"<#rt/>
+ style="${parameters.cssErrorStyle}"<#rt/>
 </#if>

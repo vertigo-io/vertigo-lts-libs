@@ -11,24 +11,24 @@
 	</#if>
 	<input type="hidden"<#rt/>
 	  <#if parameters.widgetid?has_content>
-	    id="${parameters.widgetid?html}"<#rt/>
+	    id="${parameters.widgetid}"<#rt/>
 	  </#if>
 	  <#if parameters.nameValue?has_content>
-	    value="${parameters.nameValue?html}"<#rt/>
+	    value="${parameters.nameValue}"<#rt/>
 	  </#if>
 	  <#if parameters.widgetname?has_content>
-	 	name="${parameters.widgetname?html}"<#rt/>
+	 	name="${parameters.widgetname}"<#rt/>
 	  </#if>
 	  <#if parameters.disabled!false>
 	    disabled="disabled"<#rt/>
 	  </#if>
 	  <#if parameters.popinURL?has_content>
-	 	popinURL="${parameters.popinURL?html}"<#rt/>
+	 	popinURL="${parameters.popinURL}"<#rt/>
 	  </#if>
 	/><#rt/>
 	<#include "/${parameters.templateDir}/jquery/autocomplete-simple-text.ftl" />
 	<#assign escapedIconId="icon_${parameters.id?string?replace('.', '_')}">
-	<div id="${escapedIconId?html}" class="autocompleter-icon" alt="chercher" />
+	<div id="${escapedIconId}" class="autocompleter-icon" alt="chercher" />
         <#if (parameters.parentTheme == 'xhtml')>
 		<#include "/${parameters.templateDir}/xhtml/controlfooter.ftl" />
 	</#if>	
