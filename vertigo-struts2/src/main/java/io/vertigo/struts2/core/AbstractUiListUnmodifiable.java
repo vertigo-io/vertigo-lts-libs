@@ -138,7 +138,7 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 	@Override
 	public final UiObject<O> get(final int index) {
 		return uiObjectByIndex.computeIfAbsent(index, i -> {
-			Assertion.check().isTrue(uiObjectByIndex.size() < 1000, "Trop d'élément dans le buffer uiObjectByIndex de la liste de {0}", getDtDefinition().getName());
+			Assertion.check().isTrue(uiObjectByIndex.size() < NB_MAX_ELEMENTS, "Trop d'élément dans le buffer uiObjectByIndex de la liste de {0}", getDtDefinition().getName());
 			return new StrutsUiObject<>(obtainDtList().get(i));
 		});
 	}
@@ -202,7 +202,7 @@ public abstract class AbstractUiListUnmodifiable<O extends DtObject> extends Abs
 	private UiObject<O> loadMissingEntity(final String keyFieldName, final String keyValueAsString, final Map<String, UiObject<O>> uiObjectById) throws FormatterException {
 		final DtDefinition dtDefinition = getDtDefinition();
 		// ---
-		Assertion.check().isTrue(dtDefinition.getIdField().isPresent(), "The definition : {0} must have an id to retrieve missing elements by Id", dtDefinition);
+		Assertion.check().isTrue(dtDefinition.getIdField().isPresent(), "The definition : {0} must have an id to retrieve missing elements by Id (check you have defined idField in ContextList)", dtDefinition);
 		// ---
 		UiObject<O> uiObject;
 		final DtField dtField = dtDefinition.getField(keyFieldName);
