@@ -20,6 +20,16 @@
 	</v:div>
 </s:form>
 
+<s:form id="simpleForm">
+<h1>Test simpleForm</h1>
+    <v:div layout="table">
+        <s:textfield name="movie.title" label="default" />
+        <s:textfield name="movie.year" label="default" />
+        <s:checkbox name="movie.vff" label="default" />
+        <s:submit action="saveAccueil" />
+    </v:div>
+</s:form>
+
 <s:form  id="displayTable">
 <h1>Test display:table sur ContextList</h1>
 <display:table name="movies" class="tableau" uid="item" export="false" requestURI="#" pagesize="20" defaultsort="0">

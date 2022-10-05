@@ -36,13 +36,13 @@
     </#if>
 <#assign previousCssClass = appendedCssClass!''/>
 <#assign appendedCssClass = previousCssClass +' radio'/>
-<label for="${parameters.id}${itemKeyStr}" <#include "/${parameters.templateDir}/simple/css.ftl"/>><#rt/>
+<label for="${parameters.id}${itemKeyStr?replace(".", "_")}" <#include "/${parameters.templateDir}/${parameters.expandTheme}/css.ftl"/>><#rt/>
 <#assign appendedCssClass = previousCssClass/>
 <input type="radio"<#rt/>
 <#if parameters.name?has_content>
- name="${parameters.name}"<#rt/>
+ name="${parameters.name?no_esc}"<#rt/>
 </#if>
- id="${parameters.id}${itemKeyStr}"<#rt/>
+ id="${parameters.id}${itemKeyStr?replace(".", "_")}"<#rt/>
 <#if tag.contains(parameters.nameValue!'', itemKeyStr)>
  checked="checked"<#rt/>
 </#if>
@@ -69,6 +69,7 @@
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/css.ftl" />
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/scripting-events.ftl" />
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/common-attributes.ftl" />
+<#global evaluate_dynamic_attributes = true/>
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/dynamic-attributes.ftl" />
 /><#rt/>
   ${itemValue}<#rt/>

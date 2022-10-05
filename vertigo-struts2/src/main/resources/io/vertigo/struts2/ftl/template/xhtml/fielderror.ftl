@@ -47,7 +47,7 @@
                     <#list eValue as eEachValue>
 		<li><#t/>
 			<span class="messageLabel" onclick="focusElementByName('${eKey}');">${util.label(eKey)}: </span><#t/>
-	        <span class="message"><#if parameters.escape>${eEachValue!}<#else>${eEachValue!}</#if></span><#t/>
+	        <span class="message"><#if parameters.escape>${eEachValue!}<#else>${eEachValue!?no_esc}</#if></span><#t/>
 	    </li><#rt/>
                     </#list>
                 </#if>
@@ -73,7 +73,7 @@
                 <#list eValue as eEachValue>
 		<li><#t/>
         	<span class="messageLabel" onclick="focusElementByName('${eKey}');">${util.label(eKey)}: </span><#t/>
-        	<span class="message"><#if parameters.escape>${eEachValue!}<#else>${eEachValue!}</#if></span><#t/>
+        	<span class="message"><#if parameters.escape>${eEachValue!}<#else>${eEachValue!?no_esc}</#if></span><#t/>
       	</li><#rt/>
             </#list>
 		</#list>

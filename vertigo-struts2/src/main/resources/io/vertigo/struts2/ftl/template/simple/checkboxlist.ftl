@@ -71,12 +71,12 @@
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/css.ftl" />
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/scripting-events.ftl" />
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/common-attributes.ftl" />
+<#global evaluate_dynamic_attributes = true/>
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/dynamic-attributes.ftl" />
 /><#rt/>
 ${itemValue}</label><br/>
 </@s.iterator>
     <#else>
- &nbsp;<#t/>
 </#if>
 <input type="hidden" id="__multiselect_${parameters.id}" name="__multiselect_${parameters.name}"<#rt/>
  value=""<#rt/>

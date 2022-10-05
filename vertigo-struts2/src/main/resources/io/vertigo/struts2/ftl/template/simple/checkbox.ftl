@@ -35,6 +35,7 @@
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/common-attributes.ftl" />
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/dynamic-attributes.ftl" />
 /><#t/>
+<#-- we always need this hidden input no use of parameters.submitUnchecked -->
 <input type="hidden" id="${hiddenPrefix}${parameters.id}" name="${hiddenPrefix}${parameters.name}" value="${parameters.fieldValue}"<#rt/>
 <#if parameters.disabled!false>
  disabled="disabled"<#rt/>
