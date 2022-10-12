@@ -36,39 +36,40 @@
     </#if>
 <#assign previousCssClass = appendedCssClass!''/>
 <#assign appendedCssClass = previousCssClass +' radio'/>
-<label for="${parameters.id?html}${itemKeyStr?html}" <#include "/${parameters.templateDir}/simple/css.ftl"/>><#rt/>
+<label for="${parameters.id}${itemKeyStr?replace(".", "_")}" <#include "/${parameters.templateDir}/${parameters.expandTheme}/css.ftl"/>><#rt/>
 <#assign appendedCssClass = previousCssClass/>
 <input type="radio"<#rt/>
 <#if parameters.name?has_content>
- name="${parameters.name?html}"<#rt/>
+ name="${parameters.name?no_esc}"<#rt/>
 </#if>
- id="${parameters.id?html}${itemKeyStr?html}"<#rt/>
+ id="${parameters.id}${itemKeyStr?replace(".", "_")}"<#rt/>
 <#if tag.contains(parameters.nameValue!'', itemKeyStr)>
  checked="checked"<#rt/>
 </#if>
 <#if itemKey??>
- value="${itemKeyStr?html}"<#rt/>
+ value="${itemKeyStr}"<#rt/>
 </#if>
 <#if parameters.disabled!false>
  disabled="disabled"<#rt/>
 </#if>
 <#if parameters.tabindex?has_content>
- tabindex="${parameters.tabindex?html}"<#rt/>
+ tabindex="${parameters.tabindex}"<#rt/>
 </#if>
 <#if itemCssClass?has_content>
- class="${itemCssClass?html}"<#rt/>  <#-- parameter.cssClass, and other are included by css.ftl -->
+ class="${itemCssClass}"<#rt/>  <#-- parameter.cssClass, and other are included by css.ftl -->
 </#if>
 <#if itemCssStyle?has_content>
- style="${itemCssStyle?html}"<#rt/>
+ style="${itemCssStyle}"<#rt/>
 </#if>
 <#if itemTitle?has_content>
- title="${itemTitle?html}"<#rt/>
+ title="${itemTitle}"<#rt/>
 <#elseif parameters.title?has_content>
- title="${parameters.title?html}"<#rt/>
+ title="${parameters.title}"<#rt/>
 </#if>
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/css.ftl" />
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/scripting-events.ftl" />
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/common-attributes.ftl" />
+<#global evaluate_dynamic_attributes = true/>
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/dynamic-attributes.ftl" />
 /><#rt/>
   ${itemValue}<#rt/>

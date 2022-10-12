@@ -1,6 +1,6 @@
 <!DOCTYPE struts PUBLIC
-    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
-    "http://struts.apache.org/dtds/struts-2.5.dtd">
+        "-//Apache Software Foundation//DTD Struts Configuration 6.0//EN"
+        "https://struts.apache.org/dtds/struts-6.0.dtd">
 
 <struts><!-- Configuration for the default package. -->
 	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
@@ -8,6 +8,7 @@
 	<constant name="struts.ognl.logMissingProperties" value="true" />
 	<constant name="struts.ui.theme" value="xhtml" />
 	<constant name="struts.ui.templateDir" value="template" />
+	<constant name="struts.ui.staticContentPath" value="/struts" />
 	
 	<!-- overwrite struts2-core.jar/org.apache.struts2/struts-messages.properties -->
 	<constant name="struts.custom.i18n.resources" value="global" />
@@ -35,8 +36,46 @@
 			<interceptor name="restrictActionAccess" class="io.vertigo.struts2.impl.interceptor.KActionRestrictAccessInterceptor" />
 
 			<interceptor-stack name="vertigoDefaultStack">
-				<interceptor-ref name="defaultStack" />
-
+				<interceptor-ref name="exception"/>
+                <interceptor-ref name="alias"/>
+                <interceptor-ref name="servletConfig"/>
+                <interceptor-ref name="i18n"/>
+                <interceptor-ref name="cspInterceptor">
+                    <param name="disabled">true</param>
+                    <param name="enforcingMode">false</param>
+                </interceptor-ref>
+                <interceptor-ref name="prepare"/>
+                <interceptor-ref name="chain"/>
+                <interceptor-ref name="scopedModelDriven"/>
+                <interceptor-ref name="modelDriven"/>
+                <interceptor-ref name="fileUpload"/>
+                <interceptor-ref name="checkbox"/>
+                <interceptor-ref name="datetime"/>
+                <interceptor-ref name="multiselect"/>
+                <interceptor-ref name="staticParams"/>
+                <interceptor-ref name="actionMappingParams"/>
+                <interceptor-ref name="params"/>
+                <interceptor-ref name="conversionError"/>
+                <interceptor-ref name="coepInterceptor">
+                    <param name="disabled">false</param>
+                    <param name="enforcingMode">false</param>
+                    <param name="exemptedPaths"/>
+                </interceptor-ref>
+                <interceptor-ref name="coopInterceptor">
+                    <param name="disabled">false</param>
+                    <param name="exemptedPaths"/>
+                    <param name="mode">same-origin</param>
+                </interceptor-ref>
+                <interceptor-ref name="fetchMetadata">
+                    <param name="disabled">false</param>
+                </interceptor-ref>
+                <interceptor-ref name="validation">
+                    <param name="excludeMethods">input,back,cancel,browse</param>
+                </interceptor-ref>
+                <interceptor-ref name="workflow">
+                    <param name="excludeMethods">input,back,cancel,browse</param>
+                </interceptor-ref>
+                <interceptor-ref name="debugging"/>
 				<interceptor-ref name="restrictActionAccess" /> <!-- Assure que les executes sont appellés en POST sauf s'ils ont l'annotation @GET -->
 				<interceptor-ref name="userException" /> <!-- Converti les UserExceptions en ActionError ou FieldsError -->
 				<interceptor-ref name="contextStore" /> <!-- Persist le context -->

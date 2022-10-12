@@ -18,17 +18,17 @@
 	<#if currentLayout = 'table'>
 	<tr>
 		<#assign tablecolspan = controlLayout_tablecolspan />
-	    <th colspan="${parameters.tablecolspan?html}"><#t/>
+	    <th colspan="${parameters.tablecolspan}"><#t/>
 		<#include "/${parameters.templateDir}/${parameters.theme}/controllabel.ftl" /> 
 	    </th>
 	</tr>
 	<tr>
 	   <td <#t/>
 			<#if parameters.inputcolspan??><#t/>
-			    colspan="${parameters.inputcolspan?html}"<#t/>	    
+			    colspan="${parameters.inputcolspan}"<#t/>	    
 			<#t/></#if>
 			<#if parameters.align??><#t/>
-			    align="${parameters.align?html}"<#t/>
+			    align="${parameters.align}"<#t/>
 			<#t/></#if>
 			><#t/>
 	        <#include "/${parameters.templateDir}/simple_read/checkbox.ftl" />
@@ -43,10 +43,10 @@
 		<#include "/${parameters.templateDir}/xhtml/controlheader-trlogic.ftl" />	
 		<td class="checkBoxLeft"<#t/>
 		<#if parameters.inputcolspan??><#t/>
-		    colspan="${parameters.inputcolspan?html}"<#t/>	    
+		    colspan="${parameters.inputcolspan}"<#t/>	    
 		<#t/></#if>
 		<#if parameters.align??><#t/>
-		    align="${parameters.align?html}"<#t/>
+		    align="${parameters.align}"<#t/>
 		<#t/></#if>
 		><#t/>
 		<#include "/${parameters.templateDir}/simple_read/checkbox.ftl" />
@@ -54,7 +54,7 @@
 		</td><#lt/>
 		<th class="checkBoxLabelRight" <#t/>
 	    <#if parameters.labelcolspan??>
-		    colspan="${parameters.labelcolspan?html}" <#t/>
+		    colspan="${parameters.labelcolspan}" <#t/>
 		</#if>
 		><#t/>
 		<#if parameters.label??>

@@ -54,7 +54,7 @@ public final class UiUtil implements Serializable {
 	 * @param uiObject Object du context
 	 * @return Nom de l'object dans le context
 	 */
-	public static String contextKey(final UiObject<?> uiObject) {
+	public String contextKey(final UiObject<?> uiObject) {
 		final ActionContext actionContext = ActionContext.getContext();
 		final KActionContext kActionContext = ((AbstractActionSupport) actionContext.getActionInvocation().getAction()).getModel();
 		return kActionContext.findKey(uiObject);
@@ -65,7 +65,7 @@ public final class UiUtil implements Serializable {
 	 * @param uiObject Objet de la liste
 	 * @return index de l'objet dans sa liste
 	 */
-	public static int indexOf(final List<?> uiList, final UiObject<?> uiObject) {
+	public int indexOf(final List<?> uiList, final UiObject<?> uiObject) {
 		return uiList.indexOf(uiObject);
 	}
 
@@ -73,7 +73,7 @@ public final class UiUtil implements Serializable {
 	 * @param fieldPath Chemin du champ
 	 * @return Label du champs
 	 */
-	public static String label(final String fieldPath) {
+	public String label(final String fieldPath) {
 		return getDtField(fieldPath).getLabel().getDisplay();
 	}
 
@@ -82,7 +82,7 @@ public final class UiUtil implements Serializable {
 	 * @param value Valeur à formater
 	 * @return rendu du champs boolean
 	 */
-	public static String formatBoolean(final String fieldPath, final Boolean value) {
+	public String formatBoolean(final String fieldPath, final Boolean value) {
 		if (!fieldPath.contains(".")) { //cas des ContextRef sans smartType
 			return DEFAULT_FORMATTER.valueToString(value, BasicType.Boolean);
 		}
@@ -94,7 +94,7 @@ public final class UiUtil implements Serializable {
 	 * @param fieldPath Chemin du champ
 	 * @return Si le champs est obligatoire
 	 */
-	public static boolean required(final String fieldPath) {
+	public boolean required(final String fieldPath) {
 		Assertion.check().isTrue(fieldPath.indexOf('.') != 0, "FieldPath shouldn't starts with . ({0})", fieldPath);
 		//-----
 		if (fieldPath.indexOf('.') > 0) { //Le champs est porté par un Object
@@ -107,7 +107,7 @@ public final class UiUtil implements Serializable {
 	 * @param uiList liste du context
 	 * @return Nom du champ display de cette liste
 	 */
-	public static String getDisplayField(final UiList<?> uiList) {
+	public String getDisplayField(final UiList<?> uiList) {
 		final DtDefinition dtDefinition = uiList.getDtDefinition();
 		return dtDefinition.getDisplayField().get().getName();
 	}
@@ -116,7 +116,7 @@ public final class UiUtil implements Serializable {
 	 * @param uiList liste du context
 	 * @return Nom du champ de l'id de cette liste
 	 */
-	public static String getIdField(final UiList<?> uiList) {
+	public String getIdField(final UiList<?> uiList) {
 		final DtDefinition dtDefinition = uiList.getDtDefinition();
 		return dtDefinition.getIdField().get().getName();
 	}

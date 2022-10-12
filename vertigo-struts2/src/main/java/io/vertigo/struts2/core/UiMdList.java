@@ -64,6 +64,11 @@ final class UiMdList<E extends Entity> extends AbstractUiListUnmodifiable<E> {
 			try (final VTransactionWritable transaction = transactionManager.get().createCurrentTransaction()) {
 				lazyDtList = entityStoreManager.get().<E> findAll(dtListURIForMasterData);
 			}
+
+			//load UiObjects
+			if (lazyDtList.size() < NB_MAX_ELEMENTS) {
+				initUiObjectByIdIndex();
+			}
 		}
 		return lazyDtList;
 	}

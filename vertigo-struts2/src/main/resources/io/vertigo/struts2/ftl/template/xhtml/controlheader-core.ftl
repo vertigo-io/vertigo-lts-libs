@@ -16,7 +16,7 @@
 	<#if currentLayout = 'table'>
 			<th class="tdLabel" <#rt/>
     	<#if parameters.labelcolspan??>
-	    colspan="${parameters.labelcolspan?html}" <#t/>
+	    colspan="${parameters.labelcolspan}" <#t/>
 		</#if>
 	><#t/>
 	</#if>

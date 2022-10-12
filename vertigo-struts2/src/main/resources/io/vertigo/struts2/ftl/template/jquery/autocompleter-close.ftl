@@ -9,45 +9,45 @@
 <script type='text/javascript'>
 jQuery(document).ready(function () {
   <#if parameters.valueWidget?if_exists != "">
-	jQuery("#${parameters.id?html}").val("${parameters.valueWidget?html}");
+	jQuery("#${parameters.id}").val("${parameters.valueWidget}");
   </#if>
-	var options_${escapedOptionId?html} = {};
+	var options_${escapedOptionId} = {};
   <#if parameters.widgetid?if_exists != "">
-	options_${escapedOptionId?html}.hiddenid = "${parameters.widgetid?html}";
+	options_${escapedOptionId}.hiddenid = "${parameters.widgetid}";
   </#if>
   <#if parameters.delay??>
-	options_${escapedOptionId?html}.delay = ${parameters.delay?html};
+	options_${escapedOptionId}.delay = ${parameters.delay};
   </#if>
   <#if parameters.loadMinimumCount??>
-	options_${escapedOptionId?html}.minimum = ${parameters.loadMinimumCount?html};
+	options_${escapedOptionId}.minimum = ${parameters.loadMinimumCount};
   </#if>
   <#if parameters.autoFocus?default(false) >
-	options_${escapedOptionId?html}.autoFocus = true;
+	options_${escapedOptionId}.autoFocus = true;
   </#if>
   <#if parameters.selectBox?default(false) || (parameters.list?? && parameters.listKey?? && !parameters.hrefUrl??) >
-	options_${escapedOptionId?html}.selectBox = true;
+	options_${escapedOptionId}.selectBox = true;
   <#else>
-	options_${escapedOptionId?html}.selectBox = false;
+	options_${escapedOptionId}.selectBox = false;
   </#if>
   <#if parameters.selectBoxIcon?default(false) >
-	options_${escapedOptionId?html}.selectBoxIcon = true;
+	options_${escapedOptionId}.selectBoxIcon = true;
   </#if>
   <#if parameters.onSearchTopics?exists>
-	options_${escapedOptionId?html}.onsearchtopics = "${parameters.onSearchTopics?html}";
+	options_${escapedOptionId}.onsearchtopics = "${parameters.onSearchTopics}";
   </#if>
   <#if parameters.forceValidOption?default(true) >
-	options_${escapedOptionId?html}.forceValidOption = true;
+	options_${escapedOptionId}.forceValidOption = true;
   <#else>
-	options_${escapedOptionId?html}.forceValidOption = false;
+	options_${escapedOptionId}.forceValidOption = false;
   </#if>
   <#if parameters.onFocusTopics?exists>
-	options_${escapedOptionId?html}.onfocustopics = "${parameters.onFocusTopics?html}";
+	options_${escapedOptionId}.onfocustopics = "${parameters.onFocusTopics}";
   </#if>
   <#if parameters.onSelectTopics?exists>
-	options_${escapedOptionId?html}.onselecttopics = "${parameters.onSelectTopics?html}";
+	options_${escapedOptionId}.onselecttopics = "${parameters.onSelectTopics}";
   </#if>
   <#if parameters.list?? && !parameters.listKey?? && !parameters.selectBox?? &&  !parameters.hrefUrl??>
-	options_${escapedOptionId?html}.list = new Array();
+	options_${escapedOptionId}.list = new Array();
 <@s.iterator value="parameters.list">
         <#if parameters.listValue??>
             <#if stack.findString(parameters.listValue)??>
@@ -58,29 +58,29 @@ jQuery(document).ready(function () {
         <#else>
             <#assign itemValue = stack.findString('top')/>
         </#if>
-	options_${escapedOptionId?html}.list.push("${itemValue?html}");
+	options_${escapedOptionId}.list.push("${itemValue}");
 </@s.iterator>
   </#if>
   <#if parameters.remoteList?? && parameters.hrefUrl?? && !parameters.selectBox??>
-	options_${escapedOptionId?html}.hrefparameter = "list=${parameters.remoteList?html}<#rt/>
+	options_${escapedOptionId}.hrefparameter = "list=${parameters.remoteList}<#rt/>
 	<#if parameters.remoteListKey??>
-		&listKey=${parameters.remoteListKey?html}<#t/>
+		&listKey=${parameters.remoteListKey}<#t/>
 	</#if>
 	<#if parameters.remoteListValue??>
-		&listValue=${parameters.remoteListValue?html}<#t/>
+		&listValue=${parameters.remoteListValue}<#t/>
 	</#if>
-	&CTX=${CTX?html}";<#lt/>
+	&CTX=${CTX}";<#lt/>
 	<#-- 
-	options_${escapedOptionId?html}.list = "${parameters.remoteList?html}";
+	options_${escapedOptionId}.list = "${parameters.remoteList}";
 	-->
 	<#if parameters.remoteListKey??>
-	options_${escapedOptionId?html}.listkey = "${parameters.remoteListKey?html}";
+	options_${escapedOptionId}.listkey = "${parameters.remoteListKey}";
 	</#if>
 	<#if parameters.remoteListValue??>
-	options_${escapedOptionId?html}.listvalue = "${parameters.remoteListValue?html}";
+	options_${escapedOptionId}.listvalue = "${parameters.remoteListValue}";
 	</#if>
 	<#if parameters.listLabel??>
-	options_${escapedOptionId?html}.listlabel = "${parameters.listLabel?html}";
+	options_${escapedOptionId}.listlabel = "${parameters.listLabel}";
 	</#if>
   </#if>
   <#include "/${parameters.templateDir}/jquery/base.ftl" />
@@ -96,7 +96,7 @@ jQuery(document).ready(function () {
 
   <#include "/${parameters.templateDir}/jquery/jquery-ui-bind.ftl" />
   <#assign escapedIconId="icon_${parameters.id?string?replace('.', '_')}">
-  initAutocompleter('#${parameters.widgetid?html}', '#${escapedOptionId?html}', '#${escapedIconId?html}', ${parameters.loadMinimumCount!1?html});
+  initAutocompleter('#${parameters.widgetid}', '#${escapedOptionId}', '#${escapedIconId}', ${parameters.loadMinimumCount!1});
  });
 </script>
 </#if>

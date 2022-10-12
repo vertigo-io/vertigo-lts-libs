@@ -8,10 +8,10 @@
 	<#include "/${parameters.templateDir}/xhtml/controlheader-trlogic.ftl" />
 		<td <#rt/>
 	<#if parameters.inputcolspan??>
-	    colspan="${parameters.inputcolspan?html}"<#t/>	    
+	    colspan="${parameters.inputcolspan}"<#t/>	    
 	</#if>
 	<#if parameters.align??>
-	    align="${parameters.align?html}"<#t/>
+	    align="${parameters.align}"<#t/>
 	</#if>
 	><#lt/>
 	<#if controlLayout_tablecolspan?exists >

@@ -6,21 +6,21 @@
 -->
 <textarea<#rt/>
 <#if parameters.id??>
- id="${parameters.id?html}"<#rt/>
+ id="${parameters.id}"<#rt/>
 </#if>
  readonly="readonly"<#rt/>
  disabled="disabled"<#rt/>
- cols="${parameters.cols?default("")?html}"<#rt/>
- rows="${parameters.rows?default("")?html}"<#rt/>
+ cols="${parameters.cols?default("")}"<#rt/>
+ rows="${parameters.rows?default("")}"<#rt/>
 <#if parameters.wrap??>
- wrap="${parameters.wrap?html}"<#rt/>
+ wrap="${parameters.wrap}"<#rt/>
 </#if>
 <#if parameters.tabindex??>
- tabindex="${parameters.tabindex?html}"<#rt/>
+ tabindex="${parameters.tabindex}"<#rt/>
 </#if>
 <#include "/${parameters.templateDir}/simple/css.ftl" />
 <#if parameters.title??>
- title="${parameters.title?html}"<#rt/>
+ title="${parameters.title}"<#rt/>
 </#if>
 <#include "/${parameters.templateDir}/simple/scripting-events.ftl" />
 <#include "/${parameters.templateDir}/simple/common-attributes.ftl" />

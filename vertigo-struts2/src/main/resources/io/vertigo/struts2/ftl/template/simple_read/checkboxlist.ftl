@@ -9,10 +9,10 @@
 		<#assign itemCount = itemCount + 1/>
 <span<#rt/>
 		<#if parameters.id??>
- id="${parameters.id?html}-${itemCount?html}"<#rt/>
+ id="${parameters.id}-${itemCount}"<#rt/>
 		</#if>
 		<#if parameters.title??>
- title="${parameters.title?html}"<#rt/>
+ title="${parameters.title}"<#rt/>
 		</#if>
 		<#assign previousCssClass = appendedCssClass!''/>
 		<#assign appendedCssClass = previousCssClass +' checkbox-checked'/>
@@ -24,16 +24,18 @@
 		><#t/>
 		<#if selectedValue?? && selectedValue!='' >
 			<#if parameters.list.getById??>
-				<#assign paramListKey = parameters.listKey!util.getIdField(parameters.list) />
-				<#assign paramListValue = parameters.listValue!util.getDisplayField(parameters.list) />
-				<#assign uiObject = parameters.list.getById(parameters.listKey, selectedValue) />
+				<#assign paramListKey = (parameters.listKey != 'top' && parameters.listKey != 'key')?then(parameters.listKey, util.getIdField(parameters.list)) />
+				<#assign paramListValue = (parameters.listValue != 'top')?then(parameters.listValue, util.getDisplayField(parameters.list)) />
+				<#if (parameters.listKey != 'top' && parameters.listKey != 'key') >
+					<#assign uiObject = parameters.list.getById(parameters.listKey, selectedValue) />
+				</#if>
 				<#if uiObject??>
-				 ${uiObject.get(parameters.listValue)?html?replace("\n", "<br/>")}<#t/>
+				 ${uiObject.get(parameters.listValue)?replace("\n", "<br/>")}<#t/>
 				</#if>
 			<#else> <#-- si pas de getById : liste ou map brute -->
 				<#list parameters.list as entry>
 					<#if entry.key = selectedValue>
-					 ${entry.value?html?replace("\n", "<br/>")}<#t/>
+					 ${entry.value?replace("\n", "<br/>")}<#t/>
 					</#if>
 				</#list>
 			</#if>

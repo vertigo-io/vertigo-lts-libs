@@ -25,6 +25,7 @@ import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.param.ParamValue;
 import io.vertigo.datamodel.criteria.Criteria;
+import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.definitions.DtField;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -45,7 +46,7 @@ public final class StaticStorePlugin extends AbstractStaticEntityStorePlugin imp
 	private final String values;
 	private final String dtDefinitionName;
 
-	private String dataSpace;
+	private final String dataSpace;
 	private DtDefinition staticDtDefinition;
 	private DtField idField;
 	private DtField displayField;
@@ -57,7 +58,7 @@ public final class StaticStorePlugin extends AbstractStaticEntityStorePlugin imp
 	 * @param dtDefinitionName Definition of element
 	 */
 	@Inject
-	public StaticStorePlugin(@ParamValue("values") final String values, @ParamValue("dtDefinitionName") final String dtDefinitionName) {
+	public StaticStorePlugin(@ParamValue("values") final String values, @ParamValue("dtDefinitionName") final String dtDefinitionName, @ParamValue("dataSpace") final String dataSpace) {
 		super();
 		Assertion.check()
 				.isNotNull(dtDefinitionName)
@@ -66,6 +67,7 @@ public final class StaticStorePlugin extends AbstractStaticEntityStorePlugin imp
 		//----
 		this.dtDefinitionName = dtDefinitionName;
 		this.values = values;
+		this.dataSpace = dataSpace;
 	}
 
 	@Override
@@ -76,7 +78,8 @@ public final class StaticStorePlugin extends AbstractStaticEntityStorePlugin imp
 				.isTrue(staticDtDefinition.getDisplayField().isPresent(), "The Static MasterDataList {0} must have a DisplayField", staticDtDefinition.getClassSimpleName());
 		idField = staticDtDefinition.getIdField().get();
 		displayField = staticDtDefinition.getDisplayField().get();
-		dataSpace = staticDtDefinition.getDataSpace();
+		//trop tard pour récupèrer le dataSpace, il a déjà été référencé dans le LogicalEntityStoreConfig
+		//dataSpace = staticDtDefinition.getDataSpace();
 		//----
 		dtc = new DtList<>(staticDtDefinition);
 		final BasicType keyDataType = staticDtDefinition.getIdField().get().getSmartTypeDefinition().getBasicType();
@@ -151,9 +154,9 @@ public final class StaticStorePlugin extends AbstractStaticEntityStorePlugin imp
 				.isNotNull(dtDefinition)
 				.isNotNull(dtListState)
 				.isTrue(dtDefinition.equals(staticDtDefinition), "This store should be use for {0} only, not {1}", staticDtDefinition.getClassSimpleName(), dtDefinition.getClassSimpleName())
-				.isNull(criteria, "This store could only load all data, not {0}", criteria);
+				.isTrue(criteria == null || criteria == Criterions.alwaysTrue(), "This store could only load all data, not {0}", criteria);
 		//----
-		return (DtList<E>) dtc;
+		return (DtList) dtc;
 	}
 
 	/** {@inheritDoc} */

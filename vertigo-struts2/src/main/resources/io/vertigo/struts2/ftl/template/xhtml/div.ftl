@@ -9,10 +9,10 @@
 	<#include "/${parameters.templateDir}/xhtml/controlheader-trlogic.ftl" />
 		<td <#rt/>
 	<#if parameters.dynamicAttributes.get('colspan')??>
-	    colspan="${parameters.dynamicAttributes.get('colspan')?html}"<#t/>	    
+	    colspan="${parameters.dynamicAttributes.get('colspan')}"<#t/>	    
 	</#if>
 	<#if parameters.align??>
-	    align="${parameters.align?html}"<#t/>
+	    align="${parameters.align}"<#t/>
 	</#if>
 	><#lt/>
 	<#if controlLayout_tablecolspan?exists >
@@ -26,11 +26,11 @@
 	<#if parameters.dynamicAttributes.get('layout') = 'table' > 
 <#assign tablecolspan = parameters.dynamicAttributes.get('cols')?default(2)?number />
 <table class="grid table-${parameters.dynamicAttributes.get('cols')?default(2)}-col<#rt/>
-<#if parameters.cssClass??> ${parameters.cssClass?default('wwFormTable')?html}</#if>"<#rt/>
-<#if parameters.id??> id="${parameters.id?html}"</#if><#rt/>
-<#if parameters.name??> name="${parameters.name?html}"</#if><#rt/>
-<#if parameters.cssStyle??> style="${parameters.cssStyle?html}"</#if><#rt/>
-<#if parameters.title??> title="${parameters.title?html}"</#if><#rt/>
+<#if parameters.cssClass??> ${parameters.cssClass?default('wwFormTable')}</#if>"<#rt/>
+<#if parameters.id??> id="${parameters.id}"</#if><#rt/>
+<#if parameters.name??> name="${parameters.name}"</#if><#rt/>
+<#if parameters.cssStyle??> style="${parameters.cssStyle}"</#if><#rt/>
+<#if parameters.title??> title="${parameters.title}"</#if><#rt/>
 <#include "/${parameters.templateDir}/simple/scripting-events.ftl" />
 <#include "/${parameters.templateDir}/simple/common-attributes.ftl" />
 <#include "/${parameters.templateDir}/simple/dynamic-attributes.ftl" />
@@ -44,11 +44,11 @@ ${stack.setValue('#controlLayout_type', 'none')}<#t/>
 	</#if><#-- layout == 'table' -->
 <#else><#-- layout??--><#t/>
 <div<#rt/>
-<#if parameters.id??> id="${parameters.id?html}"</#if><#rt/>
-<#if parameters.name??> name="${parameters.name?html}"</#if><#rt/>
-<#if parameters.cssClass??> class="${parameters.cssClass?html}"</#if><#rt/>
-<#if parameters.cssStyle??> style="${parameters.cssStyle?html}"</#if><#rt/>
-<#if parameters.title??> title="${parameters.title?html}"</#if><#rt/>
+<#if parameters.id??> id="${parameters.id}"</#if><#rt/>
+<#if parameters.name??> name="${parameters.name}"</#if><#rt/>
+<#if parameters.cssClass??> class="${parameters.cssClass}"</#if><#rt/>
+<#if parameters.cssStyle??> style="${parameters.cssStyle}"</#if><#rt/>
+<#if parameters.title??> title="${parameters.title}"</#if><#rt/>
 <#include "/${parameters.templateDir}/simple/scripting-events.ftl" />
 <#include "/${parameters.templateDir}/simple/common-attributes.ftl" />
 <#include "/${parameters.templateDir}/simple/dynamic-attributes.ftl" />

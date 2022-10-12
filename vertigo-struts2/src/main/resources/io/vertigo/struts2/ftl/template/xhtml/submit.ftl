@@ -13,7 +13,7 @@
 	    colspan="${submitcolspan}" <#t/>	    
 	<#t/></#if>
 	<#if parameters.align??><#t/>
-	    align="${parameters.align?html}"<#t/>
+	    align="${parameters.align}"<#t/>
 	<#t/></#if>
 	><#t/>
 	<#if controlLayout_tablecolspan?exists >

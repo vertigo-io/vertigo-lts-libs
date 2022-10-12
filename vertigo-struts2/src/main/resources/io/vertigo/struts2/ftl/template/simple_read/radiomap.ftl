@@ -6,11 +6,11 @@
 
 <span<#t/>
 <#if parameters.id??>
- id="${parameters.id?html}"<#rt/>
+ id="${parameters.id}"<#rt/>
 </#if>
 <#include "/${parameters.templateDir}/simple/css.ftl" />
 <#if parameters.title??>
- title="${parameters.title?html}"<#rt/>
+ title="${parameters.title}"<#rt/>
 </#if>
 <#include "/${parameters.templateDir}/simple/css.ftl" />
 <#include "/${parameters.templateDir}/simple/scripting-events.ftl" />
@@ -18,20 +18,20 @@
 <#include "/${parameters.templateDir}/simple/dynamic-attributes.ftl" />
 ><#t/>
 <#if parameters.headerKey?? && parameters.headerValue?? && tag.contains(parameters.nameValue, parameters.headerKey) == true>
- ${parameters.headerValue?html}<#t/>
+ ${parameters.headerValue}<#t/>
 <#else>
 <#if parameters.nameValue?? && parameters.nameValue!='' >
 <#if parameters.list.getById??>
-<#assign paramListKey = parameters.listKey!util.getIdField(parameters.list) />
-<#assign paramListValue = parameters.listValue!util.getDisplayField(parameters.list) />
+<#assign paramListKey = (parameters.listKey != 'top' && parameters.listKey != 'key')?then(parameters.listKey, util.getIdField(parameters.list)) />
+<#assign paramListValue = (parameters.listValue != 'top' && parameters.listValue != 'value')?then(parameters.listValue, util.getDisplayField(parameters.list)) />
 <#assign uiObject = parameters.list.getById(paramListKey, parameters.nameValue) />
 <#if uiObject??>
- ${uiObject.get(paramListValue)?html?replace("\n", "<br/>")}<#t/>
+ ${uiObject.get(paramListValue)?replace("\n", "<br/>")}<#t/>
 </#if>
 <#else><#-- si pas de getById : liste ou map brute -->
 <#list parameters.list as entry>
 <#if entry.key = parameters.nameValue>
- ${entry.value?html?replace("\n", "<br/>")}<#t/>
+ ${entry.value?replace("\n", "<br/>")}<#t/>
 </#if>
 </#list>
 </#if>
