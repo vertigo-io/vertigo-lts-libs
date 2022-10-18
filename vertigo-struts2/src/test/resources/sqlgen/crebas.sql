@@ -94,6 +94,7 @@ create table MOVIE
     RUNTIME     	 NUMERIC     	,
     TITLE       	 VARCHAR(250)	,
     YEAR        	 NUMERIC     	,
+    VFF              BOOLEAN        ,
     constraint PK_MOVIE primary key (MOV_ID)
 );
 

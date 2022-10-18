@@ -20,6 +20,16 @@
 	</v:div>
 </s:form>
 
+<s:form id="simpleForm">
+<h1>Test simpleForm</h1>
+    <v:div layout="table">
+        <s:textfield name="movie.title" label="default" />
+        <s:textfield name="movie.year" label="default" />
+        <s:checkbox name="movie.vff" label="default" />
+        <s:submit action="saveAccueil" />
+    </v:div>
+</s:form>
+
 <s:form  id="displayTable">
 <h1>Test display:table sur ContextList</h1>
 <display:table name="movies" class="tableau" uid="item" export="false" requestURI="#" pagesize="20" defaultsort="0">
@@ -47,6 +57,20 @@
 		<s:radio name="casting.movId" label="default" list="movies" listKey="movId" listValue="title"/>
 		<s:submit action="saveCastingAccueil" />
 	</v:div>
+</s:form>
+<s:form id="radioBoolInlineList">
+<h1>Test boolean radio sur List Inline (dans jsp)</h1>
+    <v:div layout="table">
+        <s:radio name="movie.vff" label="default" list="#{'true':'Oui','false':'Non'}"/>
+        <s:submit action="saveAccueil" />
+    </v:div>
+</s:form>
+<s:form id="radioBoolContextList">
+<h1>Test boolean radio sur ContextList</h1>
+    <v:div layout="table">
+        <s:radio name="movie.vff" label="default" list="ouiNon" listKey="key" listValue="libelle"/>
+        <s:submit action="saveAccueil" />
+    </v:div>
 </s:form>
 <s:form id="selectContextMdl">
 <h1>Test select sur ContextMdl</h1>

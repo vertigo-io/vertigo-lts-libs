@@ -18,6 +18,7 @@
 package io.vertigo.datafactory.plugins.search.elasticsearch_5_6;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -140,7 +141,7 @@ final class ESDocumentCodec {
 		try (final XContentBuilder xContentBuilder = XContentFactory.jsonBuilder()) {
 			xContentBuilder.startObject()
 					.field(FULL_RESULT, result)
-					.field(DOC_ID, index.getUID().getId());
+					.field(DOC_ID, Serializable.class.cast(index.getUID().getId()));
 
 			/* 3 : Les champs du dto index */
 			final DtObject dtIndex = index.getIndexDtObject();

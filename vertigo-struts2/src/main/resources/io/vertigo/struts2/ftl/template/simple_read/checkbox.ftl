@@ -7,7 +7,7 @@
 
 <span<#t/>
 <#if parameters.id??>
- id="${parameters.id?html}"<#rt/>
+ id="${parameters.id}"<#rt/>
 </#if>
 <#if parameters.nameValue?? && parameters.nameValue>
  class="checkbox-checked<#rt/>
@@ -15,12 +15,12 @@
  class="checkbox-unchecked<#rt/>
 </#if>
 <#if parameters.cssClass?? >
- ${parameters.cssClass?html}<#rt/>
+ ${parameters.cssClass}<#rt/>
 </#if>
 "><#rt/>
 <#assign itemValue = stack.findValue(parameters.name)?default('')/>
 <#if itemValue?is_enumerable && parameters.fieldValue?? >
-	${util.formatBoolean(parameters.name,itemValue?seq_contains(parameters.fieldValue?html)!false)}<#t/>	
+	${util.formatBoolean(parameters.name,itemValue?seq_contains(parameters.fieldValue)!false)}<#t/>	
 <#else>
 	${util.formatBoolean(parameters.name,parameters.nameValue!false)}<#t/>
 </#if>

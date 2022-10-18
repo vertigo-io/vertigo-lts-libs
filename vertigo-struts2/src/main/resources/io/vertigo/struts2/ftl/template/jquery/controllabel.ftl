@@ -8,16 +8,16 @@
 <#assign hasFieldErrors = parameters.name?? && fieldErrors?? && fieldErrors.get(fieldName)??/>
 <label <#t/>
 <#if parameters.id??>
-	for="${parameters.id?html}" <#t/>
+	for="${parameters.id}" <#t/>
 </#if>
 <#if hasFieldErrors>
 	class="errorLabel" <#t/>
 </#if>
 ><#t/>
 <#if parameters.label = "default">    
-	${util.label(fieldName)?html}<#t/>
+	${util.label(fieldName)}<#t/>
 <#else>
-	${parameters.label?html}<#t/>
+	${parameters.label}<#t/>
 </#if>
 <#if parameters.required??>
 	<#if parameters.required>

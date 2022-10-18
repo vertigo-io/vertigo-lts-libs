@@ -22,6 +22,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.struts2.data.domain.movies.Movie;
 import io.vertigo.struts2.data.domain.movies.MovieDisplay;
+import io.vertigo.struts2.data.domain.reference.OuiNonChoice;
 
 public interface MovieServices extends Component {
 
@@ -32,4 +33,6 @@ public interface MovieServices extends Component {
 	Movie get(Long movId);
 
 	DtList<MovieDisplay> getMoviesDisplay(DtListState dtListState);
+
+	DtList<OuiNonChoice> getOuiNonChoice();
 }

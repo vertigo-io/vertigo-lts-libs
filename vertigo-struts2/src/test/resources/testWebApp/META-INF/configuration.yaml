@@ -38,6 +38,7 @@ modules:
       - io.vertigo.struts2.services.util.StaticStorePlugin:
           values: "true=Oui;false=Non"
           dtDefinitionName: DtOuiNonChoice
+          dataSpace: ouiNon
       - io.vertigo.struts2.services.util.CommuneStorePlugin: {}
   io.vertigo.datafactory.DataFactoryFeatures:
     featuresConfig:
