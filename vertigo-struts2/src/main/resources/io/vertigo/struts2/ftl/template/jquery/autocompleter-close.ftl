@@ -5,7 +5,7 @@
 <#if parameters.parentTheme = 'xhtml_read'>
    <#-- rien -->
 <#else>
-<#assign escapedOptionId="${parameters.id?string?replace('.', '_')}">
+<#assign escapedOptionId="${parameters.escapedId}">
 <script type='text/javascript'>
 jQuery(document).ready(function () {
   <#if parameters.valueWidget?if_exists != "">
@@ -19,7 +19,7 @@ jQuery(document).ready(function () {
 	options_${escapedOptionId}.delay = ${parameters.delay};
   </#if>
   <#if parameters.loadMinimumCount??>
-	options_${escapedOptionId}.minimum = ${parameters.loadMinimumCount};
+	options_${escapedOptionId}.minLength = ${parameters.loadMinimumCount};
   </#if>
   <#if parameters.autoFocus?default(false) >
 	options_${escapedOptionId}.autoFocus = true;
@@ -46,6 +46,9 @@ jQuery(document).ready(function () {
   <#if parameters.onSelectTopics?exists>
 	options_${escapedOptionId}.onselecttopics = "${parameters.onSelectTopics}";
   </#if>
+  <#if parameters.requestType?exists>
+	options_${escapedOptionId}.requesttype = "${parameters.requestType}";
+  </#if>
   <#if parameters.list?? && !parameters.listKey?? && !parameters.selectBox?? &&  !parameters.hrefUrl??>
 	options_${escapedOptionId}.list = new Array();
 <@s.iterator value="parameters.list">
@@ -70,7 +73,7 @@ jQuery(document).ready(function () {
 		&listValue=${parameters.remoteListValue}<#t/>
 	</#if>
 	&CTX=${CTX}";<#lt/>
-	<#-- 
+	<#-- Must be removed when hrefparameter is used
 	options_${escapedOptionId}.list = "${parameters.remoteList}";
 	-->
 	<#if parameters.remoteListKey??>

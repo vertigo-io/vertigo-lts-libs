@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-core</artifactId>
-			<version>6.0.3</version>
+			<version>6.1.1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>javassist</groupId>
@@ -64,14 +64,14 @@
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-spring-plugin</artifactId>
-			<version>6.0.3</version>
+			<version>6.1.1</version>
 		</dependency>
 
 		<!-- Struts 2 Ajax -->
 		<dependency>
 			<groupId>com.jgeppert.struts2.jquery</groupId>
 			<artifactId>struts2-jquery-plugin</artifactId>
-			<version>5.0.0</version>
+			<version>5.0.1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.struts</groupId>
@@ -97,37 +97,37 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>apache-jsp</artifactId>
-			<version>9.4.49.v20220914</version>
+			<version>9.4.50.v20221201</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>apache-jsp</artifactId>
-			<version>9.4.49.v20220914</version>
+			<version>9.4.50.v20221201</version>
 			<scope>compile</scope> <!-- uses for DivTag compilation -->
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>apache-jstl</artifactId>
-			<version>9.4.49.v20220914</version>
+			<version>9.4.50.v20221201</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-plus</artifactId>
-			<version>9.4.49.v20220914</version>
+			<version>9.4.50.v20221201</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty.websocket</groupId>
 			<artifactId>websocket-client</artifactId>
-			<version>9.4.49.v20220914</version>
+			<version>9.4.50.v20221201</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-annotations</artifactId>
-			<version>9.4.49.v20220914</version>
+			<version>9.4.50.v20221201</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -183,19 +183,19 @@
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-support</artifactId>
-			<version>4.4.0</version>
+			<version>4.7.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-api</artifactId>
-			<version>4.4.0</version>
+			<version>4.7.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 		    <groupId>org.seleniumhq.selenium</groupId>
 		    <artifactId>htmlunit-driver</artifactId>
-		    <version>3.64.0</version>
+		    <version>4.7.2</version>
 			<scope>test</scope>
 		</dependency>
 		
