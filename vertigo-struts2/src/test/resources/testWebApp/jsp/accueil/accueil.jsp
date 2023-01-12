@@ -30,13 +30,6 @@
     </v:div>
 </s:form>
 
-<s:form  id="displayTable">
-<h1>Test display:table sur ContextList</h1>
-<display:table name="movies" class="tableau" uid="item" export="false" requestURI="#" pagesize="20" defaultsort="0">
-	<display:column property="title" title="Jour" sortable="true" />
-	<display:column property="year" title="year" sortable="true"/>
-</display:table>
-</s:form>
 <s:form id="selectContextList">
 <h1>Test select sur ContextList</h1>
 	<v:div layout="table">
@@ -100,6 +93,15 @@
 		<s:submit action="saveCommuneAccueil" />
 	</v:div>
 </s:form>
+
+<s:form  id="displayTable">
+<h1>Test display:table sur ContextList</h1>
+<display:table name="movies" class="tableau" uid="item" export="false" requestURI="#" pagesize="20" defaultsort="0">
+    <display:column property="title" title="Jour" sortable="true" />
+    <display:column property="year" title="year" sortable="true"/>
+</display:table>
+</s:form>
+
 <s:form id="displayTableContextListModifiable">
 <h1>Test display:table sur ContextListModifiable</h1>
 <display:table name="moviesModifiable" class="tableau" uid="item" export="false" requestURI="#" pagesize="20" defaultsort="0">
