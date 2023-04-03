@@ -24,7 +24,6 @@
 
 	<modules>
 		<module>vertigo-datafactory-plugin-elasticsearch_5_6</module>
-		<module>vertigo-struts2</module>
 		<module>vertigo-account-plugin-authorization-basic</module>
 	</modules>
 
