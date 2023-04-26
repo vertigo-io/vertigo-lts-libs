@@ -112,8 +112,8 @@ public final class VSecurityManagerTest {
 
 	@Test
 	public void testNoUserSession() {
-		final Optional<UserSession> userSession = securityManager.getCurrentUserSession();
-		assertFalse(userSession.isPresent());
+		final Optional<UserSession> userSessionFromManager = securityManager.getCurrentUserSession();
+		assertFalse(userSessionFromManager.isPresent());
 	}
 
 	@Test
