@@ -105,9 +105,7 @@
         </#if>
     >${itemValue}</option><#lt/>
 </@s.iterator>
-
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/optgroup.ftl" />
-
 </select><#t/>
 <#if parameters.multiple!false>
 <input type="hidden" id="__multiselect_${parameters.id}" name="__multiselect_${parameters.name}" value=""<#rt/>
