@@ -200,4 +200,24 @@
 		</dependency>
 		
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<compilerArgs>
+						<arg>-Auri=/vertigo-tags</arg>
+						<arg>-AtlibVersion=3.6</arg>
+						<arg>-AjspVersion=2.0</arg>
+						<arg>-AshortName=v</arg>
+						<arg>-AdisplayName=Vertigo Tags</arg>
+						<arg>-AoutFile=${basedir}/target/classes/META-INF/vertigo-tags.tld</arg>
+						<arg>-Adescription="Additional tags for vertigo struts2 based UI."</arg>
+						<arg>-AoutTemplatesDir=${basedir}/src/site/resources/tags</arg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

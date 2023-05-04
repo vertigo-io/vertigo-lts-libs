@@ -8,7 +8,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
                                     to ensure that input is correct and output is localized.
                                     The Struts Tags can be used with JSP FreeMarker or Velocity."]]></description>
   <display-name>Vertigo Tags</display-name>
-  <tlib-version>3.4</tlib-version>
+  <tlib-version>3.6</tlib-version>
   <short-name>v</short-name>
   <uri>/vertigo-tags</uri>
   <tag>
