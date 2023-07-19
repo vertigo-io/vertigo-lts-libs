@@ -103,6 +103,10 @@
 		</action>
 
 		<action name="*Accueil" class="io.vertigo.struts2.ui.controller.accueil.AccueilAction" method="{1}">
+            <result name="none">/jsp/accueil/accueil.jsp</result>
+        </action>
+        <action name="*Accueil-*" class="io.vertigo.struts2.ui.controller.accueil.AccueilAction" method="{1}">
+       		<param name="rowindex">{2}</param>
 			<result name="none">/jsp/accueil/accueil.jsp</result>
 		</action>
 

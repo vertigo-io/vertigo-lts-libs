@@ -111,6 +111,13 @@
 	<display:column title="Année" >
 		<s:textfield name="%{util.contextKey(#attr.itemModifiable)}.year" theme="simple" />
 	</display:column>
+	<display:column>
+                <s:submit
+                    action="deleteMovieListAccueil-%{util.indexOf(moviesModifiable, #attr.itemModifiable)}"
+                    value="Supprimer" />
+            </display:column>
+
+
 </display:table>
 <s:submit action="saveListAccueil" />
 <s:submit action="addMovieListAccueil" value="Ajouter"/>

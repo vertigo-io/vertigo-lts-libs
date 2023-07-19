@@ -28,6 +28,7 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import io.vertigo.account.security.VSecurityManager;
+import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.datamodel.structure.model.DtListState;
@@ -134,6 +135,24 @@ public class AccueilAction extends AbstractTestActionSupport {
 
 	public String addMovieList() {
 		movieListModifiables.getUiListModifiable().add(new Movie());
+		return NONE;
+	}
+
+	/**
+	 * Fournit l'index de l'entité associée à l'action.
+	 * @return Valeur du paramètre rowIndex.
+	 */
+	protected final int getRowIndex() {
+		final String rowIndexAsString = getModel().getString("rowindex");
+		Assertion.check().isNotNull(rowIndexAsString, "Le rowIndex n'existe pas.\n"
+				+ "1- Dans votre jsp le submit doit avoir pour action : methodAction%\\{util.indexOf(contextList, #iteratorVar)\\}\n"
+				+ "2- Dans le struts.xml mapper le suffix de l'action comme paramètre rowindex : <action name=\"*UtilisateurDetail*\" ... <param name=\"rowindex\">\\{2\\}</param> ... </action>");
+		return Integer.parseInt(rowIndexAsString);
+	}
+
+	public String deleteMovieList() {
+		final int index = getRowIndex();
+		movieListModifiables.getUiListModifiable().remove(index);
 		return NONE;
 	}
 
