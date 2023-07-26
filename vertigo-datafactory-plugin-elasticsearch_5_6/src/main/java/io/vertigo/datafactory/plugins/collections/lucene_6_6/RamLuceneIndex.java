@@ -30,10 +30,11 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.SortedDocValuesField;
-import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -73,6 +74,21 @@ import io.vertigo.datastore.entitystore.EntityStoreManager;
  * @param <D> Type d'objet
  */
 final class RamLuceneIndex<D extends DtObject> {
+	private static final FieldType KEYWORD_TYPE_STORED = new FieldType();
+	private static final FieldType KEYWORD_TYPE_NOT_STORED = new FieldType();
+
+	static {
+		KEYWORD_TYPE_STORED.setOmitNorms(true);
+		KEYWORD_TYPE_STORED.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+		KEYWORD_TYPE_STORED.setStored(true);
+		KEYWORD_TYPE_STORED.setTokenized(false);
+		KEYWORD_TYPE_STORED.freeze();
+
+		KEYWORD_TYPE_NOT_STORED.setOmitNorms(true);
+		KEYWORD_TYPE_NOT_STORED.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+		KEYWORD_TYPE_NOT_STORED.setTokenized(false);
+		KEYWORD_TYPE_NOT_STORED.freeze();
+	}
 
 	//DtDefinition est non serializable
 	private final DtDefinition dtDefinition;
@@ -276,7 +292,7 @@ final class RamLuceneIndex<D extends DtObject> {
 			final String fieldName,
 			final String fieldValue,
 			final boolean storeValue) {
-		final IndexableField keywordField = new StringField(fieldName, fieldValue, storeValue ? Field.Store.YES : Field.Store.NO);
+		final IndexableField keywordField = new Field(fieldName, fieldValue, storeValue ? KEYWORD_TYPE_STORED : KEYWORD_TYPE_NOT_STORED);
 		final IndexableField sortedDocValuesField = new SortedDocValuesField(fieldName, new BytesRef(fieldValue));
 		document.add(keywordField);
 		document.add(sortedDocValuesField);
