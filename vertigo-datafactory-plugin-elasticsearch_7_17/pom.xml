@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.vertigo</groupId>
+		<artifactId>vertigo-lts-extensions</artifactId>
+		<version>4.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>vertigo-datafactory-plugin-elasticsearch_7_17</artifactId>
+	<packaging>jar</packaging>
+	<name>vertigo-datafactory-plugin-elasticsearch_7_17</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-datafactory</artifactId>
+			<version>${vertigo.version}</version>
+		</dependency>
+		
+		<!--  tests -->
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-datafactory</artifactId>
+			<version>${vertigo.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>2.2.220</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>8.11.1</version><!-- 8.11.1 compatible with ElasticSearch 7.17.12 -->
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>8.11.1</version><!-- 8.11.1 compatible with ElasticSearch 7.17.12 -->
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>8.11.1</version><!-- 8.11.1 compatible with ElasticSearch 7.17.12 -->
+			<optional>true</optional>
+		</dependency>
+
+	<!-- Search -->
+	    <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>7.17.12</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+            </exclusions>           
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>transport</artifactId>
+            <version>7.17.12</version>
+            <optional>true</optional> <!-- TransportSearchServicesPlugin -->
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>7.17.12</version>
+            <optional>true</optional> <!-- RestHighLevelElasticSearchConnector -->
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>x-pack-transport</artifactId>
+            <version>7.17.12</version>
+            <optional>true</optional> <!-- SecuredTransportSearchConnector -->
+        </dependency>
+        <dependency>
+            <groupId>org.codelibs.elasticsearch.module</groupId>
+            <artifactId>analysis-common</artifactId> 
+            <version>7.17.9</version> <!-- required by EmbeddedSearchServicesPlugin -->
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.codelibs.elasticsearch.module</groupId>
+            <artifactId>mapper-extras</artifactId>
+            <version>7.17.9</version> <!-- required by ESEmbeddedSearchServicesPlugin -->
+            <optional>true</optional>
+        </dependency>
+	    
+		<!-- Connections Pool -->
+		<dependency>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.5.5</version>
+			<optional>true</optional><!-- C3p0DataSourceProviderPlugin -->
+		</dependency>
+	</dependencies>
+</project>
