@@ -453,6 +453,10 @@ public abstract class AbstractESSearchServicesPlugin implements SearchServicesPl
 				default:
 					break;
 			}
+		} catch (final InterruptedException e) {
+			healthMeasureBuilder.withRedStatus(e.getMessage());
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
 		} catch (final Exception e) {
 			healthMeasureBuilder.withRedStatus(e.getMessage());
 		}

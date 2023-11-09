@@ -365,8 +365,8 @@ public class SearchManagerStoreTest {
 		item.setModel("Martin");
 		item.setItemYear(1978);
 		item.setKilo(1500);
-		final BigDecimal conso = new BigDecimal(7.6);
-		conso.setScale(2, RoundingMode.HALF_UP);
+		final BigDecimal conso = BigDecimal.valueOf(7.6)
+				.setScale(2, RoundingMode.HALF_UP);
 		item.setConsommation(conso);
 		item.setMotorType("essence");
 		item.setDescription("Voiture de légende assurant une reindexation dès son insertion");
@@ -440,7 +440,7 @@ public class SearchManagerStoreTest {
 		Assertions.assertEquals(expectedCount, size);
 	}
 
-	private class SqlConnectionCloseable implements AutoCloseable {
+	private static class SqlConnectionCloseable implements AutoCloseable {
 		private final SqlConnection connection;
 
 		SqlConnectionCloseable(final SqlManager dataBaseManager) {
