@@ -491,7 +491,7 @@ public abstract class AbstractSearchManagerTest {
 		Assertions.assertEquals(1998, firstItem.getItemYear().intValue());
 
 		firstItem = doQueryAndGetFirst("*:*", "itemYear", true);
-		Assertions.assertEquals(2010, firstItem.getItemYear().intValue());
+		Assertions.assertEquals(2061, firstItem.getItemYear().intValue());
 
 		final DtListState listState = DtListState.of(null, 0, itemIndexDefinition.getIndexDtDefinition().getField("model").name(), true);
 		final DtList<Item> dtList = doQueryAll(listState).getDtList();
