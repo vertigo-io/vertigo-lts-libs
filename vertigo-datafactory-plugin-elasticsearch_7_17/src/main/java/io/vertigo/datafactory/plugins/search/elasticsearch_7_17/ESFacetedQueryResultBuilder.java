@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.lucene.search.TotalHits;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.search.SearchHit;
@@ -116,10 +117,12 @@ public final class ESFacetedQueryResultBuilder<I extends DtObject> implements Bu
 		}
 		//On fabrique à la volée le résultat.
 		final List<Facet> facets = createFacetList(searchQuery, queryResponse);
-		final long count = queryResponse.getHits().getTotalHits().value;
+		final TotalHits count = queryResponse.getHits().getTotalHits();
+		Assertion.check().isNotNull(count, "Can't retreive totalHits : check request");
+
 		return new FacetedQueryResult<>(
 				searchQuery.getFacetedQuery(),
-				count,
+				count.value,
 				dtc,
 				facets,
 				searchQuery.isClusteringFacet() ? Optional.of(searchQuery.getClusteringFacetDefinition()) : Optional.empty(),

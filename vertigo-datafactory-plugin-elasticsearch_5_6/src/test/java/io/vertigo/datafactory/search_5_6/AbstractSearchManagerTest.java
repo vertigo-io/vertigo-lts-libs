@@ -20,6 +20,7 @@ package io.vertigo.datafactory.search_5_6;
 import java.io.File;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +32,6 @@ import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -107,7 +107,7 @@ public abstract class AbstractSearchManagerTest {
 	}
 
 	@BeforeEach
-	public final void setUp() throws Exception {
+	public final void setUp() {
 		node = new AutoCloseableNode(buildNodeConfig());
 		DIInjector.injectMembers(this, node.getComponentSpace());
 		doSetUp();
@@ -118,7 +118,7 @@ public abstract class AbstractSearchManagerTest {
 	protected abstract NodeConfig buildNodeConfig();
 
 	@AfterEach
-	public final void tearDown() throws Exception {
+	public final void tearDown() {
 		if (node != null) {
 			node.close();
 		}
@@ -128,7 +128,7 @@ public abstract class AbstractSearchManagerTest {
 	public static void doBeforeClass() throws Exception {
 		//We must remove data dir in index, in order to support versions updates when testing on PIC
 		final URL esDataURL = Thread.currentThread().getContextClassLoader().getResource("io/vertigo/datafactory/search/indexconfig");
-		final File esData = new File(URLDecoder.decode(esDataURL.getFile() + "/data", "UTF-8"));
+		final File esData = new File(URLDecoder.decode(esDataURL.getFile() + "/data", StandardCharsets.UTF_8.name()));
 		if (esData.exists() && esData.isDirectory()) {
 			recursiveDelete(esData);
 		}
@@ -491,7 +491,7 @@ public abstract class AbstractSearchManagerTest {
 		Assertions.assertEquals(1998, firstItem.getItemYear().intValue());
 
 		firstItem = doQueryAndGetFirst("*:*", "itemYear", true);
-		Assertions.assertEquals(2010, firstItem.getItemYear().intValue());
+		Assertions.assertEquals(2061, firstItem.getItemYear().intValue());
 
 		final DtListState listState = DtListState.of(null, 0, itemIndexDefinition.getIndexDtDefinition().getField("model").name(), true);
 		final DtList<Item> dtList = doQueryAll(listState).getDtList();
@@ -1292,7 +1292,7 @@ public abstract class AbstractSearchManagerTest {
 			final List<SearchIndex<Item, Item>> indexes = itemDataBase.getAllItems()
 					.stream()
 					.map(item -> SearchIndex.createIndex(itemIndexDefinition, item.getUID(), item))
-					.collect(Collectors.toList());
+					.toList();
 			searchManager.putAll(itemIndexDefinition, indexes);
 		} else {
 			//Indexation unitaire

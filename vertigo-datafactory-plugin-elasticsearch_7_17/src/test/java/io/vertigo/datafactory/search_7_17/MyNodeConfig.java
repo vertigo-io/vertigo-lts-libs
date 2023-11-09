@@ -47,13 +47,13 @@ public final class MyNodeConfig {
 
 		final ElasticSearchFeatures elasticSearchFeatures = new ElasticSearchFeatures()
 				.withEmbeddedServer(
-						Param.of("home", "io/vertigo/datafactory/search/indexconfig"));
+						Param.of("home", "io/vertigo/datafactory/search_7_17/indexconfig"));
 		if (esHL) {
 			elasticSearchFeatures.withRestHL(
 					Param.of("servers.names", "localhost:9200"));
 
 			dataFactoryFeatures.addPlugin(RestHLClientESSearchServicesPlugin.class,
-					Param.of("config.file", "io/vertigo/datafactory/search/indexconfig/elasticsearch.yml"),
+					Param.of("config.file", "io/vertigo/datafactory/search_7_17/indexconfig/elasticsearch.yml"),
 					Param.of("envIndexPrefix", "TuTest"),
 					Param.of("rowsPerQuery", "50"));
 		} else {
@@ -62,7 +62,7 @@ public final class MyNodeConfig {
 					Param.of("cluster.name", EmbeddedElasticSearchServer.DEFAULT_VERTIGO_ES_CLUSTER_NAME));
 
 			dataFactoryFeatures.addPlugin(ClientESSearchServicesPlugin.class,
-					Param.of("config.file", "io/vertigo/datafactory/search/indexconfig/elasticsearch.yml"),
+					Param.of("config.file", "io/vertigo/datafactory/search_7_17/indexconfig/elasticsearch.yml"),
 					Param.of("envIndexPrefix", "TuTest"),
 					Param.of("rowsPerQuery", "50"));
 		}

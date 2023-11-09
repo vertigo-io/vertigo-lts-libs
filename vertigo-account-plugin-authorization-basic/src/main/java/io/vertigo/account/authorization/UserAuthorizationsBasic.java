@@ -38,7 +38,7 @@ import io.vertigo.core.node.definition.DefinitionId;
  */
 public final class UserAuthorizationsBasic implements Serializable {
 
-	private static final long serialVersionUID = -7924146007592711123L;
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * All authorizations list of this user (global and keyConcept)

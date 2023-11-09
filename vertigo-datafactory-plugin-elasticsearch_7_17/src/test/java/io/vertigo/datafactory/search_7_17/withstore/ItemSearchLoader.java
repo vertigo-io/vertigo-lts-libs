@@ -48,7 +48,7 @@ import io.vertigo.datamodel.task.model.Task;
  * SearchLoader of Item keyconcept, load uses StoreManager.
  * @author npiedeloup
  */
-public final class ItemSearchLoader extends AbstractSqlSearchLoader<Long, Item, Item> {
+public final class ItemSearchLoader extends AbstractSqlSearchLoader<Item, Item> {
 	private final SearchManager searchManager;
 	private final DefinitionSpace definitionSpace;
 

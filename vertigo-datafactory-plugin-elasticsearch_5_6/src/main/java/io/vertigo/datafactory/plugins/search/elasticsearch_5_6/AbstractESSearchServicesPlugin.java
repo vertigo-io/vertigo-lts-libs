@@ -19,6 +19,7 @@ package io.vertigo.datafactory.plugins.search.elasticsearch_5_6;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
@@ -63,6 +64,7 @@ import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.definitions.DtField;
+import io.vertigo.datamodel.structure.definitions.DtFieldName;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.KeyConcept;
@@ -303,6 +305,24 @@ public abstract class AbstractESSearchServicesPlugin implements SearchServicesPl
 		markToOptimize(obtainIndexName(indexDefinition));
 	}
 
+	/** {@inheritDoc} */
+	@Override
+	public void putMetaData(final SearchIndexDefinition indexDefinition, final String dataPath, final Serializable dataValue) {
+		throw new UnsupportedOperationException("This old plugin doesn't support this method.");
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Serializable getMetaData(final SearchIndexDefinition indexDefinition, final String dataPath) {
+		throw new UnsupportedOperationException("This old plugin doesn't support this method.");
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public <K extends KeyConcept> Map<UID<K>, Serializable> loadVersions(final SearchIndexDefinition indexDefinitions, final DtFieldName<K> versionFieldName, final ListFilter listFilter, final int maxElements) {
+		throw new UnsupportedOperationException("This old plugin doesn't support this method.");
+	}
+
 	private <S extends KeyConcept, I extends DtObject> ESStatement<S, I> createElasticStatement(final SearchIndexDefinition indexDefinition) {
 		Assertion.check()
 				.isTrue(indexSettingsValid,
@@ -453,6 +473,10 @@ public abstract class AbstractESSearchServicesPlugin implements SearchServicesPl
 				default:
 					break;
 			}
+		} catch (final InterruptedException e) {
+			healthMeasureBuilder.withRedStatus(e.getMessage());
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
 		} catch (final Exception e) {
 			healthMeasureBuilder.withRedStatus(e.getMessage());
 		}

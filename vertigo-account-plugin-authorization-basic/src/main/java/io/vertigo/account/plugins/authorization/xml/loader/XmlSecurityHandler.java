@@ -126,7 +126,7 @@ final class XmlSecurityHandler extends DefaultHandler {
 		final List<PermissionBasic> rolePermissions = myPermRefs.stream()
 				.map(permissionName -> permissions.computeIfAbsent(permissionName, p -> {
 					throw new VSystemException("Can't found {0} referenced by {1}", p, name);
-				})).collect(Collectors.toList());
+				})).toList();
 		return new RoleBasic(name, description, rolePermissions);
 	}
 
