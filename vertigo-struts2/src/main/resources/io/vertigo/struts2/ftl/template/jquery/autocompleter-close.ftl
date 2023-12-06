@@ -6,7 +6,7 @@
    <#-- rien -->
 <#else>
 <#assign escapedOptionId="${parameters.escapedId}">
-<script type='text/javascript'>
+<@s.script type='text/javascript'>
 jQuery(document).ready(function () {
   <#if parameters.valueWidget?if_exists != "">
 	jQuery("#${parameters.id}").val("${parameters.valueWidget}");
@@ -101,5 +101,5 @@ jQuery(document).ready(function () {
   <#assign escapedIconId="icon_${parameters.id?string?replace('.', '_')}">
   initAutocompleter('#${parameters.widgetid}', '#${escapedOptionId}', '#${escapedIconId}', ${parameters.loadMinimumCount!1});
  });
-</script>
+</@s.script>
 </#if>

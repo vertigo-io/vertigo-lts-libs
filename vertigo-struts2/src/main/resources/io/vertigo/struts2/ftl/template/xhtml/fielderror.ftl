@@ -12,7 +12,7 @@
     <#assign haveMatchedErrorField=false>
     
     <#if (fieldErrorFieldNames?size > 0 || eKeysSize>0) >
-    <script>
+    <@s.script>
     	function focusElementByName(eltName) {
     		var elt = document.getElementsByName(eltName)[0];
     		if (elt) { 
@@ -23,7 +23,7 @@
     			elt.focus();
     		}
     	}
-    </script>
+    </@s.script>
     </#if>
     
     <#if (fieldErrorFieldNames?size > 0) >
