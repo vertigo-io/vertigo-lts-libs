@@ -53,7 +53,7 @@ import io.vertigo.datafactory.collections.model.FacetedQueryResult;
 import io.vertigo.datafactory.collections.model.SelectedFacetValues;
 import io.vertigo.datamodel.DataModelFeatures;
 import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.DataStoreFeatures;
 
 /**
@@ -141,7 +141,7 @@ public class FacetManagerTest {
 		//On recherche la facette constructeur
 		final Facet manufacturerFacet = getFacetByName(result, "FctManufacturerCar");
 		//On vérifie que l'on est sur le champ Make
-		Assertions.assertEquals("manufacturer", manufacturerFacet.getDefinition().getDtField().name());
+		Assertions.assertEquals("manufacturer", manufacturerFacet.getDefinition().getDataField().name());
 		Assertions.assertFalse(manufacturerFacet.getDefinition().isRangeFacet());
 
 		//On vérifie qu'il existe une valeur pour peugeot et que le nombre d'occurrences est correct

@@ -50,12 +50,12 @@ import io.vertigo.datafactory.plugins.collections.lucene_8_11.LuceneIndexPlugin;
 import io.vertigo.datamodel.DataModelFeatures;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.definitions.DataDefinition;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.util.DataModelUtil;
+import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.datastore.DataStoreFeatures;
 
 /**
@@ -66,8 +66,8 @@ public class CollectionsManagerTest {
 	private static final String Ba_aa = "Ba aa";
 	private static final String aaa_ba = "aaa ba";
 	private static final String bb_aa = "bb aa";
-	private DtDefinition dtDefinitionItem;
-	private DtDefinition dtDefinitionItemCd;
+	private DataDefinition dtDefinitionItem;
+	private DataDefinition dtDefinitionItemCd;
 	@Inject
 	private CollectionsManager collectionsManager;
 	private AutoCloseableNode node;
@@ -77,8 +77,8 @@ public class CollectionsManagerTest {
 		node = new AutoCloseableNode(buildNodeConfig());
 		DIInjector.injectMembers(this, node.getComponentSpace());
 		//---
-		dtDefinitionItem = DtObjectUtil.findDtDefinition(SmartItem.class);
-		dtDefinitionItemCd = DtObjectUtil.findDtDefinition(SmartItemCd.class);
+		dtDefinitionItem = DataModelUtil.findDataDefinition(SmartItem.class);
+		dtDefinitionItemCd = DataModelUtil.findDataDefinition(SmartItemCd.class);
 	}
 
 	@AfterEach
@@ -153,8 +153,8 @@ public class CollectionsManagerTest {
 				.build()
 				.apply(createItemsCd());
 		Assertions.assertEquals(3, result.size());*/
-		//final List<DtField> fields = Collections.singletonList(dtDefinitionItemCd.getFields().get(1));
-		final List<DtField> fields = dtDefinitionItemCd.getFields();
+		//final List<DataField> fields = Collections.singletonList(dtDefinitionItemCd.getFields().get(1));
+		final List<DataField> fields = dtDefinitionItemCd.getFields();
 		final DtList<SmartItemCd> result2 = collectionsManager.<SmartItemCd> createIndexDtListFunctionBuilder()
 				.filter("B", 1000, fields)
 				.build()
@@ -175,7 +175,7 @@ public class CollectionsManagerTest {
 	@Test
 	public void testFilterFullTextTokenizer() {
 		final DtList<SmartItem> dtc = createItems();
-		final Collection<DtField> searchedDtFields = dtDefinitionItem.getFields();
+		final Collection<DataField> searchedDataFields = dtDefinitionItem.getFields();
 		final SmartItem mock1 = new SmartItem();
 		mock1.setId(seqId++);
 		mock1.setLabel("Agence de l'Ouest");
@@ -186,18 +186,18 @@ public class CollectionsManagerTest {
 		mock2.setLabel("Hôpital et autres accents çava où ãpied");
 		dtc.add(mock2);
 
-		Assertions.assertTrue(filter(dtc, "agence", 1000, searchedDtFields).size() == 1, "La recherche n'est pas case insensitive");//majuscule/minuscule
-		Assertions.assertTrue(filter(dtc, "l'ouest", 1000, searchedDtFields).size() == 1, "La recherche n'est pas plain text");//tokenizer
-		Assertions.assertTrue(filter(dtc, "hopital", 1000, searchedDtFields).size() == 1, "La recherche ne supporte pas les accents");//accents
-		Assertions.assertTrue(filter(dtc, "cava", 1000, searchedDtFields).size() == 1, "La recherche ne supporte pas les caractères spéciaux fr (ç)"); //accents fr (ç)
-		Assertions.assertTrue(filter(dtc, "apied", 1000, searchedDtFields).size() == 1, "La recherche ne supporte pas les caractères spéciaux latin1 (ã)"); //accents autre (ã)
-		Assertions.assertTrue(filter(dtc, "apie", 1000, searchedDtFields).size() == 1, "La recherche ne supporte pas la recherche par préfix");//prefix
+		Assertions.assertTrue(filter(dtc, "agence", 1000, searchedDataFields).size() == 1, "La recherche n'est pas case insensitive");//majuscule/minuscule
+		Assertions.assertTrue(filter(dtc, "l'ouest", 1000, searchedDataFields).size() == 1, "La recherche n'est pas plain text");//tokenizer
+		Assertions.assertTrue(filter(dtc, "hopital", 1000, searchedDataFields).size() == 1, "La recherche ne supporte pas les accents");//accents
+		Assertions.assertTrue(filter(dtc, "cava", 1000, searchedDataFields).size() == 1, "La recherche ne supporte pas les caractères spéciaux fr (ç)"); //accents fr (ç)
+		Assertions.assertTrue(filter(dtc, "apied", 1000, searchedDataFields).size() == 1, "La recherche ne supporte pas les caractères spéciaux latin1 (ã)"); //accents autre (ã)
+		Assertions.assertTrue(filter(dtc, "apie", 1000, searchedDataFields).size() == 1, "La recherche ne supporte pas la recherche par préfix");//prefix
 	}
 
 	@Test
 	public void testFilterFullTextTokenizerCd() {
 		final DtList<SmartItemCd> dtc = createItemsCd();
-		final Collection<DtField> searchedDtFields = dtDefinitionItemCd.getFields();
+		final Collection<DataField> searchedDataFields = dtDefinitionItemCd.getFields();
 		final SmartItemCd mock1 = new SmartItemCd();
 		mock1.setCd(String.valueOf(seqId++));
 		mock1.setLabel("Agence de l'Ouest");
@@ -208,24 +208,24 @@ public class CollectionsManagerTest {
 		mock2.setLabel("Hôpital et autres accents çava où ãpied");
 		dtc.add(mock2);
 
-		Assertions.assertTrue(filterCd(dtc, "agence", 1000, searchedDtFields).size() == 1, "La recherche n'est pas case insensitive");//majuscule/minuscule
-		Assertions.assertTrue(filterCd(dtc, "l'ouest", 1000, searchedDtFields).size() == 1, "La recherche n'est pas plain text");//tokenizer
-		Assertions.assertTrue(filterCd(dtc, "hopital", 1000, searchedDtFields).size() == 1, "La recherche ne supporte pas les accents");//accents
-		Assertions.assertTrue(filterCd(dtc, "cava", 1000, searchedDtFields).size() == 1, "La recherche ne supporte pas les caractères spéciaux fr (ç)"); //accents fr (ç)
-		Assertions.assertTrue(filterCd(dtc, "apied", 1000, searchedDtFields).size() == 1, "La recherche ne supporte pas les caractères spéciaux latin1 (ã)"); //accents autre (ã)
-		Assertions.assertTrue(filterCd(dtc, "apie", 1000, searchedDtFields).size() == 1, "La recherche ne supporte pas la recherche par préfix");//prefix
+		Assertions.assertTrue(filterCd(dtc, "agence", 1000, searchedDataFields).size() == 1, "La recherche n'est pas case insensitive");//majuscule/minuscule
+		Assertions.assertTrue(filterCd(dtc, "l'ouest", 1000, searchedDataFields).size() == 1, "La recherche n'est pas plain text");//tokenizer
+		Assertions.assertTrue(filterCd(dtc, "hopital", 1000, searchedDataFields).size() == 1, "La recherche ne supporte pas les accents");//accents
+		Assertions.assertTrue(filterCd(dtc, "cava", 1000, searchedDataFields).size() == 1, "La recherche ne supporte pas les caractères spéciaux fr (ç)"); //accents fr (ç)
+		Assertions.assertTrue(filterCd(dtc, "apied", 1000, searchedDataFields).size() == 1, "La recherche ne supporte pas les caractères spéciaux latin1 (ã)"); //accents autre (ã)
+		Assertions.assertTrue(filterCd(dtc, "apie", 1000, searchedDataFields).size() == 1, "La recherche ne supporte pas la recherche par préfix");//prefix
 	}
 
-	private List<SmartItem> filter(final DtList<SmartItem> dtc, final String query, final int nbRows, final Collection<DtField> searchedDtFields) {
+	private List<SmartItem> filter(final DtList<SmartItem> dtc, final String query, final int nbRows, final Collection<DataField> searchedDataFields) {
 		return collectionsManager.<SmartItem> createIndexDtListFunctionBuilder()
-				.filter(query, nbRows, searchedDtFields)
+				.filter(query, nbRows, searchedDataFields)
 				.build()
 				.apply(dtc);
 	}
 
-	private List<SmartItemCd> filterCd(final DtList<SmartItemCd> dtc, final String query, final int nbRows, final Collection<DtField> searchedDtFields) {
+	private List<SmartItemCd> filterCd(final DtList<SmartItemCd> dtc, final String query, final int nbRows, final Collection<DataField> searchedDataFields) {
 		return collectionsManager.<SmartItemCd> createIndexDtListFunctionBuilder()
-				.filter(query, nbRows, searchedDtFields)
+				.filter(query, nbRows, searchedDataFields)
 				.build()
 				.apply(dtc);
 	}
@@ -233,7 +233,7 @@ public class CollectionsManagerTest {
 	@Test
 	public void testFilterFullTextElision() {
 		final DtList<SmartItem> dtc = createItems();
-		final Collection<DtField> searchedDtFields = dtDefinitionItem.getFields();
+		final Collection<DataField> searchedDataFields = dtDefinitionItem.getFields();
 
 		final SmartItem mock1 = new SmartItem();
 		mock1.setId(seqId++);
@@ -245,13 +245,13 @@ public class CollectionsManagerTest {
 		mock2.setLabel("Hôpital et autres accents çava où àpied");
 		dtc.add(mock2);
 
-		Assertions.assertTrue(filter(dtc, "ouest", 1000, searchedDtFields).size() == 1, "La recherche ne supporte pas l'elision");
+		Assertions.assertTrue(filter(dtc, "ouest", 1000, searchedDataFields).size() == 1, "La recherche ne supporte pas l'elision");
 	}
 
 	@Test
 	public void testFilterFullTextMultiKeyword() {
 		final DtList<SmartItem> dtc = createItems();
-		final Collection<DtField> searchedDtFields = dtDefinitionItem.getFields();
+		final Collection<DataField> searchedDataFields = dtDefinitionItem.getFields();
 
 		final SmartItem mock1 = new SmartItem();
 		mock1.setId(seqId++);
@@ -263,10 +263,10 @@ public class CollectionsManagerTest {
 		mock2.setLabel("Hôpital et autres accents çava où ãpied");
 		dtc.add(mock2);
 
-		Assertions.assertTrue(filter(dtc, "agence de", 1000, searchedDtFields).size() == 1, "La recherche ne supporte pas l'espace");//mots proches
-		Assertions.assertTrue(filter(dtc, "hopital accent", 1000, searchedDtFields).size() == 1, "La recherche ne supporte pas l'utilisation de plusieurs mots");//mots séparés
-		Assertions.assertTrue(filter(dtc, "accent hopital", 1000, searchedDtFields).size() == 1, "La recherche ne supporte pas l'inversion des mots");//inversés
-		Assertions.assertTrue(filter(dtc, "agence hopital", 1000, searchedDtFields).size() == 0, "Les mots clés ne sont pas en 'ET'");//multi doc
+		Assertions.assertTrue(filter(dtc, "agence de", 1000, searchedDataFields).size() == 1, "La recherche ne supporte pas l'espace");//mots proches
+		Assertions.assertTrue(filter(dtc, "hopital accent", 1000, searchedDataFields).size() == 1, "La recherche ne supporte pas l'utilisation de plusieurs mots");//mots séparés
+		Assertions.assertTrue(filter(dtc, "accent hopital", 1000, searchedDataFields).size() == 1, "La recherche ne supporte pas l'inversion des mots");//inversés
+		Assertions.assertTrue(filter(dtc, "agence hopital", 1000, searchedDataFields).size() == 0, "Les mots clés ne sont pas en 'ET'");//multi doc
 	}
 
 	/**
@@ -411,7 +411,7 @@ public class CollectionsManagerTest {
 
 	@Test
 	public void testCreateFilter() {
-		final Predicate<DtObject> predicate = collectionsManager.filter(ListFilter.of("label" + ":[a TO b]"));
+		final Predicate<DataObject> predicate = collectionsManager.filter(ListFilter.of("label" + ":[a TO b]"));
 		Assertions.assertNotNull(predicate);
 	}
 

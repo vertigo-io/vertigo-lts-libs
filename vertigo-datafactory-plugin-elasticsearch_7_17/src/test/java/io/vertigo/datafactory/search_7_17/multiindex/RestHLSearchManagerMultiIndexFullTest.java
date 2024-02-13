@@ -29,7 +29,7 @@ import io.vertigo.datafactory.search.model.SearchIndex;
 import io.vertigo.datafactory.search.model.SearchQuery;
 import io.vertigo.datafactory.search_7_17.AbstractSearchManagerTest;
 import io.vertigo.datafactory.search_7_17.MyNodeConfig;
-import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.data.model.DtListState;
 
 /**
  * @author  npiedeloup

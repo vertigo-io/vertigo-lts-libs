@@ -35,13 +35,13 @@ import io.vertigo.datafactory.search.definitions.SearchIndexDefinition;
 import io.vertigo.datafactory.search.model.SearchIndex;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
-import io.vertigo.datamodel.structure.definitions.DataAccessor;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.model.KeyConcept;
-import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.definitions.DataAccessor;
+import io.vertigo.datamodel.data.definitions.DataDefinition;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.model.KeyConcept;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * Traduction bi directionnelle des objets SOLR en objets logique de recherche.
@@ -72,14 +72,14 @@ final class ESDocumentCodec {
 		this.smartTypeManager = smartTypeManager;
 	}
 
-	private <I extends DtObject> String encode(final I dto) {
+	private <I extends DataObject> String encode(final I dto) {
 		Assertion.check().isNotNull(dto);
 		//-----
 		final byte[] data = codecManager.getCompressedSerializationCodec().encode(dto);
 		return codecManager.getBase64Codec().encode(data);
 	}
 
-	private <R extends DtObject> R decode(final String base64Data) {
+	private <R extends DataObject> R decode(final String base64Data) {
 		Assertion.check().isNotNull(base64Data);
 		//-----
 		final byte[] data = codecManager.getBase64Codec().decode(base64Data);
@@ -95,11 +95,11 @@ final class ESDocumentCodec {
 	 * @param searchHit Resultat ElasticSearch
 	 * @return Objet logique de recherche
 	 */
-	<S extends KeyConcept, I extends DtObject> SearchIndex<S, I> searchHit2Index(final SearchIndexDefinition indexDefinition, final SearchHit searchHit) {
+	<S extends KeyConcept, I extends DataObject> SearchIndex<S, I> searchHit2Index(final SearchIndexDefinition indexDefinition, final SearchHit searchHit) {
 		/* On lit du document les données persistantes. */
 		/* 1. UID */
 		final String urn = searchHit.getId();
-		final UID uid = io.vertigo.datamodel.structure.model.UID.of(urn);
+		final UID uid = io.vertigo.datamodel.data.model.UID.of(urn);
 
 		/* 2 : Result stocké */
 		final I resultDtObjectdtObject;
@@ -120,12 +120,12 @@ final class ESDocumentCodec {
 	 * @return Document SOLR
 	 * @throws IOException Json exception
 	 */
-	<S extends KeyConcept, I extends DtObject> XContentBuilder index2XContentBuilder(final SearchIndex<S, I> index) throws IOException {
+	<S extends KeyConcept, I extends DataObject> XContentBuilder index2XContentBuilder(final SearchIndex<S, I> index) throws IOException {
 		Assertion.check().isNotNull(index);
 		//-----
 
-		final DtDefinition dtDefinition = index.getDefinition().getIndexDtDefinition();
-		final List<DtField> notStoredFields = getNotStoredFields(dtDefinition); //on ne copie pas les champs not stored dans le smartType
+		final DataDefinition dtDefinition = index.getDefinition().getIndexDtDefinition();
+		final List<DataField> notStoredFields = getNotStoredFields(dtDefinition); //on ne copie pas les champs not stored dans le smartType
 		notStoredFields.addAll(index.getDefinition().getIndexCopyToFields()); //on ne copie pas les champs (copyTo)
 		final I dtResult;
 		if (notStoredFields.isEmpty()) {
@@ -144,12 +144,12 @@ final class ESDocumentCodec {
 					.field(DOC_ID, Serializable.class.cast(index.getUID().getId()));
 
 			/* 3 : Les champs du dto index */
-			final DtObject dtIndex = index.getIndexDtObject();
-			final DtDefinition indexDtDefinition = DtObjectUtil.findDtDefinition(dtIndex);
-			final Set<DtField> copyToFields = index.getDefinition().getIndexCopyToFields();
+			final DataObject dtIndex = index.getIndexDtObject();
+			final DataDefinition indexDtDefinition = DataModelUtil.findDataDefinition(dtIndex);
+			final Set<DataField> copyToFields = index.getDefinition().getIndexCopyToFields();
 			final Map<Class, BasicTypeAdapter> typeAdapters = smartTypeManager.getTypeAdapters("search");
 
-			for (final DtField dtField : indexDtDefinition.getFields()) {
+			for (final DataField dtField : indexDtDefinition.getFields()) {
 				if (!copyToFields.contains(dtField)) {//On index pas les copyFields
 					final Object value = dtField.getDataAccessor().getValue(dtIndex);
 					if (value != null) { //les valeurs null ne sont pas indexées => conséquence : on ne peut pas les rechercher
@@ -177,15 +177,15 @@ final class ESDocumentCodec {
 		}
 	}
 
-	private static List<DtField> getNotStoredFields(final DtDefinition dtDefinition) {
+	private static List<DataField> getNotStoredFields(final DataDefinition dtDefinition) {
 		return dtDefinition.getFields().stream()
 				.filter(dtField -> !isIndexStoredDomain(dtField.smartTypeDefinition()))
 				.collect(Collectors.toList());
 	}
 
-	private static <I extends DtObject> I cloneDto(final DtDefinition dtDefinition, final I dto, final List<DtField> excludedFields) {
-		final I clonedDto = (I) DtObjectUtil.createDtObject(dtDefinition);
-		for (final DtField dtField : dtDefinition.getFields()) {
+	private static <I extends DataObject> I cloneDto(final DataDefinition dtDefinition, final I dto, final List<DataField> excludedFields) {
+		final I clonedDto = (I) DataModelUtil.createDataObject(dtDefinition);
+		for (final DataField dtField : dtDefinition.getFields()) {
 			if (!excludedFields.contains(dtField)) {
 				final DataAccessor dataAccessor = dtField.getDataAccessor();
 				dataAccessor.setValue(clonedDto, dataAccessor.getValue(dto));
