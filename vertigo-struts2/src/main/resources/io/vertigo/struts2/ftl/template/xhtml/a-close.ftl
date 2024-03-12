@@ -25,7 +25,7 @@
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/scripting-events.ftl" />
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/common-attributes.ftl" />
 <#include "/${parameters.templateDir}/${parameters.expandTheme}/dynamic-attributes.ftl" />
->${parameters.body}</a>
+>${tag.escapeHtmlBody()?then(parameters.body, parameters.body?no_esc)}</a>
 <#if parameters.dynamicAttributes.get('tooltipPosition')?? && parameters.dynamicAttributes.get('tooltipPosition') = 'field'>
         <#include "/${parameters.templateDir}/xhtml/tooltip.ftl" /> 
 </#if>
