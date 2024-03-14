@@ -34,7 +34,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.multipart.UploadedFile;
-import org.apache.struts2.interceptor.ServletResponseAware;
+import org.apache.struts2.action.ServletResponseAware;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.ModelDriven;
@@ -336,7 +336,7 @@ public abstract class AbstractActionSupport extends ActionSupport implements Mod
 
 	/** {@inheritDoc} */
 	@Override
-	public final void setServletResponse(final HttpServletResponse servletResponse) {
+	public final void withServletResponse(final HttpServletResponse servletResponse) {
 		response = servletResponse;
 	}
 
