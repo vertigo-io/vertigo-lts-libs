@@ -40,7 +40,7 @@
                 <interceptor-ref name="alias"/>
                 <interceptor-ref name="servletConfig"/>
                 <interceptor-ref name="i18n"/>
-                <interceptor-ref name="cspInterceptor">
+                <interceptor-ref name="csp">
                     <param name="disabled">true</param>
                     <param name="enforcingMode">false</param>
                 </interceptor-ref>
