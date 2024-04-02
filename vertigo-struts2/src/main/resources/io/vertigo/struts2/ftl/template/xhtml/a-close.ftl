@@ -8,7 +8,7 @@
  id="${parameters.id}"<#rt/>
 </#if>
 <#if parameters.href?if_exists != "">
- href="${parameters.href}"<#rt/>
+ href="${parameters.href?no_esc}"<#rt/>
 </#if>
 <#if parameters.tabindex??>
  tabindex="${parameters.tabindex}"<#rt/>
