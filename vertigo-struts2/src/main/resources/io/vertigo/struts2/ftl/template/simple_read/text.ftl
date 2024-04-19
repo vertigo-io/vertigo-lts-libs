@@ -17,6 +17,10 @@
 <#include "/${parameters.templateDir}/simple/dynamic-attributes.ftl" />
 ><#t/>
 <#if parameters.nameValue??>
- ${parameters.nameValue?replace("\n", "<br/>")}<#t/>
+  <#if parameters.escape??>
+    ${parameters.nameValue}<#t/>
+  <#else>
+    ${parameters.nameValue?replace("\n", "<br/>")?no_esc}<#t/>
+  </#if>
 </#if>
 </span><#t/>
