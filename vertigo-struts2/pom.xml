@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- vertigo - simple java starter Copyright (C) 2013, KleeGroup, direction.technique@kleegroup.com 
+<!-- vertigo - simple java starter Copyright (C) 2013, KleeGroup,
+direction.technique@kleegroup.com 
 	(http://www.kleegroup.com) KleeGroup, Centre d'affaire la Boursidiere - BP 
 	159 - 92357 Le Plessis Robinson Cedex - France Licensed under the Apache 
 	License, Version 2.0 (the "License"); you may not use this file except in 
-	compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	compliance with the License. You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0 
 	Unless required by applicable law or agreed to in writing, software distributed 
 	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
 	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
 	the specific language governing permissions and limitations under the License. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -30,17 +34,16 @@
 		</dependency>
 		<dependency>
 			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-datamodel</artifactId><!-- for io.vertigo.dynamo.impl.domain.metamodel.AbstractFormatterImpl and 
-				io.vertigo.dynamox.domain.formatter.Resources --> 
+			<artifactId>vertigo-datamodel</artifactId><!-- for
+			io.vertigo.dynamo.impl.domain.metamodel.AbstractFormatterImpl and 
+				io.vertigo.dynamox.domain.formatter.Resources -->
 			<version>${vertigo.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-vega</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
@@ -51,8 +54,12 @@
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-core</artifactId>
-			<version>6.3.0</version>
+			<version>6.3.0.2</version>
 			<exclusions>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-api</artifactId>
+				</exclusion>
 				<exclusion>
 					<groupId>javassist</groupId>
 					<artifactId>javassist</artifactId>
@@ -64,7 +71,7 @@
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-spring-plugin</artifactId>
-			<version>6.3.0</version>
+			<version>6.3.0.2</version>
 		</dependency>
 
 		<!-- Struts 2 Ajax -->
@@ -74,8 +81,8 @@
 			<version>5.0.3</version>
 			<exclusions>
 				<exclusion>
-					<groupId>org.apache.struts</groupId>
-					<artifactId>struts2-velocity-plugin</artifactId>
+					<groupId>org.apache.velocity</groupId>
+					<artifactId>velocity</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -193,11 +200,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.seleniumhq.selenium</groupId>
-		    <artifactId>htmlunit-driver</artifactId>
-		    <version>4.7.2</version>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>htmlunit-driver</artifactId>
+			<version>4.7.2</version>
 			<scope>test</scope>
 		</dependency>
-		
 	</dependencies>
 </project>
