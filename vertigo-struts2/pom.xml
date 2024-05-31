@@ -84,6 +84,10 @@ http://www.apache.org/licenses/LICENSE-2.0
 					<groupId>org.apache.velocity</groupId>
 					<artifactId>velocity</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.apache.struts</groupId>
+					<artifactId>struts-annotations</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
