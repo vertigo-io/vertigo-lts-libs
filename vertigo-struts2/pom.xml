@@ -20,7 +20,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 	</parent>
 
 	<artifactId>vertigo-struts2</artifactId>
-	<version>3.6.1</version>
+	<version>3.7.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>vertigo-struts2</name>
 
