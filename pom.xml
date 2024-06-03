@@ -17,7 +17,7 @@
 	</parent>
 
 	<artifactId>vertigo-lts-libs</artifactId>
-	<version>3.6.1-SNAPSHOT</version>
+	<version>3.6.1</version>
 	<name>vertigo-lts-libs</name>
 	<packaging>pom</packaging>
 
@@ -30,6 +30,6 @@
 		<connection>scm:git:https://github.com/vertigo-io/vertigo-lts-libs.git</connection>
 		<developerConnection>scm:git:https://github.com/vertigo-io/vertigo-lts-libs.git</developerConnection>
 		<url>scm:git:https://github.com/vertigo-io/vertigo-lts-libs.git</url>
-		<tag>vertigo-3.6.0</tag>
+		<tag>vertigo-3.6.1</tag>
 	</scm>
 </project>
