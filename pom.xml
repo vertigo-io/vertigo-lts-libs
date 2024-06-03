@@ -13,17 +13,18 @@
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-parent</artifactId>
-		<version>3.6.0</version>
+		<version>3.7.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vertigo-lts-libs</artifactId>
-	<version>3.7.0-SNAPSHOT</version>
 	<name>vertigo-lts-libs</name>
 	<packaging>pom</packaging>
 
 
 	<modules>
+		<module>vertigo-datafactory-plugin-elasticsearch_5_6</module>
 		<module>vertigo-struts2</module>
+		<module>vertigo-account-plugin-authorization-basic</module>
 	</modules>
 
 	<scm>

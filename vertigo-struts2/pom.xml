@@ -16,7 +16,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-lts-extensions</artifactId>
-		<version>3.6.0</version>
+		<version>3.7.0-SNAPSHO</version>
 	</parent>
 
 	<artifactId>vertigo-struts2</artifactId>
