@@ -13,25 +13,23 @@
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-parent</artifactId>
-		<version>3.6.1-SNAPSHOT</version>
+		<version>3.6.0</version>
 	</parent>
 
-	<artifactId>vertigo-lts-extensions</artifactId>
+	<artifactId>vertigo-lts-libs</artifactId>
 	<version>3.6.1-SNAPSHOT</version>
-	<name>vertigo-lts-extensions</name>
+	<name>vertigo-lts-libs</name>
 	<packaging>pom</packaging>
 
 
 	<modules>
-		<module>vertigo-datafactory-plugin-elasticsearch_5_6</module>
 		<module>vertigo-struts2</module>
-		<module>vertigo-account-plugin-authorization-basic</module>
 	</modules>
 
 	<scm>
-		<connection>scm:git:https://github.com/vertigo-io/vertigo-lts-extensions.git</connection>
-		<developerConnection>scm:git:https://github.com/vertigo-io/vertigo-lts-extensions.git</developerConnection>
-		<url>scm:git:https://github.com/vertigo-io/vertigo-lts-extensions.git</url>
-		<tag>vertigo-3.4.0</tag>
+		<connection>scm:git:https://github.com/vertigo-io/vertigo-lts-libs.git</connection>
+		<developerConnection>scm:git:https://github.com/vertigo-io/vertigo-lts-libs.git</developerConnection>
+		<url>scm:git:https://github.com/vertigo-io/vertigo-lts-libs.git</url>
+		<tag>vertigo-3.6.0</tag>
 	</scm>
 </project>
