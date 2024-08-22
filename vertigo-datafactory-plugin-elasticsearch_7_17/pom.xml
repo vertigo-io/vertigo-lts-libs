@@ -44,26 +44,22 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>2.2.224</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
-			<version>8.11.1</version><!-- 8.11.1 compatible with ElasticSearch 7.17.14 -->
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers-common</artifactId>
-			<version>8.11.1</version><!-- 8.11.1 compatible with ElasticSearch 7.17.14 -->
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-queryparser</artifactId>
-			<version>8.11.1</version><!-- 8.11.1 compatible with ElasticSearch 7.17.14 -->
 			<optional>true</optional>
 		</dependency>
 
@@ -71,7 +67,6 @@
 	    <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>7.17.14</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
@@ -86,19 +81,16 @@
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>transport</artifactId>
-            <version>7.17.14</version>
             <optional>true</optional> <!-- TransportSearchServicesPlugin -->
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
-            <version>7.17.14</version>
             <optional>true</optional> <!-- RestHighLevelElasticSearchConnector -->
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>x-pack-transport</artifactId>
-            <version>7.17.14</version>
             <optional>true</optional> <!-- SecuredTransportSearchConnector -->
             <exclusions>
                 <exclusion>
@@ -110,13 +102,11 @@
         <dependency>
             <groupId>org.codelibs.elasticsearch.module</groupId>
             <artifactId>analysis-common</artifactId> 
-            <version>7.17.9</version> <!-- required by EmbeddedSearchServicesPlugin -->
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.codelibs.elasticsearch.module</groupId>
             <artifactId>mapper-extras</artifactId>
-            <version>7.17.9</version> <!-- required by ESEmbeddedSearchServicesPlugin -->
             <optional>true</optional>
         </dependency>
 	    
@@ -124,8 +114,19 @@
 		<dependency>
 			<groupId>com.mchange</groupId>
 			<artifactId>c3p0</artifactId>
-			<version>0.9.5.5</version>
 			<optional>true</optional><!-- C3p0DataSourceProviderPlugin -->
 		</dependency>
 	</dependencies>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.vertigo</groupId>
+				<artifactId>vertigo-datafactory</artifactId>
+				<version>${project.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
