@@ -32,7 +32,6 @@ import io.vertigo.commons.codec.CodecManager;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicTypeAdapter;
 import io.vertigo.datafactory.search.model.SearchIndex;
-import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.datamodel.data.definitions.DataAccessor;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
 import io.vertigo.datamodel.data.definitions.DataField;
@@ -41,6 +40,7 @@ import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.model.KeyConcept;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datamodel.data.util.DataModelUtil;
+import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 
 /**
  * Traduction bi directionnelle des objets SOLR en objets logique de recherche.
@@ -131,14 +131,14 @@ public final class ESDocumentCodec {
 		Assertion.check().isNotNull(index);
 		//-----
 
-		final DataDefinition dtDefinition = index.getDefinition().getIndexDtDefinition();
-		final List<DataField> notStoredFields = getNotStoredFields(dtDefinition); //on ne copie pas les champs not stored dans le domain
+		final DataDefinition dataDefinition = index.getDefinition().getIndexDtDefinition();
+		final List<DataField> notStoredFields = getNotStoredFields(dataDefinition); //on ne copie pas les champs not stored dans le domain
 		notStoredFields.addAll(index.getDefinition().getIndexCopyToFields()); //on ne copie pas les champs (copyTo)
 		final I dtResult;
 		if (notStoredFields.isEmpty()) {
 			dtResult = index.getIndexDtObject();
 		} else {
-			dtResult = cloneDto(dtDefinition, index.getIndexDtObject(), notStoredFields);
+			dtResult = cloneData(dataDefinition, index.getIndexDtObject(), notStoredFields);
 		}
 
 		/* 2: Result stocké */
@@ -188,16 +188,16 @@ public final class ESDocumentCodec {
 		return encodedValue;
 	}
 
-	private static List<DataField> getNotStoredFields(final DataDefinition dtDefinition) {
-		return dtDefinition.getFields().stream()
+	private static List<DataField> getNotStoredFields(final DataDefinition dataDefinition) {
+		return dataDefinition.getFields().stream()
 				//We don't store (in Result) computed fields and fields with a "notStored" domain
 				.filter(dtField -> !isIndexStoredDomain(dtField.smartTypeDefinition()) || dtField.getType() == FieldType.COMPUTED)
 				.collect(Collectors.toList());
 	}
 
-	private static <I extends DataObject> I cloneDto(final DataDefinition dtDefinition, final I dto, final List<DataField> excludedFields) {
-		final I clonedDto = (I) DataModelUtil.createDataObject(dtDefinition);
-		for (final DataField dtField : dtDefinition.getFields()) {
+	private static <I extends DataObject> I cloneData(final DataDefinition dataDefinition, final I dto, final List<DataField> excludedFields) {
+		final I clonedDto = (I) DataModelUtil.createDataObject(dataDefinition);
+		for (final DataField dtField : dataDefinition.getFields()) {
 			if (!excludedFields.contains(dtField)) {
 				final DataAccessor dataAccessor = dtField.getDataAccessor();
 				dataAccessor.setValue(clonedDto, dataAccessor.getValue(dto));

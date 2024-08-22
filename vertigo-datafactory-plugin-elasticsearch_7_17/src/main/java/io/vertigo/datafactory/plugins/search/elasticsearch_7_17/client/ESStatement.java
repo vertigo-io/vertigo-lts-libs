@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.lucene.search.TotalHits;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchPhaseExecutionException;
@@ -59,8 +58,8 @@ import io.vertigo.datafactory.search.model.SearchIndex;
 import io.vertigo.datafactory.search.model.SearchQuery;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
 import io.vertigo.datamodel.data.definitions.DataField;
-import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.model.KeyConcept;
 import io.vertigo.datamodel.data.model.UID;
 
@@ -275,8 +274,6 @@ final class ESStatement<K extends KeyConcept, I extends DataObject> {
 				.setSize(0) //on cherche juste à compter
 				.execute()
 				.actionGet();
-		final TotalHits count = response.getHits().getTotalHits();
-		Assertion.check().isNotNull(count, "Can't retreive totalHits : check request");
-		return count.value;
+		return response.getHits().getTotalHits().value;
 	}
 }

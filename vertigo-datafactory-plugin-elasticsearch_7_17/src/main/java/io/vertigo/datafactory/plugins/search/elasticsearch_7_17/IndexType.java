@@ -24,8 +24,8 @@ import java.util.Optional;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicType;
-import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.datamodel.smarttype.definitions.DtProperty;
+import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 
 public final class IndexType {
 
@@ -89,7 +89,7 @@ public final class IndexType {
 		}
 	}
 
-	private Map<String, Object> parseIndexType(final String[] indexTypeArray, final String indexType) {
+	private static Map<String, Object> parseIndexType(final String[] indexTypeArray, final String indexType) {
 		final Map<String, Object> parsedIndexType = new HashMap<>();
 
 		//On parcours les paramètres et on détermine si on reconnait un mot clé
