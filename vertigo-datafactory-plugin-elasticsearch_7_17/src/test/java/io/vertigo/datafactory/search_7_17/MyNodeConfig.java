@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,8 @@ public final class MyNodeConfig {
 						Param.of("home", "io/vertigo/datafactory/search_7_17/indexconfig"));
 		if (esHL) {
 			elasticSearchFeatures.withRestHL(
-					Param.of("servers.names", "localhost:9200"));
+					Param.of("servers.names", "localhost:9200"),
+					Param.of("ssl", "false"));
 
 			dataFactoryFeatures.addPlugin(RestHLClientESSearchServicesPlugin.class,
 					Param.of("config.file", "io/vertigo/datafactory/search_7_17/indexconfig/elasticsearch.yml"),

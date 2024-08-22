@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,8 +54,8 @@ import io.vertigo.datafactory.collections.model.FacetedQuery;
 import io.vertigo.datafactory.impl.collections.functions.filter.DtListPatternFilterUtil;
 import io.vertigo.datafactory.search.definitions.SearchIndexDefinition;
 import io.vertigo.datafactory.search.model.SearchQuery;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.DtListState;
 
 //vérifier
 /**
@@ -166,7 +166,7 @@ final class ESSearchRequestBuilder implements Builder<SearchRequestBuilder> {
 	}
 
 	private static FieldSortBuilder getFieldSortBuilder(final SearchIndexDefinition myIndexDefinition, final DtListState myListState) {
-		final DtField sortField = myIndexDefinition.getIndexDtDefinition().getField(myListState.getSortFieldName().get());
+		final DataField sortField = myIndexDefinition.getIndexDtDefinition().getField(myListState.getSortFieldName().get());
 		String sortIndexFieldName = sortField.name();
 		final IndexType indexType = IndexType.readIndexType(sortField.smartTypeDefinition());
 
@@ -307,14 +307,14 @@ final class ESSearchRequestBuilder implements Builder<SearchRequestBuilder> {
 	}
 
 	private static AggregationBuilder facetToAggregationBuilder(final FacetDefinition facetDefinition) {
-		final DtField dtField = facetDefinition.getDtField();
+		final DataField dtField = facetDefinition.getDataField();
 		if (facetDefinition.isRangeFacet()) {
 			return rangeFacetToAggregationBuilder(facetDefinition, dtField);
 		}
 		return termFacetToAggregationBuilder(facetDefinition, dtField);
 	}
 
-	private static AggregationBuilder termFacetToAggregationBuilder(final FacetDefinition facetDefinition, final DtField dtField) {
+	private static AggregationBuilder termFacetToAggregationBuilder(final FacetDefinition facetDefinition, final DataField dtField) {
 		//facette par field
 		final Order facetOrder;
 		switch (facetDefinition.getOrder()) {
@@ -343,7 +343,7 @@ final class ESSearchRequestBuilder implements Builder<SearchRequestBuilder> {
 				.order(facetOrder);
 	}
 
-	private static AggregationBuilder rangeFacetToAggregationBuilder(final FacetDefinition facetDefinition, final DtField dtField) {
+	private static AggregationBuilder rangeFacetToAggregationBuilder(final FacetDefinition facetDefinition, final DataField dtField) {
 		//facette par range
 		Assertion.check().isTrue(dtField.smartTypeDefinition().getScope().isBasicType(), "Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + dtField.smartTypeDefinition() + "].");
 		final BasicType dataType = dtField.smartTypeDefinition().getBasicType();
@@ -362,7 +362,7 @@ final class ESSearchRequestBuilder implements Builder<SearchRequestBuilder> {
 		return AggregationBuilders.filters(facetDefinition.getName(), filters.toArray(new KeyedFilter[filters.size()]));
 	}
 
-	private static AggregationBuilder numberRangeFacetToAggregationBuilder(final FacetDefinition facetDefinition, final DtField dtField) {
+	private static AggregationBuilder numberRangeFacetToAggregationBuilder(final FacetDefinition facetDefinition, final DataField dtField) {
 		final RangeAggregationBuilder rangeBuilder = AggregationBuilders.range(facetDefinition.getName())//
 				.field(dtField.name());
 		for (final FacetValue facetRange : facetDefinition.getFacetRanges()) {
@@ -382,7 +382,7 @@ final class ESSearchRequestBuilder implements Builder<SearchRequestBuilder> {
 		return rangeBuilder;
 	}
 
-	private static AggregationBuilder dateRangeFacetToAggregationBuilder(final FacetDefinition facetDefinition, final DtField dtField) {
+	private static AggregationBuilder dateRangeFacetToAggregationBuilder(final FacetDefinition facetDefinition, final DataField dtField) {
 		final DateRangeAggregationBuilder dateRangeBuilder = AggregationBuilders.dateRange(facetDefinition.getName())
 				.field(dtField.name())
 				.format(DATE_PATTERN);

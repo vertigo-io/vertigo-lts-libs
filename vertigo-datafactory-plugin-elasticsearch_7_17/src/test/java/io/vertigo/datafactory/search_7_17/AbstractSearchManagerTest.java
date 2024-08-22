@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2023, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,9 +65,9 @@ import io.vertigo.datafactory.search.data.domain.ItemSearchLoader;
 import io.vertigo.datafactory.search.definitions.SearchIndexDefinition;
 import io.vertigo.datafactory.search.model.SearchIndex;
 import io.vertigo.datafactory.search.model.SearchQuery;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.model.UID;
 
 /**
  * @author  npiedeloup
@@ -792,7 +792,7 @@ public abstract class AbstractSearchManagerTest {
 		//On recherche la facette constructeur
 		final Facet optionalStringFacet = getFacetByName(result, "FctOptionalStringItem");
 		//On vérifie que l'on est sur le champ Manufacturer
-		Assertions.assertEquals("optionalString", optionalStringFacet.getDefinition().getDtField().name());
+		Assertions.assertEquals("optionalString", optionalStringFacet.getDefinition().getDataField().name());
 		Assertions.assertFalse(optionalStringFacet.getDefinition().isRangeFacet());
 
 		//On vérifie qu'il existe une valeur pour empty et que le nombre d'occurrences est correct
@@ -818,7 +818,7 @@ public abstract class AbstractSearchManagerTest {
 		//On recherche la facette constructeur
 		final Facet manufacturerFacet = getFacetByName(result, "FctManufacturerItem");
 		//On vérifie que l'on est sur le champ Manufacturer
-		Assertions.assertEquals("manufacturer", manufacturerFacet.getDefinition().getDtField().name());
+		Assertions.assertEquals("manufacturer", manufacturerFacet.getDefinition().getDataField().name());
 		Assertions.assertFalse(manufacturerFacet.getDefinition().isRangeFacet());
 
 		//On vérifie qu'il existe une valeur pour peugeot et que le nombre d'occurrences est correct
@@ -846,7 +846,7 @@ public abstract class AbstractSearchManagerTest {
 		//On recherche la facette constructeur
 		final Facet localisationFacet = getFacetByName(result, "FctLocalisationItem");
 		//On vérifie que l'on est sur le champ Manufacturer
-		Assertions.assertEquals("localisation", localisationFacet.getDefinition().getDtField().name());
+		Assertions.assertEquals("localisation", localisationFacet.getDefinition().getDataField().name());
 		Assertions.assertTrue(localisationFacet.getDefinition().isRangeFacet());
 
 		Assertions.assertEquals(5, localisationFacet.getFacetValues().size());
