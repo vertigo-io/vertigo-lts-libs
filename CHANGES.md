@@ -1,10 +1,31 @@
 Version history
 ===============
 
-Running 4.1.0
+Running 4.3.0
 ----------------------
 
 more to come :)
+
+
+Release 4.2.0 - 2024/08/22
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-400-to-410)
+* [DataModel] Impact v4.2.0 renaming DtObject => DataObject & co
+
+Release 3.6.1 - 2024/06/03
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-360-to-361)
+A step version focus on Struts2 MCS.
+
+* CSP vertigo-struts2 : transmission du nonce via <@s.script> by @vpkg in #6
+* Update a-close.ftl by @vpkg in #7
+* Update Struts2 6.3.0 by @vpkg in #8
+* text.ftl avec no_esc by @vpkg in #9
+
+Release 4.1.0 - 2023/11/09
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-400-to-410)
+* Minor changes
 
 Release 4.0.0 - 2023/08/17
 ----------------------
