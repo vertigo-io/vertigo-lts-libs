@@ -889,7 +889,7 @@ public abstract class AbstractSearchManagerTest {
 	public void testFilterFacetListByTwoTerms() {
 		index(true);
 		final List<Item> peugeotItems = itemDataBase.getItemsByManufacturer("peugeot");
-		final long peugeotContainsCuirCount = ItemDataBase.containsDescription(peugeotItems, "cuir");
+		final long peugeotContainsCuirCount = ItemDataBase.containsDescription(peugeotItems, "cuir").size();
 
 		final SearchQuery searchQuery = SearchQuery.builder("QryItemFacet")
 				.withCriteria("")

@@ -70,9 +70,10 @@ import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.model.UID;
 
 /**
- * @author  npiedeloup
+ * @author npiedeloup
  */
 public abstract class AbstractSearchManagerTest {
+
 	private static final SelectedFacetValues EMPTY_SELECTED_FACET_VALUES = SelectedFacetValues.empty().build();
 
 	/** Logger. */
@@ -154,11 +155,9 @@ public abstract class AbstractSearchManagerTest {
 			if (!file.delete()) {
 				System.err.println("Can't delete directory : " + file.getAbsolutePath());
 			}
-		} else {
-			//if file, then delete it
-			if (!file.delete()) {
-				System.err.println("Can't delete file : " + file.getAbsolutePath());
-			}
+		} else //if file, then delete it
+		if (!file.delete()) {
+			System.err.println("Can't delete file : " + file.getAbsolutePath());
 		}
 	}
 
@@ -1170,7 +1169,7 @@ public abstract class AbstractSearchManagerTest {
 	public void testFilterFacetListByTwoTerms() {
 		index(true);
 		final List<Item> peugeotItems = itemDataBase.getItemsByManufacturer("peugeot");
-		final long peugeotContainsCuirCount = ItemDataBase.containsDescription(peugeotItems, "cuir");
+		final long peugeotContainsCuirCount = ItemDataBase.containsDescription(peugeotItems, "cuir").size();
 
 		final SearchQuery searchQuery = SearchQuery.builder("QryItemFacet")
 				.withCriteria("")
@@ -1407,6 +1406,7 @@ public abstract class AbstractSearchManagerTest {
 	}
 
 	private enum YearCluster {
+
 		before2000("avant 2000"), between2000and2005("2000-2005"), after2005("apres 2005");
 
 		private final String label;
