@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.account.authorization.AuthorizationBasicManager;
 import io.vertigo.account.authorization.ResourceNameFactory;

@@ -20,7 +20,7 @@ package io.vertigo.account.plugins.authorization.xml.loader;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.account.authorization.definitions.PermissionBasic;
 import io.vertigo.account.authorization.definitions.RoleBasic;

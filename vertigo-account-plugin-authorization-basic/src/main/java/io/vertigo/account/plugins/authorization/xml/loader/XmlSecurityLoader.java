@@ -21,7 +21,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;

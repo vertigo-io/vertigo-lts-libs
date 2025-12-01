@@ -20,7 +20,7 @@ package io.vertigo.connectors.elasticsearch_7_17;
 import java.net.InetSocketAddress;
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;

@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
