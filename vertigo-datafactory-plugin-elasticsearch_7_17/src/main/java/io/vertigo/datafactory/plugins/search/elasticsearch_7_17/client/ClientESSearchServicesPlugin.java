@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,8 +69,8 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datafactory.collections.ListFilter;
 import io.vertigo.datafactory.collections.model.FacetedQueryResult;
 import io.vertigo.datafactory.impl.search.SearchServicesPlugin;
-import io.vertigo.datafactory.plugins.search.elasticsearch.ESDocumentCodec;
-import io.vertigo.datafactory.plugins.search.elasticsearch.IndexType;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.ESDocumentCodec;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.IndexType;
 import io.vertigo.datafactory.search.definitions.SearchIndexDefinition;
 import io.vertigo.datafactory.search.model.SearchIndex;
 import io.vertigo.datafactory.search.model.SearchQuery;
@@ -86,6 +86,7 @@ import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 
 /**
  * Gestion de la connexion au serveur Solr de manière transactionnel.
+ * 
  * @author dchallas, npiedeloup
  */
 public final class ClientESSearchServicesPlugin implements SearchServicesPlugin, Activeable {
@@ -113,6 +114,7 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 
 	/**
 	 * Constructor.
+	 * 
 	 * @param envIndexPrefix ES index name
 	 * @param defaultMaxRows Nombre de lignes
 	 * @param codecManager Manager de codec
@@ -317,7 +319,7 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 	private String[] obtainIndicesNames(final List<SearchIndexDefinition> indexDefinitions) {
 		String[] indiceNames = new String[indexDefinitions.size()];
 		indiceNames = indexDefinitions.stream()
-				.map(d -> obtainIndexName(d))
+				.map(this::obtainIndexName)
 				.collect(Collectors.toList())
 				.toArray(indiceNames);
 		return indiceNames;
@@ -333,7 +335,8 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 
 	/** {@inheritDoc} */
 	@Override
-	public <K extends KeyConcept> Map<UID<K>, Serializable> loadVersions(final SearchIndexDefinition indexDefinition, final DataFieldName<K> versionFieldName, final ListFilter listFilter, final int maxElements) {
+	public <K extends KeyConcept> Map<UID<K>, Serializable> loadVersions(final SearchIndexDefinition indexDefinition, final DataFieldName<K> versionFieldName, final ListFilter listFilter,
+			final int maxElements) {
 		final DataDefinition indexDtDefinition = indexDefinition.getIndexDtDefinition();
 		return ((ESStatement<K, ?>) createElasticStatement(indexDefinition)).loadVersions(indexDtDefinition.getField(versionFieldName), listFilter, maxElements);
 	}
@@ -452,32 +455,25 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 				.isNotNull(indexDefinition)
 				.isTrue(types.contains(indexDefinition.getName()), "Type {0} hasn't been registered (Registered type: {1}).", indexDefinition.getName(), types);
 		//-----
-		return new ESStatement<>(elasticDocumentCodec, obtainIndexName(indexDefinition), esClient, typeAdapters);
+		return new ESStatement(elasticDocumentCodec, obtainIndexName(indexDefinition), esClient, typeAdapters);
 	}
 
 	private static String obtainPkIndexDataType(final SmartTypeDefinition smartTypeDefinition) {
 		// On peut préciser pour chaque smartType le type d'indexation
 		// Calcul automatique  par default.
 		Assertion.check().isTrue(smartTypeDefinition.getScope().isBasicType(), "Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
-		switch (smartTypeDefinition.getBasicType()) {
-			case Boolean:
-			case Double:
-			case Integer:
-			case Long:
-				return smartTypeDefinition.getBasicType().name().toLowerCase(Locale.ROOT);
-			case String:
-				return "keyword";
-			case LocalDate:
-			case Instant:
-			case BigDecimal:
-			case DataStream:
-			default:
-				throw new IllegalArgumentException("Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
-		}
+		return switch (smartTypeDefinition.getBasicType()) {
+			case Boolean, Double, Integer, Long -> smartTypeDefinition.getBasicType().name().toLowerCase(Locale.ROOT);
+			case String -> "keyword";
+			case LocalDate, Instant, BigDecimal, DataStream -> throw new IllegalArgumentException(
+					"Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
+			default -> throw new IllegalArgumentException("Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
+		};
 	}
 
 	/**
 	 * Update template definition of this type.
+	 * 
 	 * @param indexDefinition Index concerné
 	 */
 	private void updateTypeMapping(final SearchIndexDefinition indexDefinition, final boolean sortableNormalizer) {

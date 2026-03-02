@@ -76,8 +76,8 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datafactory.collections.ListFilter;
 import io.vertigo.datafactory.collections.model.FacetedQueryResult;
 import io.vertigo.datafactory.impl.search.SearchServicesPlugin;
-import io.vertigo.datafactory.plugins.search.elasticsearch.ESDocumentCodec;
-import io.vertigo.datafactory.plugins.search.elasticsearch.IndexType;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.ESDocumentCodec;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.IndexType;
 import io.vertigo.datafactory.search.definitions.SearchIndexDefinition;
 import io.vertigo.datafactory.search.model.SearchIndex;
 import io.vertigo.datafactory.search.model.SearchQuery;
@@ -93,6 +93,7 @@ import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 
 /**
  * Gestion de la connexion au serveur Solr de manière transactionnel.
+ * 
  * @author dchallas, npiedeloup
  */
 public final class RestHLClientESSearchServicesPlugin implements SearchServicesPlugin, Activeable {
@@ -119,6 +120,7 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 
 	/**
 	 * Constructor.
+	 * 
 	 * @param envIndexPrefix ES index name
 	 * @param indexNameIsPrefix indexName use as prefix
 	 * @param defaultMaxRows Nombre de lignes
@@ -319,7 +321,7 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 	private String[] obtainIndicesNames(final List<SearchIndexDefinition> indexDefinitions) {
 		String[] indiceNames = new String[indexDefinitions.size()];
 		indiceNames = indexDefinitions.stream()
-				.map(d -> obtainIndexName(d))
+				.map(this::obtainIndexName)
 				.collect(Collectors.toList())
 				.toArray(indiceNames);
 		return indiceNames;
@@ -335,7 +337,8 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 
 	/** {@inheritDoc} */
 	@Override
-	public <K extends KeyConcept> Map<UID<K>, Serializable> loadVersions(final SearchIndexDefinition indexDefinition, final DataFieldName<K> versionFieldName, final ListFilter listFilter, final int maxElements) {
+	public <K extends KeyConcept> Map<UID<K>, Serializable> loadVersions(final SearchIndexDefinition indexDefinition, final DataFieldName<K> versionFieldName, final ListFilter listFilter,
+			final int maxElements) {
 		final DataDefinition indexDtDefinition = indexDefinition.getIndexDtDefinition();
 		return ((ESStatement<K, ?>) createElasticStatement(indexDefinition)).loadVersions(indexDtDefinition.getField(versionFieldName), listFilter, maxElements);
 	}
@@ -365,13 +368,18 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 				final GetResponse response = esClient.get(getRequest, RequestOptions.DEFAULT);
 				if (response.isExists()) {
 					final String type = (String) response.getSource().get("type");
-					final Serializable value = Serializable.class.cast(response.getSource().get("value"));
-					if (value instanceof Integer && "Long".equals(type)) {
-						return Long.valueOf((Integer) value); //ES use integer to store short long : and forget the source type
-					} else if (value instanceof String && "Instant".equals(type)) {
-						return Instant.parse(String.valueOf(value)); //ES use String to Instant
+					final Serializable rawValue = Serializable.class.cast(response.getSource().get("value"));
+					// rawValue peut être un Integer ou un Long selon sa taille dans le JSON
+					if (rawValue instanceof Number && "Long".equals(type)) {
+						return ((Number) rawValue).longValue(); //ES use integer to store short long : and forget the source type
+					} else if (rawValue instanceof Number && "Double".equals(type)) {
+						return ((Number) rawValue).doubleValue(); //ES use integer to store short long : and forget the source type
+					} else if (rawValue instanceof String && "Instant".equals(type)) {
+						return Instant.parse(String.valueOf(rawValue)); //ES use String to Instant
+					} else if (rawValue instanceof String && "LocalDate".equals(type)) {
+						return java.time.LocalDate.parse(String.valueOf(rawValue)); //ES use String to LocalDate
 					}
-					return value;
+					return rawValue;
 				}
 			} //no metadata index => return null
 			return null;
@@ -452,25 +460,18 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 		// On peut préciser pour chaque smartType le type d'indexation
 		// Calcul automatique  par default.
 		Assertion.check().isTrue(smartTypeDefinition.getScope().isBasicType(), "Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
-		switch (smartTypeDefinition.getBasicType()) {
-			case Boolean:
-			case Double:
-			case Integer:
-			case Long:
-				return smartTypeDefinition.getBasicType().name().toLowerCase(Locale.ROOT);
-			case String:
-				return "keyword";
-			case LocalDate:
-			case Instant:
-			case BigDecimal:
-			case DataStream:
-			default:
-				throw new IllegalArgumentException("Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
-		}
+		return switch (smartTypeDefinition.getBasicType()) {
+			case Boolean, Double, Integer, Long -> smartTypeDefinition.getBasicType().name().toLowerCase(Locale.ROOT);
+			case String -> "keyword";
+			case LocalDate, Instant, BigDecimal, DataStream -> throw new IllegalArgumentException(
+					"Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
+			default -> throw new IllegalArgumentException("Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
+		};
 	}
 
 	/**
 	 * Update template definition of this type.
+	 * 
 	 * @param indexDefinition Index concerné
 	 * @throws IOException
 	 */

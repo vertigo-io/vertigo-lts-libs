@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestClientBuilder.HttpClientConfigCallback;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.RestHighLevelClientBuilder;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.WrappedException;
@@ -89,6 +90,7 @@ public class RestHighLevelElasticSearchConnector implements Connector<RestHighLe
 			@ParamValue("apiKeyId") final Optional<String> apiKeyIdOpt,
 			@ParamValue("apiKeySecret") final Optional<String> apiKeySecretOpt,
 			@ParamValue("ssl") final boolean ssl,
+			@ParamValue("compatibilityMode") final Optional<Boolean> compatibilityMode,
 			@ParamValue("trustStoreUrl") final Optional<String> trustStoreUrlOpt,
 			@ParamValue("trustStorePassword") final Optional<String> trustStorePasswordOpt) {
 		Assertion.check()
@@ -109,14 +111,16 @@ public class RestHighLevelElasticSearchConnector implements Connector<RestHighLe
 				.when(ssl, () -> Assertion.check()
 						.isTrue(trustStoreUrlOpt.isPresent()
 								&& trustStorePasswordOpt.isPresent(),
-								"When SSL is enabled, you must set apiKey, trustStoreUrl and trustStorePassword"));
+								"When SSL is enabled, you must set trustStoreUrl and trustStorePassword"));
 		// ---------------------------------------------------------------------
 		connectorName = connectorNameOpt.orElse("main");
 		serversNames = serversNamesStr.split(",");
 
 		final RestClientBuilder restClientBuilder = buildRestClientBuilder(resourceManager, basicUserOpt, basicPasswordOpt,
 				apiKeyIdOpt, apiKeySecretOpt, ssl, trustStoreUrlOpt, trustStorePasswordOpt);
-		client = new RestHighLevelClient(restClientBuilder);
+		final RestHighLevelClientBuilder restHighLevelClientBuilder = new RestHighLevelClientBuilder(restClientBuilder.build());
+		restHighLevelClientBuilder.setApiCompatibilityMode(compatibilityMode.orElse(false));
+		client = restHighLevelClientBuilder.build();
 	}
 
 	/** {@inheritDoc} */

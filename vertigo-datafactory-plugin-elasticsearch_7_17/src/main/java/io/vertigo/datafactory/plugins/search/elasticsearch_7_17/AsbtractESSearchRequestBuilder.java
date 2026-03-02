@@ -557,6 +557,10 @@ public abstract class AsbtractESSearchRequestBuilder<R, S, T extends AsbtractESS
 		Assertion.check().isNotNull(listFilter);
 		//-----
 		String listFilterValue = listFilter.getFilterValue();
+		if (listFilterValue.trim().isEmpty()) {
+			return QueryBuilders.matchAllQuery(); //empty mean match all
+		}
+
 		for (final DataField keywordField : keywordFields) {
 			listFilterValue = listFilterValue.replace(keywordField.name() + ":", keywordField.name() + ".keyword:");
 		}

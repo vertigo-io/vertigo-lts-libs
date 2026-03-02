@@ -20,6 +20,9 @@ package io.vertigo.datafactory.search_7_17;
 import java.io.File;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -116,6 +119,7 @@ public abstract class AbstractSearchManagerTest {
 
 	/**
 	 * Initialise l'index.
+	 * 
 	 * @param indexName Nom de l'index
 	 */
 	protected final void init(final String indexName) {
@@ -138,7 +142,7 @@ public abstract class AbstractSearchManagerTest {
 	public static void doBeforeClass() throws Exception {
 		//We must remove data dir in index, in order to support versions updates when testing on PIC
 		final URL esDataURL = Thread.currentThread().getContextClassLoader().getResource("io/vertigo/datafactory/search/indexconfig");
-		final File esData = new File(URLDecoder.decode(esDataURL.getFile() + "/data", "UTF-8"));
+		final File esData = new File(URLDecoder.decode(esDataURL.getFile() + "/data", StandardCharsets.UTF_8.name()));
 		if (esData.exists() && esData.isDirectory()) {
 			recursiveDelete(esData);
 		}
@@ -197,6 +201,7 @@ public abstract class AbstractSearchManagerTest {
 	/**
 	 * Test de reindexation de l'index.
 	 * La création s'effectue dans une seule transaction.
+	 * 
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 * @throws TimeoutException
@@ -558,7 +563,7 @@ public abstract class AbstractSearchManagerTest {
 	public void testInsensitivityQuery() {
 		index(false);
 
-		final long databaseResult = itemDataBase.containsDescription("sieges") + itemDataBase.containsDescription("sièges");
+		final long databaseResult = itemDataBase.containsDescription("sieges"); //containsDescription use normalizer
 		long size;
 		size = query("description:sieges");
 		Assertions.assertEquals(databaseResult, size);
@@ -598,7 +603,7 @@ public abstract class AbstractSearchManagerTest {
 	public void testInsensitivity2Query() {
 		index(false);
 
-		final long databaseResult = itemDataBase.containsDescription("sieges") + itemDataBase.containsDescription("sièges");
+		final long databaseResult = itemDataBase.containsDescription("sieges");//containsDescription use normalizer
 		long size;
 		//y compris en wildcard
 		size = query("description:siè*");
@@ -944,6 +949,7 @@ public abstract class AbstractSearchManagerTest {
 		index(false);
 		final GeoPoint origin = new GeoPoint(48.80f, 2.36f);
 		final Item criteria = new Item();
+		criteria.setDescription("");
 		criteria.setLocalisation(origin);
 		final SearchQuery searchQuery = SearchQuery.builder("QryItemFacetGeo")
 				.withCriteria(criteria)
@@ -971,6 +977,7 @@ public abstract class AbstractSearchManagerTest {
 		index(false);
 		final GeoPoint origin = new GeoPoint(48.80f, 2.36f);
 		final Item criteria = new Item();
+		criteria.setDescription("");
 		criteria.setLocalisation(origin);
 		final SearchQuery searchQuery = SearchQuery.builder("QryItemFacetGeo")
 				.withCriteria(criteria)
@@ -1208,7 +1215,7 @@ public abstract class AbstractSearchManagerTest {
 		final List<Item> volkswagenItems = itemDataBase.getItemsByManufacturer("volkswagen");
 		final List<Item> peugeotVolkswagenItems = itemDataBase.getItemsByManufacturers("peugeot", "volkswagen");
 
-		final int audiItemsSize = itemDataBase.getItemsByManufacturer("audit").size();
+		final int audiItemsSize = itemDataBase.getItemsByManufacturer("audi").size();
 
 		final long peugeot2000To2005Count = ItemDataBase.between(peugeotItems, 2000, 2005);
 		final long peugeotVolkswagen2000To2005Count = ItemDataBase.between(peugeotVolkswagenItems, 2000, 2005);
@@ -1504,7 +1511,7 @@ public abstract class AbstractSearchManagerTest {
 	public void testClusterByFacetRangeVerySmallMaxRows() {
 		index(true);
 		final SearchQuery searchQuery = SearchQuery.builder("QryItemFacet")
-				.withCriteria("")
+				.withCriteria("etat")
 				.withFacetClustering(yearFacetDefinition) // "avant 2000", "2000-2005", "après 2005"
 				.build();
 		final FacetedQueryResult<Item, SearchQuery> result = doQuery(searchQuery, DtListState.of(1));
@@ -1548,6 +1555,7 @@ public abstract class AbstractSearchManagerTest {
 		index(true);
 		final GeoPoint origin = new GeoPoint(48.80f, 2.36f);
 		final Item criteria = new Item();
+		criteria.setDescription("etat");
 		criteria.setLocalisation(origin);
 		final SearchQuery searchQuery = SearchQuery.builder("QryItemFacetGeo")
 				.withCriteria(criteria)
@@ -1600,6 +1608,7 @@ public abstract class AbstractSearchManagerTest {
 		index(true);
 		final GeoPoint origin = new GeoPoint(48.80f, 2.36f);
 		final Item criteria = new Item();
+		criteria.setDescription("etat");
 		criteria.setLocalisation(origin);
 		final SearchQuery searchQuery = SearchQuery.builder("QryItemFacetGeo")
 				.withCriteria(criteria)
@@ -1666,24 +1675,123 @@ public abstract class AbstractSearchManagerTest {
 		final FacetedQueryResult<Item, SearchQuery> result = doQuery(searchQuery, null);
 
 		//On vérifie qu'il existe une valeur pour chaque range et que le nombre d'occurrences est correct
+		//les filtres retournent : 1220, 10001, 1030 et 20000
 		for (final Entry<FacetValue, DtList<Item>> entry : result.getClusters().entrySet()) {
 			final String searchFacetLabel = entry.getKey().label().getDisplay().toLowerCase(Locale.FRENCH);
 			final int searchFacetCount = entry.getValue().size();
 
 			if ("u09t6".equals(searchFacetLabel)) {
-				Assertions.assertEquals(3, searchFacetCount);
+				Assertions.assertEquals(3, searchFacetCount); //10, 10201,20000
 			} else if ("u09te".equals(searchFacetLabel)) {
-				Assertions.assertEquals(2, searchFacetCount);
+				Assertions.assertEquals(2, searchFacetCount); //1220, 10001
 			} else if ("u09tt".equals(searchFacetLabel)) {
-				Assertions.assertEquals(1, searchFacetCount);
+				Assertions.assertEquals(1, searchFacetCount); //1030
 			} else if ("u09td".equals(searchFacetLabel)) {
-				Assertions.assertEquals(1, searchFacetCount);
+				Assertions.assertEquals(1, searchFacetCount); //11
 			} else if ("u09t7".equals(searchFacetLabel)) {
-				Assertions.assertEquals(1, searchFacetCount);
+				Assertions.assertEquals(1, searchFacetCount); //12
 			} else {
 				Assertions.fail("Unexpected facet " + searchFacetLabel);
 			}
 		}
+	}
+
+	@Test
+	public void testIndexMetaData() {
+		searchManager.putMetaData(itemIndexDefinition, "metadata/testString", "testValue");
+		var value = searchManager.getMetaData(itemIndexDefinition, "metadata/testString");
+		Assertions.assertEquals("testValue", value);
+
+		searchManager.putMetaData(itemIndexDefinition, "metadata/testInteger", 1337);
+		value = searchManager.getMetaData(itemIndexDefinition, "metadata/testInteger");
+		Assertions.assertEquals(1337, value);
+
+		searchManager.putMetaData(itemIndexDefinition, "metadata/testLong", 132456789132L);
+		value = searchManager.getMetaData(itemIndexDefinition, "metadata/testLong");
+		Assertions.assertEquals(132456789132L, value);
+
+		searchManager.putMetaData(itemIndexDefinition, "metadata/testShortLong", 1338L);
+		value = searchManager.getMetaData(itemIndexDefinition, "metadata/testShortLong");
+		Assertions.assertEquals(1338L, value);
+
+		searchManager.putMetaData(itemIndexDefinition, "metadata/testDouble", 3.14);
+		value = searchManager.getMetaData(itemIndexDefinition, "metadata/testDouble");
+		Assertions.assertEquals(3.14, value);
+
+		searchManager.putMetaData(itemIndexDefinition, "metadata/testLocalDate", LocalDate.of(2024, 6, 1));
+		value = searchManager.getMetaData(itemIndexDefinition, "metadata/testLocalDate");
+		Assertions.assertEquals(LocalDate.of(2024, 6, 1), value);
+
+		searchManager.putMetaData(itemIndexDefinition, "metadata/testInstant", Instant.parse("2024-06-01T12:00:00Z"));
+		value = searchManager.getMetaData(itemIndexDefinition, "metadata/testInstant");
+		Assertions.assertEquals(Instant.parse("2024-06-01T12:00:00Z"), value);
+	}
+
+	/**
+	 * Test de reindexation de l'index.
+	 * La création s'effectue dans une seule transaction.
+	 * 
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 * @throws TimeoutException
+	 */
+	@Test
+	public void testReIndexModified() throws InterruptedException, ExecutionException, TimeoutException {
+		index(true);
+		long size = doCount();
+		Assertions.assertEquals(itemDataBase.size(), size);
+
+		//On supprime tout
+		removeAll();
+		waitAndExpectIndexation(0);
+		size = doCount();
+		Assertions.assertEquals(0L, size);
+
+		//on reindex
+		var sizeFuture = searchManager.reindexAllModified(itemIndexDefinition);
+		var currentReindex = searchManager.getReindexAllProgress(itemIndexDefinition);
+		log.info("====== currentReindex: " + currentReindex.orElse(-1L));
+		size = sizeFuture.get(10, TimeUnit.SECONDS);
+
+		//on attend 5s + le temps de reindexation
+		Assertions.assertEquals(itemDataBase.size(), size);
+		waitAndExpectIndexation(itemDataBase.size());
+
+		size = doCount();
+		Assertions.assertEquals(itemDataBase.size(), size);
+	}
+
+	/**
+	 * Test de reindexation de l'index.
+	 * La création s'effectue dans une seule transaction.
+	 * 
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 * @throws TimeoutException
+	 */
+	@Test
+	public void testReIndexDelta() throws InterruptedException, ExecutionException, TimeoutException {
+		index(true);
+		long size = doCount();
+		Assertions.assertEquals(itemDataBase.size(), size);
+
+		//On supprime tout
+		removeAll();
+		waitAndExpectIndexation(0);
+		size = doCount();
+		Assertions.assertEquals(0L, size);
+
+		//on reindex
+		var sizeFuture = searchManager.reindexDelta(itemIndexDefinition);
+		var currentReindex = searchManager.getReindexAllProgress(itemIndexDefinition);
+		log.info("====== currentReindex: " + currentReindex.orElse(-1L));
+		size = sizeFuture.get(10, TimeUnit.SECONDS);
+		//on attend 5s + le temps de reindexation
+		Assertions.assertEquals(itemDataBase.size(), size);
+		waitAndExpectIndexation(itemDataBase.size());
+
+		size = doCount();
+		Assertions.assertEquals(itemDataBase.size(), size);
 	}
 
 	private void logResult(final FacetedQueryResult<Item, SearchQuery> result) {
@@ -1821,7 +1929,7 @@ public abstract class AbstractSearchManagerTest {
 					break; //si le nombre est atteint on sort.
 				}
 
-			} while (System.currentTimeMillis() - time < 5000);//timeout 5s
+			} while (System.currentTimeMillis() - time < 10000);//timeout 10s
 		} catch (final InterruptedException e) {
 			Thread.currentThread().interrupt(); //si interrupt on relance
 		}

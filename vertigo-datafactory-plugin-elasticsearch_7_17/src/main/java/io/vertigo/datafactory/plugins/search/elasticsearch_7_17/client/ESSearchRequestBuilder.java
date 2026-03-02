@@ -32,9 +32,9 @@ import org.elasticsearch.search.sort.SortBuilders;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicTypeAdapter;
 import io.vertigo.datafactory.impl.search.dsl.model.DslGeoDistanceQuery;
-import io.vertigo.datafactory.plugins.search.elasticsearch.AsbtractESSearchRequestBuilder;
-import io.vertigo.datafactory.plugins.search.elasticsearch.DslGeoToQueryBuilderUtil;
-import io.vertigo.datafactory.plugins.search.elasticsearch.ESDocumentCodec;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.AsbtractESSearchRequestBuilder;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.DslGeoToQueryBuilderUtil;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.ESDocumentCodec;
 import io.vertigo.datafactory.search.model.SearchQuery;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
 import io.vertigo.datamodel.data.model.DtListState;
@@ -42,6 +42,7 @@ import io.vertigo.datamodel.data.model.DtListState;
 //vérifier
 /**
  * ElasticSearch request builder from searchManager api.
+ * 
  * @author pchretien, npiedeloup
  */
 final class ESSearchRequestBuilder extends AsbtractESSearchRequestBuilder<SearchRequestBuilder, SearchRequestBuilder, ESSearchRequestBuilder> {
@@ -71,7 +72,7 @@ final class ESSearchRequestBuilder extends AsbtractESSearchRequestBuilder<Search
 		if (listState.getSortFieldName().isPresent()) {
 			final var sortFieldName = listState.getSortFieldName().get();
 			if (searchQuery.getGeoExpression().isPresent()
-					&& searchQuery.getGeoExpression().get().getGeoQuery() instanceof DslGeoDistanceQuery geoDistanceQuery
+					&& searchQuery.getGeoExpression().get().getGeoQuery() instanceof final DslGeoDistanceQuery geoDistanceQuery
 					&& sortFieldName.equals(searchQuery.getGeoExpression().get().getField().getFieldName())) {
 				final GeoPoint geoPoint = DslGeoToQueryBuilderUtil.computeGeoPoint(geoDistanceQuery.getGeoPoint(), searchQuery.getCriteria(), typeAdapters);
 				Assertion.check().isNotNull(geoPoint, "When sorting by distance the geoPoint used as criteria cannot be null");

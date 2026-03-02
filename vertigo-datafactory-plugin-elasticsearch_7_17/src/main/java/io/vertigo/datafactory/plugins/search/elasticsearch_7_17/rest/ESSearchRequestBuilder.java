@@ -36,10 +36,10 @@ import org.elasticsearch.search.sort.SortOrder;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.BasicTypeAdapter;
 import io.vertigo.datafactory.impl.search.dsl.model.DslGeoDistanceQuery;
-import io.vertigo.datafactory.plugins.search.elasticsearch.AsbtractESSearchRequestBuilder;
-import io.vertigo.datafactory.plugins.search.elasticsearch.DslGeoToQueryBuilderUtil;
-import io.vertigo.datafactory.plugins.search.elasticsearch.ESDocumentCodec;
-import io.vertigo.datafactory.plugins.search.elasticsearch.IndexType;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.AsbtractESSearchRequestBuilder;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.DslGeoToQueryBuilderUtil;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.ESDocumentCodec;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.IndexType;
 import io.vertigo.datafactory.search.model.SearchQuery;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
 import io.vertigo.datamodel.data.definitions.DataField;
@@ -48,6 +48,7 @@ import io.vertigo.datamodel.data.model.DtListState;
 //vérifier
 /**
  * ElasticSearch request builder from searchManager api.
+ * 
  * @author pchretien, npiedeloup
  */
 final class ESSearchRequestBuilder extends AsbtractESSearchRequestBuilder<SearchRequest, SearchSourceBuilder, ESSearchRequestBuilder> {
