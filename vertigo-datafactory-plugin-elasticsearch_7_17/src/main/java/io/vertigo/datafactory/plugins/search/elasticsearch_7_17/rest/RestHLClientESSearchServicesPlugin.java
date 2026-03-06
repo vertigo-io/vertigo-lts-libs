@@ -40,6 +40,7 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.forcemerge.ForceMergeRequest;
 import org.elasticsearch.action.admin.indices.forcemerge.ForceMergeResponse;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -117,6 +118,7 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 	private final String envIndexPrefix;
 	private final URL configFileUrl;
 	private boolean indexSettingsValid;
+	private boolean optimizeNumSegment;
 
 	/**
 	 * Constructor.
@@ -134,6 +136,7 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 			@ParamValue("rowsPerQuery") final int defaultMaxRows,
 			@ParamValue("config.file") final String configFile,
 			@ParamValue("connectorName") final Optional<String> connectorNameOpt,
+			@ParamValue("optimizeNumSegment") final Optional<Boolean> optimizeNumSegmentOpt,
 			final List<RestHighLevelElasticSearchConnector> elasticSearchConnectors,
 			final CodecManager codecManager,
 			final SmartTypeManager smartTypeManager,
@@ -156,6 +159,7 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 		elasticSearchConnector = elasticSearchConnectors.stream()
 				.filter(connector -> connectorName.equals(connector.getName()))
 				.findFirst().orElseThrow(() -> new IllegalArgumentException("Can't found ElasticSearchConnector named '" + connectorName + "' in " + elasticSearchConnectors));
+		optimizeNumSegment = optimizeNumSegmentOpt.orElse(false);
 	}
 
 	/** {@inheritDoc} */
@@ -368,18 +372,13 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 				final GetResponse response = esClient.get(getRequest, RequestOptions.DEFAULT);
 				if (response.isExists()) {
 					final String type = (String) response.getSource().get("type");
-					final Serializable rawValue = Serializable.class.cast(response.getSource().get("value"));
-					// rawValue peut être un Integer ou un Long selon sa taille dans le JSON
-					if (rawValue instanceof Number && "Long".equals(type)) {
-						return ((Number) rawValue).longValue(); //ES use integer to store short long : and forget the source type
-					} else if (rawValue instanceof Number && "Double".equals(type)) {
-						return ((Number) rawValue).doubleValue(); //ES use integer to store short long : and forget the source type
-					} else if (rawValue instanceof String && "Instant".equals(type)) {
-						return Instant.parse(String.valueOf(rawValue)); //ES use String to Instant
-					} else if (rawValue instanceof String && "LocalDate".equals(type)) {
-						return java.time.LocalDate.parse(String.valueOf(rawValue)); //ES use String to LocalDate
+					final Serializable value = Serializable.class.cast(response.getSource().get("value"));
+					if (value instanceof Integer && "Long".equals(type)) {
+						return Long.valueOf((Integer) value); //ES use integer to store short long : and forget the source type
+					} else if (value instanceof String && "Instant".equals(type)) {
+						return Instant.parse(String.valueOf(value)); //ES use String to Instant
 					}
-					return rawValue;
+					return value;
 				}
 			} //no metadata index => return null
 			return null;
@@ -555,25 +554,50 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 	}
 
 	private void markToOptimize(final String myIndexName) {
-		final ForceMergeRequest request = new ForceMergeRequest(myIndexName)
-				.maxNumSegments(OPTIMIZE_MAX_NUM_SEGMENT)//32 files : empirique
-				.flush(true);
+		try {
+			// 2. Initialisation de la requête avec les paramètres communs
+			final ForceMergeRequest request = new ForceMergeRequest(myIndexName)
+					.flush(true); // On garde toujours le flush pour libérer le disque au niveau de l'OS
 
-		esClient.indices().forcemergeAsync(request, RequestOptions.DEFAULT, new OptimizeActionListener());
+			// 3. Application de la stratégie d'optimisation
+			if (optimizeNumSegment) {
+				/** cette manière d'optimizer est déconseillée par elastic, on peut la réactiver avec le `optimizeNumSegment` du plugin */
+				request.maxNumSegments(OPTIMIZE_MAX_NUM_SEGMENT); // 32 files : empirique
+			} else {
+				// Recommandé : on ne merge que les segments qui ont des deletes, pour éviter de faire du merge inutile
+				request.onlyExpungeDeletes(true);
+			}
+
+			// 4. Appel asynchrone via le RestHighLevelClient
+			esClient.indices().forcemergeAsync(request, RequestOptions.DEFAULT, new OptimizeActionListener());
+			LOGGER.debug("markToOptimize send");
+		} catch (final Exception e) {
+			LOGGER.error("Error on markToOptimize call", e);
+		}
 	}
 
 	private static class OptimizeActionListener implements ActionListener<ForceMergeResponse> {
-
+		/** @inheritDoc */
 		@Override
-		public void onResponse(final ForceMergeResponse response) {
-			LOGGER.debug("markToOptimize ok");
+		public void onResponse(ForceMergeResponse response) {
+			LOGGER.debug("markToOptimize.forceMerge finished");
 		}
 
+		/** @inheritDoc */
 		@Override
-		public void onFailure(final Exception e) {
-			LOGGER.error("Error on markToOptimize", e);
+		public void onFailure(Exception e) {
+			LOGGER.error("Error on markToOptimize.forceMerge", e);
 		}
+	}
 
+	/** {@inheritDoc} */
+	@Override
+	public void waitForRefresh(List<SearchIndexDefinition> indexDefinitions) {
+		try {
+			esClient.indices().refresh(new RefreshRequest(obtainIndicesNames(indexDefinitions)), RequestOptions.DEFAULT);
+		} catch (final Exception e) {
+			throw WrappedException.wrap(e, "Error on waitForRefresh");
+		}
 	}
 
 	private void waitForYellowStatus() {

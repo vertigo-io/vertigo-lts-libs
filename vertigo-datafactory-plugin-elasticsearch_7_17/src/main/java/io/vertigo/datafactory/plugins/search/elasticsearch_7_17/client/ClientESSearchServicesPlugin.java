@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -36,14 +37,18 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthAction;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.action.admin.indices.forcemerge.ForceMergeResponse;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.cluster.metadata.MappingMetadata;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
@@ -111,6 +116,7 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 	private final Set<String> types = new HashSet<>();
 	private final URL configFileUrl;
 	private boolean indexSettingsValid;
+	private boolean optimizeNumSegment;
 
 	/**
 	 * Constructor.
@@ -127,6 +133,7 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 			@ParamValue("rowsPerQuery") final int defaultMaxRows,
 			@ParamValue("config.file") final String configFile,
 			@ParamValue("connectorName") final Optional<String> connectorNameOpt,
+			@ParamValue("optimizeNumSegment") final Optional<Boolean> optimizeNumSegmentOpt,
 			final List<ElasticSearchConnector> elasticSearchConnectors,
 			final CodecManager codecManager,
 			final SmartTypeManager smartTypeManager,
@@ -149,6 +156,7 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 		elasticSearchConnector = elasticSearchConnectors.stream()
 				.filter(connector -> connectorName.equals(connector.getName()))
 				.findFirst().orElseThrow(() -> new IllegalArgumentException("Can't found ElasticSearchConnector named '" + connectorName + "' in " + elasticSearchConnectors));
+		optimizeNumSegment = optimizeNumSegmentOpt.orElse(false);
 	}
 
 	/** {@inheritDoc} */
@@ -455,7 +463,7 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 				.isNotNull(indexDefinition)
 				.isTrue(types.contains(indexDefinition.getName()), "Type {0} hasn't been registered (Registered type: {1}).", indexDefinition.getName(), types);
 		//-----
-		return new ESStatement(elasticDocumentCodec, obtainIndexName(indexDefinition), esClient, typeAdapters);
+		return new ESStatement<>(elasticDocumentCodec, obtainIndexName(indexDefinition), esClient, typeAdapters);
 	}
 
 	private static String obtainPkIndexDataType(final SmartTypeDefinition smartTypeDefinition) {
@@ -558,14 +566,56 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 		}
 	}
 
+	/** {@inheritDoc} */
+	@Override
+	public void waitForRefresh(List<SearchIndexDefinition> indexDefinitions) {
+		try {
+			esClient.admin()
+					.indices()
+					.prepareRefresh(obtainIndicesNames(indexDefinitions))
+					.execute()
+					.actionGet(); // mode bloquant voulu
+		} catch (final Exception e) {
+			throw WrappedException.wrap(e, "Error on waitForRefresh");
+		}
+	}
+
 	private void markToOptimize(final String myIndexName) {
-		esClient.admin()
-				.indices()
-				.prepareForceMerge(myIndexName)
-				.setFlush(true)
-				.setMaxNumSegments(OPTIMIZE_MAX_NUM_SEGMENT)//32 files : empirique
-				.execute()
-				.actionGet();
+		try {
+			/** cette manière d'optimizer est déconseillé par elastic, on peut la réactivé avec le `optimizeNumSegment` du plugin */
+			if (optimizeNumSegment) {
+				esClient.admin()
+						.indices()
+						.prepareForceMerge(myIndexName)
+						.setMaxNumSegments(OPTIMIZE_MAX_NUM_SEGMENT)//32 files : empirique
+						.setFlush(true)
+						.execute(new OptimizeActionListener());
+			} else {
+				esClient.admin()
+						.indices()
+						.prepareForceMerge(myIndexName)
+						.setOnlyExpungeDeletes(true) //on ne merge que les segments qui ont des delete, pour éviter de faire du merge inutile
+						.setFlush(true)
+						.execute(new OptimizeActionListener());
+			}
+			LOGGER.debug("markToOptimize send");
+		} catch (final Exception e) {
+			LOGGER.error("Error on markToOptimize call", e);
+		}
+	}
+
+	private static class OptimizeActionListener implements ActionListener<ForceMergeResponse> {
+		/** @inheritDoc */
+		@Override
+		public void onResponse(ForceMergeResponse response) {
+			LOGGER.debug("markToOptimize.forceMerge finished");
+		}
+
+		/** @inheritDoc */
+		@Override
+		public void onFailure(Exception e) {
+			LOGGER.error("Error on markToOptimize.forceMerge", e);
+		}
 	}
 
 	private void waitForYellowStatus() {
