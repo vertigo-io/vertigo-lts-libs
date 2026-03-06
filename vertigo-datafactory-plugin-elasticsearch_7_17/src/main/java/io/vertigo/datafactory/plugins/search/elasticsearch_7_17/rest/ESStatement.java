@@ -76,7 +76,6 @@ import io.vertigo.datamodel.data.model.UID;
 /**
  * Requête physique d'accès à ElasticSearch.
  * Le driver exécute les requêtes de façon synchrone dans le contexte transactionnelle de la ressource.
- * 
  * @author pchretien, npiedeloup
  * @param <I> Type de l'objet représentant l'index
  * @param <K> Type du keyConcept métier indexé
@@ -94,7 +93,6 @@ final class ESStatement<K extends KeyConcept, I extends DataObject> {
 
 	/**
 	 * Constructor.
-	 * 
 	 * @param esDocumentCodec Codec de traduction (bi-directionnelle) des objets métiers en document
 	 * @param indexName Index name
 	 * @param esClient Client ElasticSearch.
@@ -163,7 +161,6 @@ final class ESStatement<K extends KeyConcept, I extends DataObject> {
 
 	/**
 	 * Supprime des documents.
-	 * 
 	 * @param query Requete de filtrage des documents à supprimer
 	 */
 	void remove(final ListFilter query) {
@@ -228,9 +225,9 @@ final class ESStatement<K extends KeyConcept, I extends DataObject> {
 		}
 		final BasicType versionFieldDataType = versionField.smartTypeDefinition().getBasicType();
 		return switch (versionFieldDataType) {
-			case Integer -> value instanceof Integer i ? i : Integer.valueOf(String.valueOf(value));
-			case Long -> value instanceof Long l ? l : Long.valueOf(String.valueOf(value));
-			case Instant -> value instanceof Instant i ? i : Instant.parse(String.valueOf(value));
+			case Integer -> value instanceof Integer ? (Integer) value : Integer.valueOf(String.valueOf(value));
+			case Long -> value instanceof Long ? (Long) value : Long.valueOf(String.valueOf(value));
+			case Instant -> value instanceof Instant ? (Instant) value : Instant.parse(String.valueOf(value));
 			case String -> String.valueOf(value);
 			case BigDecimal, DataStream, Boolean, Double, LocalDate -> throw new IllegalArgumentException("Type's versionField " + versionFieldDataType.name() + " from "
 					+ indexName + " is not supported, prefer int, long, Instant or String.");
@@ -239,7 +236,6 @@ final class ESStatement<K extends KeyConcept, I extends DataObject> {
 
 	/**
 	 * Supprime un document.
-	 * 
 	 * @param uid UID du document à supprimer
 	 */
 	void remove(final UID uid) {
@@ -264,8 +260,7 @@ final class ESStatement<K extends KeyConcept, I extends DataObject> {
 	 * @param defaultMaxRows Nombre de ligne max par defaut
 	 * @return Résultat de la recherche
 	 */
-	FacetedQueryResult<I, SearchQuery> loadList(final DataDefinition indexDtDefinition, final String[] indexNames, final SearchQuery searchQuery, final DtListState listState,
-			final int defaultMaxRows) {
+	FacetedQueryResult<I, SearchQuery> loadList(final DataDefinition indexDtDefinition, final String[] indexNames, final SearchQuery searchQuery, final DtListState listState, final int defaultMaxRows) {
 		Assertion.check().isNotNull(searchQuery);
 		//-----
 		final SearchRequest searchRequest = new ESSearchRequestBuilder(indexNames, esClient, typeAdapters)

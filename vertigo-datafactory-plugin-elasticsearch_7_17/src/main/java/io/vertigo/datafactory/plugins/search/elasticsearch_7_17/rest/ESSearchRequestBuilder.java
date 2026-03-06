@@ -48,7 +48,6 @@ import io.vertigo.datamodel.data.model.DtListState;
 //vérifier
 /**
  * ElasticSearch request builder from searchManager api.
- * 
  * @author pchretien, npiedeloup
  */
 final class ESSearchRequestBuilder extends AsbtractESSearchRequestBuilder<SearchRequest, SearchSourceBuilder, ESSearchRequestBuilder> {

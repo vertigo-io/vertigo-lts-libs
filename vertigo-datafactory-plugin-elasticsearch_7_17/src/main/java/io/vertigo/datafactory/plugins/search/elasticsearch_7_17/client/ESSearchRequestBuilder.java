@@ -42,7 +42,6 @@ import io.vertigo.datamodel.data.model.DtListState;
 //vérifier
 /**
  * ElasticSearch request builder from searchManager api.
- * 
  * @author pchretien, npiedeloup
  */
 final class ESSearchRequestBuilder extends AsbtractESSearchRequestBuilder<SearchRequestBuilder, SearchRequestBuilder, ESSearchRequestBuilder> {
@@ -72,7 +71,7 @@ final class ESSearchRequestBuilder extends AsbtractESSearchRequestBuilder<Search
 		if (listState.getSortFieldName().isPresent()) {
 			final var sortFieldName = listState.getSortFieldName().get();
 			if (searchQuery.getGeoExpression().isPresent()
-					&& searchQuery.getGeoExpression().get().getGeoQuery() instanceof final DslGeoDistanceQuery geoDistanceQuery
+					&& searchQuery.getGeoExpression().get().getGeoQuery() instanceof DslGeoDistanceQuery geoDistanceQuery
 					&& sortFieldName.equals(searchQuery.getGeoExpression().get().getField().getFieldName())) {
 				final GeoPoint geoPoint = DslGeoToQueryBuilderUtil.computeGeoPoint(geoDistanceQuery.getGeoPoint(), searchQuery.getCriteria(), typeAdapters);
 				Assertion.check().isNotNull(geoPoint, "When sorting by distance the geoPoint used as criteria cannot be null");
