@@ -27,13 +27,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthAction;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.action.admin.indices.forcemerge.ForceMergeResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.IndicesAdminClient;
@@ -60,18 +63,19 @@ import io.vertigo.datafactory.impl.search.SearchServicesPlugin;
 import io.vertigo.datafactory.search.definitions.SearchIndexDefinition;
 import io.vertigo.datafactory.search.model.SearchIndex;
 import io.vertigo.datafactory.search.model.SearchQuery;
-import io.vertigo.datamodel.smarttype.SmartTypeManager;
-import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
 import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
-import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.model.KeyConcept;
 import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.smarttype.SmartTypeManager;
+import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 
 /**
  * Gestion de la connexion au serveur ElasticSearch de manière transactionnel.
+ * 
  * @author dchallas, npiedeloup
  */
 public abstract class AbstractESSearchServicesPlugin implements SearchServicesPlugin, Activeable {
@@ -95,6 +99,7 @@ public abstract class AbstractESSearchServicesPlugin implements SearchServicesPl
 
 	/**
 	 * Constructor.
+	 * 
 	 * @param indexNameOrPrefix ES index name
 	 * @param indexNameIsPrefix indexName use as prefix
 	 * @param defaultMaxRows Nombre de lignes
@@ -278,8 +283,8 @@ public abstract class AbstractESSearchServicesPlugin implements SearchServicesPl
 	/** {@inheritDoc} */
 	@Override
 	public final <R extends DataObject> FacetedQueryResult<R, SearchQuery> loadList(final List<SearchIndexDefinition> indexDefinitions, final SearchQuery searchQuery, final DtListState listState) {
-		Assertion.check().isNotNull(searchQuery);
-		Assertion.check().isTrue(indexDefinitions.size() == 1, "ElasticSearch plugn for old version (5.6) don't support multiple SearchIndexDefinition");
+		Assertion.check().isNotNull(searchQuery).isNotNull(indexDefinitions);
+		Assertion.check().isTrue(indexDefinitions.size() == 1, "ElasticSearch plugin for old version (5.6) don't support multiple SearchIndexDefinition");
 		//-----
 		final ESStatement<KeyConcept, R> statement = createElasticStatement(indexDefinitions.get(0));
 		final DtListState usedListState = listState != null ? listState : defaultListState;
@@ -319,7 +324,8 @@ public abstract class AbstractESSearchServicesPlugin implements SearchServicesPl
 
 	/** {@inheritDoc} */
 	@Override
-	public <K extends KeyConcept> Map<UID<K>, Serializable> loadVersions(final SearchIndexDefinition indexDefinitions, final DataFieldName<K> versionFieldName, final ListFilter listFilter, final int maxElements) {
+	public <K extends KeyConcept> Map<UID<K>, Serializable> loadVersions(final SearchIndexDefinition indexDefinitions, final DataFieldName<K> versionFieldName, final ListFilter listFilter,
+			final int maxElements) {
 		throw new UnsupportedOperationException("This old plugin doesn't support this method.");
 	}
 
@@ -337,25 +343,17 @@ public abstract class AbstractESSearchServicesPlugin implements SearchServicesPl
 		// On peut préciser pour chaque smartType le type d'indexation
 		// Calcul automatique  par default.
 		Assertion.check().isTrue(smartType.getScope().isBasicType(), "Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartType + "].");
-		switch (smartType.getBasicType()) {
-			case Boolean:
-			case Double:
-			case Integer:
-			case Long:
-				return smartType.getBasicType().name().toLowerCase(Locale.ROOT);
-			case String:
-				return "keyword";
-			case LocalDate:
-			case Instant:
-			case BigDecimal:
-			case DataStream:
-			default:
-				throw new IllegalArgumentException("Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartType + "].");
-		}
+		return switch (smartType.getBasicType()) {
+			case Boolean, Double, Integer, Long -> smartType.getBasicType().name().toLowerCase(Locale.ROOT);
+			case String -> "keyword";
+			case LocalDate, Instant, BigDecimal, DataStream -> throw new IllegalArgumentException("Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartType + "].");
+			default -> throw new IllegalArgumentException("Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartType + "].");
+		};
 	}
 
 	/**
 	 * Update template definition of this type.
+	 * 
 	 * @param indexDefinition Index concerné
 	 */
 	private void updateTypeMapping(final SearchIndexDefinition indexDefinition, final boolean sortableNormalizer) {
@@ -438,13 +436,48 @@ public abstract class AbstractESSearchServicesPlugin implements SearchServicesPl
 	}
 
 	private void markToOptimize(final String myIndexName) {
-		esClient.admin()
-				.indices()
-				.prepareForceMerge(myIndexName)
-				.setFlush(true)
-				.setMaxNumSegments(OPTIMIZE_MAX_NUM_SEGMENT)//32 files : empirique
-				.execute()
-				.actionGet();
+		try {
+			/** cette manière d'optimizer est déconseillé par elastic, on peut la réactivé avec le `optimizeNumSegment` du plugin */
+			esClient.admin()
+					.indices()
+					.prepareForceMerge(myIndexName)
+					.setMaxNumSegments(OPTIMIZE_MAX_NUM_SEGMENT)//32 files : empirique
+					.setFlush(true)
+					.execute(new OptimizeActionListener());
+			LOGGER.debug("markToOptimize send");
+		} catch (final Exception e) {
+			LOGGER.error("Error on markToOptimize call", e);
+		}
+	}
+
+	private static class OptimizeActionListener implements ActionListener<ForceMergeResponse> {
+		/** @inheritDoc */
+		@Override
+		public void onResponse(ForceMergeResponse response) {
+			LOGGER.debug("markToOptimize.forceMerge finished");
+		}
+
+		/** @inheritDoc */
+		@Override
+		public void onFailure(Exception e) {
+			LOGGER.error("Error on markToOptimize.forceMerge", e);
+		}
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void waitForRefresh(List<SearchIndexDefinition> indexDefinitions) {
+		Assertion.check().isNotNull(indexDefinitions);
+		Assertion.check().isTrue(indexDefinitions.size() == 1, "ElasticSearch plugin for old version (5.6) don't support multiple SearchIndexDefinition");
+		try {
+			esClient.admin()
+					.indices()
+					.prepareRefresh(obtainIndexName(indexDefinitions.get(0)))
+					.execute()
+					.actionGet(); // mode bloquant voulu
+		} catch (final Exception e) {
+			throw WrappedException.wrap(e, "Error on waitForRefresh");
+		}
 	}
 
 	private void waitForYellowStatus() {
