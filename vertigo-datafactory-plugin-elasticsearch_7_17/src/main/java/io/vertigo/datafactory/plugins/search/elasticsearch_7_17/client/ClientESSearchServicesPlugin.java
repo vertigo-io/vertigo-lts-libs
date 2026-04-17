@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -42,13 +41,11 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthAction;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.forcemerge.ForceMergeResponse;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.IndicesAdminClient;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.cluster.metadata.MappingMetadata;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
@@ -91,7 +88,7 @@ import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 
 /**
  * Gestion de la connexion au serveur Solr de manière transactionnel.
- * 
+ *
  * @author dchallas, npiedeloup
  */
 public final class ClientESSearchServicesPlugin implements SearchServicesPlugin, Activeable {
@@ -116,11 +113,11 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 	private final Set<String> types = new HashSet<>();
 	private final URL configFileUrl;
 	private boolean indexSettingsValid;
-	private boolean optimizeNumSegment;
+	private final boolean optimizeNumSegment;
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param envIndexPrefix ES index name
 	 * @param defaultMaxRows Nombre de lignes
 	 * @param codecManager Manager de codec
@@ -481,7 +478,7 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 
 	/**
 	 * Update template definition of this type.
-	 * 
+	 *
 	 * @param indexDefinition Index concerné
 	 */
 	private void updateTypeMapping(final SearchIndexDefinition indexDefinition, final boolean sortableNormalizer) {
@@ -568,7 +565,7 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 
 	/** {@inheritDoc} */
 	@Override
-	public void waitForRefresh(List<SearchIndexDefinition> indexDefinitions) {
+	public void waitForRefresh(final List<SearchIndexDefinition> indexDefinitions) {
 		try {
 			esClient.admin()
 					.indices()
@@ -607,13 +604,13 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 	private static class OptimizeActionListener implements ActionListener<ForceMergeResponse> {
 		/** @inheritDoc */
 		@Override
-		public void onResponse(ForceMergeResponse response) {
+		public void onResponse(final ForceMergeResponse response) {
 			LOGGER.debug("markToOptimize.forceMerge finished");
 		}
 
 		/** @inheritDoc */
 		@Override
-		public void onFailure(Exception e) {
+		public void onFailure(final Exception e) {
 			LOGGER.error("Error on markToOptimize.forceMerge", e);
 		}
 	}
