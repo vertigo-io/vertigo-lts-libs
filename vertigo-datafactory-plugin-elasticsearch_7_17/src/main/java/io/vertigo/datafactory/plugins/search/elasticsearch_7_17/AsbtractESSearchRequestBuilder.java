@@ -71,6 +71,7 @@ import io.vertigo.datamodel.smarttype.definitions.DtProperty;
 
 /**
  * ElasticSearch request builder from searchManager api.
+ *
  * @author pchretien, npiedeloup
  * @param R Type of ES searchRequest : SearchRequest for HLClent or SearchRequestBuilder for TransportClient
  * @param S Type of ES SearchSourceBuilder : SearchSourceBuilder for HLClent or SearchRequestBuilder for TransportClient
@@ -209,8 +210,14 @@ public abstract class AsbtractESSearchRequestBuilder<R, S, T extends AsbtractESS
 		setQueryAndPostFilter(requestQueryBuilder, postFilterBoolQueryBuilder);
 
 		if (useHighlight) {
+			final HighlightBuilder highlightBuilder = new HighlightBuilder();
 			//.setHighlighterFilter(true) //We don't highlight the security filter
-			setHighlighter(new HighlightBuilder().numOfFragments(3));
+			highlightBuilder.numOfFragments(3);
+			highlightBuilder.preTags("<em>");
+			highlightBuilder.postTags("</em>");
+			// Pour tous les champs
+			highlightBuilder.field("*");
+			setHighlighter(highlightBuilder);
 		}
 	}
 

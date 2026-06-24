@@ -52,12 +52,12 @@ import io.vertigo.datafactory.collections.model.FacetedQuery;
 import io.vertigo.datafactory.collections.model.FacetedQueryResult;
 import io.vertigo.datafactory.collections.model.SelectedFacetValues;
 import io.vertigo.datamodel.DataModelFeatures;
-import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 import io.vertigo.datastore.DataStoreFeatures;
 
 /**
- * @author  npiedeloup
+ * @author npiedeloup
  */
 //non final, to be overrided for previous lib version
 public class FacetManagerTest {
@@ -116,7 +116,7 @@ public class FacetManagerTest {
 		Assertions.assertEquals(smartCarDataBase.size(), result.getCount());
 
 		//On vérifie qu'il y a le bon nombre de facettes.
-		Assertions.assertEquals(3, result.getFacets().size());
+		Assertions.assertEquals(4, result.getFacets().size());
 
 		//On recherche la facette date
 		final Facet yearFacet = getFacetByName(result, "FctYearCar");
@@ -136,7 +136,7 @@ public class FacetManagerTest {
 		Assertions.assertEquals(smartCarDataBase.size(), result.getCount());
 
 		//On vérifie qu'il y a le bon nombre de facettes.
-		Assertions.assertEquals(3, result.getFacets().size());
+		Assertions.assertEquals(4, result.getFacets().size());
 
 		//On recherche la facette constructeur
 		final Facet manufacturerFacet = getFacetByName(result, "FctManufacturerCar");

@@ -94,7 +94,7 @@ import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 
 /**
  * Gestion de la connexion au serveur Solr de manière transactionnel.
- * 
+ *
  * @author dchallas, npiedeloup
  */
 public final class RestHLClientESSearchServicesPlugin implements SearchServicesPlugin, Activeable {
@@ -118,11 +118,11 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 	private final String envIndexPrefix;
 	private final URL configFileUrl;
 	private boolean indexSettingsValid;
-	private boolean optimizeNumSegment;
+	private final boolean optimizeNumSegment;
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param envIndexPrefix ES index name
 	 * @param indexNameIsPrefix indexName use as prefix
 	 * @param defaultMaxRows Nombre de lignes
@@ -372,13 +372,17 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 				final GetResponse response = esClient.get(getRequest, RequestOptions.DEFAULT);
 				if (response.isExists()) {
 					final String type = (String) response.getSource().get("type");
-					final Serializable value = Serializable.class.cast(response.getSource().get("value"));
-					if (value instanceof Integer && "Long".equals(type)) {
-						return Long.valueOf((Integer) value); //ES use integer to store short long : and forget the source type
-					} else if (value instanceof String && "Instant".equals(type)) {
-						return Instant.parse(String.valueOf(value)); //ES use String to Instant
+					final Serializable rawValue = Serializable.class.cast(response.getSource().get("value"));
+					if (rawValue instanceof Number && "Long".equals(type)) {
+						return ((Number) rawValue).longValue(); //ES use integer to store short long : and forget the source type
+					} else if (rawValue instanceof Number && "Double".equals(type)) {
+						return ((Number) rawValue).doubleValue(); //ES use integer to store short long : and forget the source type
+					} else if (rawValue instanceof String && "Instant".equals(type)) {
+						return Instant.parse(String.valueOf(rawValue)); //ES use String to Instant
+					} else if (rawValue instanceof String && "LocalDate".equals(type)) {
+						return java.time.LocalDate.parse(String.valueOf(rawValue)); //ES use String to LocalDate
 					}
-					return value;
+					return rawValue;
 				}
 			} //no metadata index => return null
 			return null;
@@ -470,7 +474,7 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 
 	/**
 	 * Update template definition of this type.
-	 * 
+	 *
 	 * @param indexDefinition Index concerné
 	 * @throws IOException
 	 */
@@ -579,20 +583,20 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 	private static class OptimizeActionListener implements ActionListener<ForceMergeResponse> {
 		/** @inheritDoc */
 		@Override
-		public void onResponse(ForceMergeResponse response) {
+		public void onResponse(final ForceMergeResponse response) {
 			LOGGER.debug("markToOptimize.forceMerge finished");
 		}
 
 		/** @inheritDoc */
 		@Override
-		public void onFailure(Exception e) {
+		public void onFailure(final Exception e) {
 			LOGGER.error("Error on markToOptimize.forceMerge", e);
 		}
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void waitForRefresh(List<SearchIndexDefinition> indexDefinitions) {
+	public void waitForRefresh(final List<SearchIndexDefinition> indexDefinitions) {
 		try {
 			esClient.indices().refresh(new RefreshRequest(obtainIndicesNames(indexDefinitions)), RequestOptions.DEFAULT);
 		} catch (final Exception e) {
