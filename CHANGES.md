@@ -1,10 +1,26 @@
 Version history
 ===============
 
-Running 4.3.0
+Running 4.4.0 - 2026-07-XX
 ----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-432-to-440)
 
-more to come :)
+* [DataFactory][ES7] Add highlighting support; fix type handling for Long, Double, LocalDate in version fields; switch forceMerge to async mode
+* [DataFactory][ES5_6] Add waitForRefresh; switch forceMerge to async mode; refacto switch expressions
+
+
+Release 4.3.2 - 2025/07/10
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-430-to-432)
+
+_No changes this time_
+
+
+Release 4.3.0 - 2025/03/28
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-420-to-430)
+
+* [DataFactory] Update ES 7.17.x plugin: removed deprecated transport client dependency; refactored clustering & topHits aggregation
 
 
 Release 4.2.0 - 2024/08/22
