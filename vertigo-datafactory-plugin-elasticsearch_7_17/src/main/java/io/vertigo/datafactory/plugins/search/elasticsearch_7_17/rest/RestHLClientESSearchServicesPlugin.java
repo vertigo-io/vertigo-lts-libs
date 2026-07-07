@@ -40,6 +40,7 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.forcemerge.ForceMergeRequest;
 import org.elasticsearch.action.admin.indices.forcemerge.ForceMergeResponse;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -76,8 +77,8 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datafactory.collections.ListFilter;
 import io.vertigo.datafactory.collections.model.FacetedQueryResult;
 import io.vertigo.datafactory.impl.search.SearchServicesPlugin;
-import io.vertigo.datafactory.plugins.search.elasticsearch.ESDocumentCodec;
-import io.vertigo.datafactory.plugins.search.elasticsearch.IndexType;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.ESDocumentCodec;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.IndexType;
 import io.vertigo.datafactory.search.definitions.SearchIndexDefinition;
 import io.vertigo.datafactory.search.model.SearchIndex;
 import io.vertigo.datafactory.search.model.SearchQuery;
@@ -93,6 +94,7 @@ import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 
 /**
  * Gestion de la connexion au serveur Solr de manière transactionnel.
+ *
  * @author dchallas, npiedeloup
  */
 public final class RestHLClientESSearchServicesPlugin implements SearchServicesPlugin, Activeable {
@@ -116,9 +118,11 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 	private final String envIndexPrefix;
 	private final URL configFileUrl;
 	private boolean indexSettingsValid;
+	private final boolean optimizeNumSegment;
 
 	/**
 	 * Constructor.
+	 *
 	 * @param envIndexPrefix ES index name
 	 * @param indexNameIsPrefix indexName use as prefix
 	 * @param defaultMaxRows Nombre de lignes
@@ -132,6 +136,7 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 			@ParamValue("rowsPerQuery") final int defaultMaxRows,
 			@ParamValue("config.file") final String configFile,
 			@ParamValue("connectorName") final Optional<String> connectorNameOpt,
+			@ParamValue("optimizeNumSegment") final Optional<Boolean> optimizeNumSegmentOpt,
 			final List<RestHighLevelElasticSearchConnector> elasticSearchConnectors,
 			final CodecManager codecManager,
 			final SmartTypeManager smartTypeManager,
@@ -154,6 +159,7 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 		elasticSearchConnector = elasticSearchConnectors.stream()
 				.filter(connector -> connectorName.equals(connector.getName()))
 				.findFirst().orElseThrow(() -> new IllegalArgumentException("Can't found ElasticSearchConnector named '" + connectorName + "' in " + elasticSearchConnectors));
+		optimizeNumSegment = optimizeNumSegmentOpt.orElse(false);
 	}
 
 	/** {@inheritDoc} */
@@ -319,7 +325,7 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 	private String[] obtainIndicesNames(final List<SearchIndexDefinition> indexDefinitions) {
 		String[] indiceNames = new String[indexDefinitions.size()];
 		indiceNames = indexDefinitions.stream()
-				.map(d -> obtainIndexName(d))
+				.map(this::obtainIndexName)
 				.collect(Collectors.toList())
 				.toArray(indiceNames);
 		return indiceNames;
@@ -335,7 +341,8 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 
 	/** {@inheritDoc} */
 	@Override
-	public <K extends KeyConcept> Map<UID<K>, Serializable> loadVersions(final SearchIndexDefinition indexDefinition, final DataFieldName<K> versionFieldName, final ListFilter listFilter, final int maxElements) {
+	public <K extends KeyConcept> Map<UID<K>, Serializable> loadVersions(final SearchIndexDefinition indexDefinition, final DataFieldName<K> versionFieldName, final ListFilter listFilter,
+			final int maxElements) {
 		final DataDefinition indexDtDefinition = indexDefinition.getIndexDtDefinition();
 		return ((ESStatement<K, ?>) createElasticStatement(indexDefinition)).loadVersions(indexDtDefinition.getField(versionFieldName), listFilter, maxElements);
 	}
@@ -365,13 +372,17 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 				final GetResponse response = esClient.get(getRequest, RequestOptions.DEFAULT);
 				if (response.isExists()) {
 					final String type = (String) response.getSource().get("type");
-					final Serializable value = Serializable.class.cast(response.getSource().get("value"));
-					if (value instanceof Integer && "Long".equals(type)) {
-						return Long.valueOf((Integer) value); //ES use integer to store short long : and forget the source type
-					} else if (value instanceof String && "Instant".equals(type)) {
-						return Instant.parse(String.valueOf(value)); //ES use String to Instant
+					final Serializable rawValue = Serializable.class.cast(response.getSource().get("value"));
+					if (rawValue instanceof Number && "Long".equals(type)) {
+						return ((Number) rawValue).longValue(); //ES use integer to store short long : and forget the source type
+					} else if (rawValue instanceof Number && "Double".equals(type)) {
+						return ((Number) rawValue).doubleValue(); //ES use integer to store short long : and forget the source type
+					} else if (rawValue instanceof String && "Instant".equals(type)) {
+						return Instant.parse(String.valueOf(rawValue)); //ES use String to Instant
+					} else if (rawValue instanceof String && "LocalDate".equals(type)) {
+						return java.time.LocalDate.parse(String.valueOf(rawValue)); //ES use String to LocalDate
 					}
-					return value;
+					return rawValue;
 				}
 			} //no metadata index => return null
 			return null;
@@ -452,25 +463,18 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 		// On peut préciser pour chaque smartType le type d'indexation
 		// Calcul automatique  par default.
 		Assertion.check().isTrue(smartTypeDefinition.getScope().isBasicType(), "Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
-		switch (smartTypeDefinition.getBasicType()) {
-			case Boolean:
-			case Double:
-			case Integer:
-			case Long:
-				return smartTypeDefinition.getBasicType().name().toLowerCase(Locale.ROOT);
-			case String:
-				return "keyword";
-			case LocalDate:
-			case Instant:
-			case BigDecimal:
-			case DataStream:
-			default:
-				throw new IllegalArgumentException("Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
-		}
+		return switch (smartTypeDefinition.getBasicType()) {
+			case Boolean, Double, Integer, Long -> smartTypeDefinition.getBasicType().name().toLowerCase(Locale.ROOT);
+			case String -> "keyword";
+			case LocalDate, Instant, BigDecimal, DataStream -> throw new IllegalArgumentException(
+					"Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
+			default -> throw new IllegalArgumentException("Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
+		};
 	}
 
 	/**
 	 * Update template definition of this type.
+	 *
 	 * @param indexDefinition Index concerné
 	 * @throws IOException
 	 */
@@ -554,25 +558,50 @@ public final class RestHLClientESSearchServicesPlugin implements SearchServicesP
 	}
 
 	private void markToOptimize(final String myIndexName) {
-		final ForceMergeRequest request = new ForceMergeRequest(myIndexName)
-				.maxNumSegments(OPTIMIZE_MAX_NUM_SEGMENT)//32 files : empirique
-				.flush(true);
+		try {
+			// 2. Initialisation de la requête avec les paramètres communs
+			final ForceMergeRequest request = new ForceMergeRequest(myIndexName)
+					.flush(true); // On garde toujours le flush pour libérer le disque au niveau de l'OS
 
-		esClient.indices().forcemergeAsync(request, RequestOptions.DEFAULT, new OptimizeActionListener());
+			// 3. Application de la stratégie d'optimisation
+			if (optimizeNumSegment) {
+				/** cette manière d'optimizer est déconseillée par elastic, on peut la réactiver avec le `optimizeNumSegment` du plugin */
+				request.maxNumSegments(OPTIMIZE_MAX_NUM_SEGMENT); // 32 files : empirique
+			} else {
+				// Recommandé : on ne merge que les segments qui ont des deletes, pour éviter de faire du merge inutile
+				request.onlyExpungeDeletes(true);
+			}
+
+			// 4. Appel asynchrone via le RestHighLevelClient
+			esClient.indices().forcemergeAsync(request, RequestOptions.DEFAULT, new OptimizeActionListener());
+			LOGGER.debug("markToOptimize send");
+		} catch (final Exception e) {
+			LOGGER.error("Error on markToOptimize call", e);
+		}
 	}
 
 	private static class OptimizeActionListener implements ActionListener<ForceMergeResponse> {
-
+		/** @inheritDoc */
 		@Override
 		public void onResponse(final ForceMergeResponse response) {
-			LOGGER.debug("markToOptimize ok");
+			LOGGER.debug("markToOptimize.forceMerge finished");
 		}
 
+		/** @inheritDoc */
 		@Override
 		public void onFailure(final Exception e) {
-			LOGGER.error("Error on markToOptimize", e);
+			LOGGER.error("Error on markToOptimize.forceMerge", e);
 		}
+	}
 
+	/** {@inheritDoc} */
+	@Override
+	public void waitForRefresh(final List<SearchIndexDefinition> indexDefinitions) {
+		try {
+			esClient.indices().refresh(new RefreshRequest(obtainIndicesNames(indexDefinitions)), RequestOptions.DEFAULT);
+		} catch (final Exception e) {
+			throw WrappedException.wrap(e, "Error on waitForRefresh");
+		}
 	}
 
 	private void waitForYellowStatus() {

@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,9 +51,9 @@ import io.vertigo.core.lang.WrappedException;
 import io.vertigo.datafactory.collections.ListFilter;
 import io.vertigo.datafactory.collections.model.FacetedQueryResult;
 import io.vertigo.datafactory.impl.search.SearchResource;
-import io.vertigo.datafactory.plugins.search.elasticsearch.AsbtractESSearchRequestBuilder;
-import io.vertigo.datafactory.plugins.search.elasticsearch.ESDocumentCodec;
-import io.vertigo.datafactory.plugins.search.elasticsearch.ESFacetedQueryResultBuilder;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.AsbtractESSearchRequestBuilder;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.ESDocumentCodec;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.ESFacetedQueryResultBuilder;
 import io.vertigo.datafactory.search.model.SearchIndex;
 import io.vertigo.datafactory.search.model.SearchQuery;
 import io.vertigo.datamodel.data.definitions.DataDefinition;

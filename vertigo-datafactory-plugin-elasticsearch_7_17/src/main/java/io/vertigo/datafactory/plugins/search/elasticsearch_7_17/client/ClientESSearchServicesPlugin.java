@@ -1,7 +1,7 @@
 /*
  * vertigo - application development platform
  *
- * Copyright (C) 2013-2024, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2025, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,9 +36,11 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthAction;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.action.admin.indices.forcemerge.ForceMergeResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.support.WriteRequest.RefreshPolicy;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
@@ -69,8 +71,8 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datafactory.collections.ListFilter;
 import io.vertigo.datafactory.collections.model.FacetedQueryResult;
 import io.vertigo.datafactory.impl.search.SearchServicesPlugin;
-import io.vertigo.datafactory.plugins.search.elasticsearch.ESDocumentCodec;
-import io.vertigo.datafactory.plugins.search.elasticsearch.IndexType;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.ESDocumentCodec;
+import io.vertigo.datafactory.plugins.search.elasticsearch_7_17.IndexType;
 import io.vertigo.datafactory.search.definitions.SearchIndexDefinition;
 import io.vertigo.datafactory.search.model.SearchIndex;
 import io.vertigo.datafactory.search.model.SearchQuery;
@@ -86,6 +88,7 @@ import io.vertigo.datamodel.smarttype.definitions.SmartTypeDefinition;
 
 /**
  * Gestion de la connexion au serveur Solr de manière transactionnel.
+ *
  * @author dchallas, npiedeloup
  */
 public final class ClientESSearchServicesPlugin implements SearchServicesPlugin, Activeable {
@@ -110,9 +113,11 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 	private final Set<String> types = new HashSet<>();
 	private final URL configFileUrl;
 	private boolean indexSettingsValid;
+	private final boolean optimizeNumSegment;
 
 	/**
 	 * Constructor.
+	 *
 	 * @param envIndexPrefix ES index name
 	 * @param defaultMaxRows Nombre de lignes
 	 * @param codecManager Manager de codec
@@ -125,6 +130,7 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 			@ParamValue("rowsPerQuery") final int defaultMaxRows,
 			@ParamValue("config.file") final String configFile,
 			@ParamValue("connectorName") final Optional<String> connectorNameOpt,
+			@ParamValue("optimizeNumSegment") final Optional<Boolean> optimizeNumSegmentOpt,
 			final List<ElasticSearchConnector> elasticSearchConnectors,
 			final CodecManager codecManager,
 			final SmartTypeManager smartTypeManager,
@@ -147,6 +153,7 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 		elasticSearchConnector = elasticSearchConnectors.stream()
 				.filter(connector -> connectorName.equals(connector.getName()))
 				.findFirst().orElseThrow(() -> new IllegalArgumentException("Can't found ElasticSearchConnector named '" + connectorName + "' in " + elasticSearchConnectors));
+		optimizeNumSegment = optimizeNumSegmentOpt.orElse(false);
 	}
 
 	/** {@inheritDoc} */
@@ -317,7 +324,7 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 	private String[] obtainIndicesNames(final List<SearchIndexDefinition> indexDefinitions) {
 		String[] indiceNames = new String[indexDefinitions.size()];
 		indiceNames = indexDefinitions.stream()
-				.map(d -> obtainIndexName(d))
+				.map(this::obtainIndexName)
 				.collect(Collectors.toList())
 				.toArray(indiceNames);
 		return indiceNames;
@@ -333,7 +340,8 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 
 	/** {@inheritDoc} */
 	@Override
-	public <K extends KeyConcept> Map<UID<K>, Serializable> loadVersions(final SearchIndexDefinition indexDefinition, final DataFieldName<K> versionFieldName, final ListFilter listFilter, final int maxElements) {
+	public <K extends KeyConcept> Map<UID<K>, Serializable> loadVersions(final SearchIndexDefinition indexDefinition, final DataFieldName<K> versionFieldName, final ListFilter listFilter,
+			final int maxElements) {
 		final DataDefinition indexDtDefinition = indexDefinition.getIndexDtDefinition();
 		return ((ESStatement<K, ?>) createElasticStatement(indexDefinition)).loadVersions(indexDtDefinition.getField(versionFieldName), listFilter, maxElements);
 	}
@@ -459,25 +467,18 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 		// On peut préciser pour chaque smartType le type d'indexation
 		// Calcul automatique  par default.
 		Assertion.check().isTrue(smartTypeDefinition.getScope().isBasicType(), "Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
-		switch (smartTypeDefinition.getBasicType()) {
-			case Boolean:
-			case Double:
-			case Integer:
-			case Long:
-				return smartTypeDefinition.getBasicType().name().toLowerCase(Locale.ROOT);
-			case String:
-				return "keyword";
-			case LocalDate:
-			case Instant:
-			case BigDecimal:
-			case DataStream:
-			default:
-				throw new IllegalArgumentException("Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
-		}
+		return switch (smartTypeDefinition.getBasicType()) {
+			case Boolean, Double, Integer, Long -> smartTypeDefinition.getBasicType().name().toLowerCase(Locale.ROOT);
+			case String -> "keyword";
+			case LocalDate, Instant, BigDecimal, DataStream -> throw new IllegalArgumentException(
+					"Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
+			default -> throw new IllegalArgumentException("Type de donnée non pris en charge comme PK pour le keyconcept indexé [" + smartTypeDefinition + "].");
+		};
 	}
 
 	/**
 	 * Update template definition of this type.
+	 *
 	 * @param indexDefinition Index concerné
 	 */
 	private void updateTypeMapping(final SearchIndexDefinition indexDefinition, final boolean sortableNormalizer) {
@@ -562,14 +563,56 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 		}
 	}
 
+	/** {@inheritDoc} */
+	@Override
+	public void waitForRefresh(final List<SearchIndexDefinition> indexDefinitions) {
+		try {
+			esClient.admin()
+					.indices()
+					.prepareRefresh(obtainIndicesNames(indexDefinitions))
+					.execute()
+					.actionGet(); // mode bloquant voulu
+		} catch (final Exception e) {
+			throw WrappedException.wrap(e, "Error on waitForRefresh");
+		}
+	}
+
 	private void markToOptimize(final String myIndexName) {
-		esClient.admin()
-				.indices()
-				.prepareForceMerge(myIndexName)
-				.setFlush(true)
-				.setMaxNumSegments(OPTIMIZE_MAX_NUM_SEGMENT)//32 files : empirique
-				.execute()
-				.actionGet();
+		try {
+			/** cette manière d'optimizer est déconseillé par elastic, on peut la réactivé avec le `optimizeNumSegment` du plugin */
+			if (optimizeNumSegment) {
+				esClient.admin()
+						.indices()
+						.prepareForceMerge(myIndexName)
+						.setMaxNumSegments(OPTIMIZE_MAX_NUM_SEGMENT)//32 files : empirique
+						.setFlush(true)
+						.execute(new OptimizeActionListener());
+			} else {
+				esClient.admin()
+						.indices()
+						.prepareForceMerge(myIndexName)
+						.setOnlyExpungeDeletes(true) //on ne merge que les segments qui ont des delete, pour éviter de faire du merge inutile
+						.setFlush(true)
+						.execute(new OptimizeActionListener());
+			}
+			LOGGER.debug("markToOptimize send");
+		} catch (final Exception e) {
+			LOGGER.error("Error on markToOptimize call", e);
+		}
+	}
+
+	private static class OptimizeActionListener implements ActionListener<ForceMergeResponse> {
+		/** @inheritDoc */
+		@Override
+		public void onResponse(final ForceMergeResponse response) {
+			LOGGER.debug("markToOptimize.forceMerge finished");
+		}
+
+		/** @inheritDoc */
+		@Override
+		public void onFailure(final Exception e) {
+			LOGGER.error("Error on markToOptimize.forceMerge", e);
+		}
 	}
 
 	private void waitForYellowStatus() {
