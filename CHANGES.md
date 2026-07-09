@@ -1,7 +1,7 @@
 Version history
 ===============
 
-Running 4.4.0 - 2026-07-XX
+Release 4.4.0 - 2026/07/09
 ----------------------
 [Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-432-to-440)
 
