@@ -1,9 +1,14 @@
 Version history
 ===============
 
-Running 4.5.0-SNAPSHOT - 2026-07-XX
+Running 4.5.0-SNAPSHOT - 2026-12-XX
 ----------------------
-[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-440-to-450)
+more to come :)
+
+
+Release 4.4.0 - 2026/07/09
+----------------------
+[Migration help](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-432-to-440)
 
 * [DataFactory][ES7] Add highlighting support; fix type handling for Long, Double, LocalDate in version fields; switch forceMerge to async mode
 * [DataFactory][ES5_6] Add waitForRefresh; switch forceMerge to async mode; refacto switch expressions
@@ -142,5 +147,3 @@ Release 3.0.0 - 2020/11/20
  * First release : this repository keep 'old' Vertigo modules for Long Term Support
  * Add DataFactory plugin for ElasticSearch 5.6.x
  * Add Struts2 UI module
-
-
