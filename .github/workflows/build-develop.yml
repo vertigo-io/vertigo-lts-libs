@@ -1,9 +1,16 @@
 name: Build Develop
+# Build sur push suspendu le temps de trancher la ligne de version de ce dépôt.
+# Les plugins ElasticSearch 5.6/7.17 ne fixent aucune version : ils importent le BOM
+# vertigo-datafactory, qui en 5.0.0-SNAPSHOT est passé à co.elastic.clients et ne gère
+# plus x-pack-transport, elasticsearch-rest-high-level-client, les modules codelibs,
+# lucene 8.11.3, h2 ni c3p0. Le dépôt n'a plus été construit depuis la 4.3.0, que
+# "init next version" a basculée en 5.0.0-SNAPSHOT en changeant une seule ligne.
+# Pour réactiver : décommenter le déclencheur push ci-dessous.
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - develop
+  #push:
+  #  branches:
+  #    - develop
 jobs:
   build:
     name: Build
