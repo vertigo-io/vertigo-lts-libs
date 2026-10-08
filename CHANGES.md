@@ -3,6 +3,7 @@ Version history
 
 Running 4.5.0-SNAPSHOT - 2026-12-XX
 ----------------------
+* [DataFactory][ES7_17] Documented the bundled in-memory collections index plugin (`lucene_8_11.LuceneIndexPlugin`, Lucene 8.11.3) — required for in-memory list search / full-text autocomplete when staying on ES 7.17, since the standard `collections.luceneIndex` feature is now Lucene 9-based
 more to come :)
 
 
