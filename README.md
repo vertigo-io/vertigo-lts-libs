@@ -32,4 +32,4 @@ It provides:
 
 The ES 7.17 connector `vertigo-elasticsearch_7_17-connector` is maintained in the [vertigo-connectors](https://github.com/vertigo-io/vertigo-connectors) repository and is pulled transitively by the artifact above.
 
-See the [ES7 LTS Migration](https://github.com/vertigo-io/vertigo/wiki/Vertigo-Migration-Guide#from-432-to-440) section of the Vertigo migration guide for the complete setup (Lucene 8.11.3 pin, YAML configuration).
+See the [ES7 LTS Migration](https://github.com/vertigo-io/vertigo-core/wiki/Vertigo-Migration-Guide#from-432-to-440) section of the Vertigo migration guide for the complete setup (Lucene 8.11.3 pin, YAML configuration).
