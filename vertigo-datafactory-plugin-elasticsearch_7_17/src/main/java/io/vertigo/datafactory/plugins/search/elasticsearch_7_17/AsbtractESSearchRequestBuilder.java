@@ -320,6 +320,9 @@ public abstract class AsbtractESSearchRequestBuilder<R, S, T extends AsbtractESS
 			final FacetedQueryDefinition facetedQueryDefinition = facetedQuery.getDefinition();
 			final var facetDefinitions = facetedQueryDefinition.getFacetDefinitions();
 			for (final FacetDefinition facetDefinition : facetDefinitions) {
+				if (searchQuery.getSkippedFacets().contains(facetDefinition.id())) {
+					continue; //skipped facet : no aggregation
+				}
 				final AggregationBuilder aggregationBuilder = facetToAggregationBuilder(facetDefinition, searchQuery.getCriteria(), typeAdapters);
 				final BoolQueryBuilder aggsFilterBoolQueryBuilder = QueryBuilders.boolQuery();
 				for (final FacetDefinition filterFacetDefinition : facetDefinitions) {
