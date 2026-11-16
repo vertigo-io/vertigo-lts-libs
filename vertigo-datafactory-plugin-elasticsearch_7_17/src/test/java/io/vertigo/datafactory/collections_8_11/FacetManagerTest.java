@@ -116,7 +116,7 @@ public class FacetManagerTest {
 		Assertions.assertEquals(smartCarDataBase.size(), result.getCount());
 
 		//On vérifie qu'il y a le bon nombre de facettes.
-		Assertions.assertEquals(4, result.getFacets().size());
+		Assertions.assertEquals(5, result.getFacets().size());
 
 		//On recherche la facette date
 		final Facet yearFacet = getFacetByName(result, "FctYearCar");
@@ -136,7 +136,7 @@ public class FacetManagerTest {
 		Assertions.assertEquals(smartCarDataBase.size(), result.getCount());
 
 		//On vérifie qu'il y a le bon nombre de facettes.
-		Assertions.assertEquals(4, result.getFacets().size());
+		Assertions.assertEquals(5, result.getFacets().size());
 
 		//On recherche la facette constructeur
 		final Facet manufacturerFacet = getFacetByName(result, "FctManufacturerCar");
