@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -409,10 +410,14 @@ public final class ClientESSearchServicesPlugin implements SearchServicesPlugin,
 			if (response.isExists()) {
 				final String type = (String) response.getSource().get("type");
 				final Serializable value = Serializable.class.cast(response.getSource().get("value"));
-				if (value instanceof Integer && "Long".equals(type)) {
-					return Long.valueOf((Integer) value); //ES use integer to store short long : and forget the source type
+				if (value instanceof Number && "Long".equals(type)) {
+					return ((Number) value).longValue(); //ES use integer to store short long : and forget the source type
+				} else if (value instanceof Number && "Double".equals(type)) {
+					return ((Number) value).doubleValue(); //ES may store a round double as an integer : and forget the source type
 				} else if (value instanceof String && "Instant".equals(type)) {
 					return Instant.parse(String.valueOf(value)); //ES use String to Instant
+				} else if (value instanceof String && "LocalDate".equals(type)) {
+					return LocalDate.parse(String.valueOf(value)); //ES use String to LocalDate
 				}
 				return value;
 			}
