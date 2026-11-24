@@ -14,8 +14,6 @@ Release 4.5.0 - 2026/11/24
 * Update libs
   - elasticsearch 7.17.28 -> 7.17.29 (through vertigo-elasticsearch_7_17-connector ; lucene 8.11.3 kept, still the Lucene of ElasticSearch 7.17.29)
 
-more to come :)
-
 
 Release 4.4.1 - 2026/08/28
 ----------------------
