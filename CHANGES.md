@@ -1,6 +1,11 @@
 Version history
 ===============
 
+Running 4.5.1-SNAPSHOT - 2027-XX-XX
+----------------------
+more to come :)
+
+
 Release 4.5.0 - 2026/11/24
 ----------------------
 * [DataFactory][ES7_17] README : documented the ES 7.17 stack, including the in-memory collections index plugin `lucene_8_11.LuceneIndexPlugin` (Lucene 8.11.3), required for in-memory list search / full-text autocomplete with ES 7.17 since the standard `collections.luceneIndex` feature moved to Lucene 9 in 4.4.0
