@@ -206,6 +206,9 @@ public final class ESFacetedQueryResultBuilder<I extends DataObject> implements 
 		if (searchQuery.getFacetedQuery().isPresent() && queryResponse.getAggregations() != null) {
 			final FacetedQueryDefinition queryDefinition = searchQuery.getFacetedQuery().get().getDefinition();
 			for (final FacetDefinition facetDefinition : queryDefinition.getFacetDefinitions()) {
+				if (searchQuery.getSkippedFacets().contains(facetDefinition.id())) {
+					continue; //skipped facet : not in the result
+				}
 				final Aggregation aggregation = obtainAggregation(queryResponse, facetDefinition.getName());
 				if (aggregation != null) {
 					final Facet facet;

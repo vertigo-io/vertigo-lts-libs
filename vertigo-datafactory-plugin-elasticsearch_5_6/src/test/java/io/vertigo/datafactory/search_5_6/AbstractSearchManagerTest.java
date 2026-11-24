@@ -408,7 +408,7 @@ public abstract class AbstractSearchManagerTest {
 	public void testInsensitivityQuery() {
 		index(false);
 
-		final long databaseResult = itemDataBase.containsDescription("sieges") + itemDataBase.containsDescription("sièges");
+		final long databaseResult = itemDataBase.containsDescription("sieges"); //containsDescription use normalizer : "sièges" is already counted
 		long size;
 		size = query("description:sieges");
 		Assertions.assertEquals(databaseResult, size);
@@ -447,7 +447,7 @@ public abstract class AbstractSearchManagerTest {
 	public void testInsensitivity2Query() {
 		index(false);
 
-		final long databaseResult = itemDataBase.containsDescription("sieges") + itemDataBase.containsDescription("sièges");
+		final long databaseResult = itemDataBase.containsDescription("sieges"); //containsDescription use normalizer : "sièges" is already counted
 		long size;
 		//y compris en wildcard
 		size = query("description:siè*");

@@ -241,11 +241,14 @@ final class ESStatement<K extends KeyConcept, I extends DataObject> {
 	FacetedQueryResult<I, SearchQuery> loadList(final DataDefinition indexDtDefinition, final String[] indexNames, final SearchQuery searchQuery, final DtListState listState, final int defaultMaxRows) {
 		Assertion.check().isNotNull(searchQuery);
 		//-----
-		final SearchRequestBuilder searchRequestBuilder = new ESSearchRequestBuilder(indexNames, esClient, typeAdapters)
+		final ESSearchRequestBuilder builder = new ESSearchRequestBuilder(indexNames, esClient, typeAdapters)
 				.withIndexDtDefinition(indexDtDefinition)
 				.withSearchQuery(searchQuery)
-				.withListState(listState, defaultMaxRows)
-				.build();
+				.withListState(listState, defaultMaxRows);
+		if (searchQuery.isUseHighlight()) {
+			builder.withHighlight();
+		}
+		final SearchRequestBuilder searchRequestBuilder = builder.build();
 		LOGGER.info("loadList {}", searchRequestBuilder);
 		try {
 			final SearchResponse queryResponse = searchRequestBuilder.execute().actionGet();

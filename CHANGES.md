@@ -3,6 +3,12 @@ Version history
 
 Running 4.5.0-SNAPSHOT - 2026-12-XX
 ----------------------
+* [DataFactory][ES7_17] README : documented the ES 7.17 stack, including the in-memory collections index plugin `lucene_8_11.LuceneIndexPlugin` (Lucene 8.11.3), required for in-memory list search / full-text autocomplete with ES 7.17 since the standard `collections.luceneIndex` feature moved to Lucene 9 in 4.4.0
+* [DataFactory][ES7_17] Support the facets skipped for one search (`SearchQueryBuilder.withSkippedFacets` / `withSkippedFacetFilter` of vertigo-libs 4.5.0) : no aggregation is computed and the facet is absent from the result
+* [DataFactory][ES7_17] Fix the transport client plugin (`ClientESSearchServicesPlugin`) like the RestHL one : `withHighlight()` is no longer ignored, and `getMetaData` returns the `LocalDate` / `Double` / `Long` values with their type (a `LocalDate` came back as a `String`)
+* Update libs
+  - elasticsearch 7.17.28 -> 7.17.29 (through vertigo-elasticsearch_7_17-connector ; lucene 8.11.3 kept, still the Lucene of ElasticSearch 7.17.29)
+
 more to come :)
 
 
