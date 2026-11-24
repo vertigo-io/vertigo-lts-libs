@@ -1,7 +1,7 @@
 Version history
 ===============
 
-Running 4.5.0 - 2026-12-XX
+Release 4.5.0 - 2026/11/24
 ----------------------
 * [DataFactory][ES7_17] README : documented the ES 7.17 stack, including the in-memory collections index plugin `lucene_8_11.LuceneIndexPlugin` (Lucene 8.11.3), required for in-memory list search / full-text autocomplete with ES 7.17 since the standard `collections.luceneIndex` feature moved to Lucene 9 in 4.4.0
 * [DataFactory][ES7_17] Support the facets skipped for one search (`SearchQueryBuilder.withSkippedFacets` / `withSkippedFacetFilter` of vertigo-libs 4.5.0) : no aggregation is computed and the facet is absent from the result
